@@ -20,6 +20,12 @@ const Chats = () => {
     const [snapshot, loading] = useCollection(collection(db, "chats"));
     const chats = snapshot?.docs.map(doc => ({ id: doc.id, ...doc.data() }));
     const values = getUserActivity();
+    const [darkMode, setDarkMode] = useState(false);
+
+    useEffect(() => {
+        const theme = JSON.parse(localStorage.getItem('theme'))
+        setDarkMode(theme);
+    }, []);
 
     const chatExits = (email) => {
         let valid = false;
@@ -75,11 +81,11 @@ const Chats = () => {
 
     if (!session) return <Loading />
     return (
-        <div className='h-screen overflow-y-scroll scrollbar-hide'>
+        <div className={`h-screen overflow-y-scroll scrollbar-hide ${darkMode ? "" : "dark"}`}>
             <div className='flex flex-col justify-between max-w-6xl md:mx-5 lg:mx-auto'>
                 <Header />
-                <div className='bg-gray-100 flex justify-center h-screen'>
-                    <div className='flex flex-col shadow-md md:w-[700px] w-full bg-white'>
+                <div className='bg-gray-100 flex justify-center h-full dark:bg-gray-900 dark:text-gray-200'>
+                    <div className='flex flex-col shadow-md md:w-[700px] w-full bg-white dark:bg-gray-900'>
                         <button className='w-full flex text-lg justify-center items-center p-3 mb-2 shadow-md'>
                             <UserCircleIcon className='h-6 w-6 mr-2' />
                             <h1 className='font-bold hover:underline'>{session.user.username}</h1>

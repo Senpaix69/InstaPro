@@ -7,7 +7,7 @@ const nextConfig = {
   },
   images: {
     domains: ['links.papareact.com', "lh3.googleusercontent.com",
-      'firebasestorage.googleapis.com', "cloudflare-ipfs.com"]
+      'firebasestorage.googleapis.com', "cloudflare-ipfs.com", "cdn.pixabay.com"]
   },
 };
 

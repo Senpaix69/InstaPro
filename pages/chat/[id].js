@@ -22,7 +22,13 @@ const Chat = () => {
     const [chat, loading] = useDocumentData(doc(db, `chats/${id}`));
     const messages = getChatMessages(id);
     const users = getUserActivity();
-    
+    const [darkMode, setDarkMode] = useState(false);
+
+    useEffect(() => {
+        const theme = JSON.parse(localStorage.getItem('theme'))
+        setDarkMode(theme);
+    }, []);
+
     const sendMessage = async (e) => {
         e.preventDefault();
         const msgToSend = text;
@@ -37,40 +43,40 @@ const Chat = () => {
     const scrollToBottom = () => {
         messagesEndRef?.current?.scrollIntoView({ behavior: "smooth" })
     }
+    useEffect(scrollToBottom, [messages]);
 
     const unsendMessage = async (id) => {
         alert("Unsend Message is deactivate right now");
     }
 
-    useEffect(scrollToBottom, [messages]);
-    if (loading) return <Loading />
     return (
-        <div className="max-w-6xl lg:mx-auto flex justify-center bg-gray-100">
-            <div className="bg-[url('https://i.pinimg.com/originals/b7/fc/af/b7fcaf2631fc54f28ef3f123855d03dc.jpg')] bg-no-repeat bg-cover bg-center w-full flex flex-col md:w-[700px] h-screen overflow-y-scroll scrollbar-hide scri">
+        <div className={`max-w-6xl lg:mx-auto flex justify-center bg-gray-100 ${darkMode ? "" : "dark"} dark:bg-gray-900`}>
+            <div className="bg-[url('https://i.pinimg.com/originals/b7/fc/af/b7fcaf2631fc54f28ef3f123855d03dc.jpg')] dark:bg-[url('https://www.teahub.io/photos/full/8-87389_witcher-dark-background-minimal-4k-ultra-hd-mobile.jpg')]
+            bg-no-repeat bg-cover bg-center w-full flex flex-col md:w-[700px] h-screen overflow-y-scroll scrollbar-hide">
 
                 {/* Chat Header */}
-                <section className="shadow-md bg-white sticky top-0 z-50">
-                    <div className="flex items-center px-2 py-1">
-                        <ArrowLeftIcon onClick={() => router?.back()} className="btn ml-1" />
+                <section className="shadow-md bg-white sticky top-0 z-50 dark:bg-gray-900 dark:text-gray-200">
+                    <button className="flex items-center px-2 py-1">
+                        <ArrowLeftIcon onClick={() => router?.back()} className="btn m-1" />
                         <div className="flex items-center justify-center p-[1px] rounded-full border-red-500 border-2 object-contain mx-2">
                             <div className="relative w-8 h-8">
                                 <Image
                                     loading='eager'
                                     layout="fill"
-                                    src={getOtherProfImage(chat, session.user.username)}
+                                    src={loading ? "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460__340.png" : getOtherProfImage(chat, session?.user.username)}
                                     alt='prof'
                                     className="rounded-full"
                                 />
                             </div>
                         </div>
                         <div>
-                            <h1 className="font-bold h-[20px]">{getOtherEmail(chat, session?.user)}</h1>
+                            <h1 className="font-bold text-left h-[20px]">{loading ? "Loading" : getOtherEmail(chat, session?.user)}</h1>
                             <span className="text-xs md:text-sm text-gray-400">active </span>
                             <Moment fromNow className="text-xs md:text-sm text-gray-400">
                                 {users && users[users.findIndex((user) => user.username === getOtherEmail(chat, session?.user))]?.timeStamp?.toDate()}
                             </Moment>
                         </div>
-                    </div>
+                    </button>
                 </section>
 
                 {/* Chat Body */}
@@ -78,49 +84,50 @@ const Chat = () => {
                     <div className="m-2 p-4 mb-4 text-sm text-green-700 bg-green-100 rounded-lg dark:bg-green-200 dark:text-green-800" role="alert">
                         <span className="font-medium">Chat Alert!</span> You can send chat only for now,  have fun 😊.
                     </div>
-                    {messages?.map((msg, i) => (
-                        <div ref={messagesEndRef} key={i} className={`flex mt-1 ${msg?.username === session?.user.username ? "justify-end" : ""}`}>
-                            <div className="flex items-center rounded-md w-fit max-w-xs py-1 px-2 relative">
-                                <div className={`absolute top-1 rounded-full ${msg?.username === session?.user.username ? "right-2" : ""}`}>
-                                    <div className="flex items-center justify-center object-contain">
-                                        <div className="relative w-7 h-7">
-                                            <Image
-                                                loading='eager'
-                                                layout="fill"
-                                                src={msg?.userImg}
-                                                alt='prof'
-                                                className='rounded-full'
-                                            />
+                    {loading ? <Loading /> :
+                        messages?.map((msg, i) => (
+                            <div ref={messagesEndRef} key={i} className={`flex mt-1 ${msg?.username === session?.user.username ? "justify-end" : ""}`}>
+                                <div className="flex items-center rounded-md w-fit max-w-xs py-1 px-2 relative">
+                                    <div className={`absolute top-1 rounded-full ${msg?.username === session?.user.username ? "right-2" : ""}`}>
+                                        <div className="flex items-center justify-center object-contain">
+                                            <div className="relative w-7 h-7">
+                                                <Image
+                                                    loading='eager'
+                                                    layout="fill"
+                                                    src={msg?.userImg}
+                                                    alt='prof'
+                                                    className='rounded-full'
+                                                />
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                                <p className={`${msg?.username === session?.user.username ? "mr-9 bg-green-200" : "ml-9 bg-blue-200"} p-2 rounded-lg`}>{msg?.text}
-                                    <Moment fromNow className="ml-2 text-[10px] text-gray-500">
-                                        {msg?.timeStamp?.toDate()}
-                                    </Moment>
-                                </p>
+                                    <p className={`${msg?.username === session?.user.username ? "mr-9 bg-green-200" : "ml-9 bg-blue-200"} p-2 rounded-lg`}>{msg?.text}
+                                        <Moment fromNow className="ml-2 text-[10px] text-gray-500">
+                                            {msg?.timeStamp?.toDate()}
+                                        </Moment>
+                                    </p>
 
-                                {msg?.username === session?.user.username &&
-                                    <>
-                                        <XCircleIcon className="h-7 w-7 absolute -left-6 cursor-pointer text-gray-800 overflow-hidden"
-                                            onClick={() => unsendMessage(msg.id)}
-                                        />
-                                        <span className="absolute right-10 top-2 items-center p-[1.5px] mr-2 text-sm font-semibold text-gray-700 bg-transparent rounded-full">
-                                            <svg aria-hidden="true" className="w-2 h-2" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd"></path></svg>
-                                            <span className="sr-only">deliverd</span>
-                                        </span>
-                                    </>
-                                }
+                                    {msg?.username === session?.user.username &&
+                                        <>
+                                            <XCircleIcon className="h-7 w-7 absolute -left-6 cursor-pointer text-gray-800 overflow-hidden dark:text-gray-200"
+                                                onClick={() => unsendMessage(msg.id)}
+                                            />
+                                            <span className="absolute right-10 top-2 items-center p-[1.5px] mr-2 text-sm font-semibold text-gray-700 bg-transparent rounded-full">
+                                                <svg aria-hidden="true" className="w-2 h-2" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd"></path></svg>
+                                                <span className="sr-only">deliverd</span>
+                                            </span>
+                                        </>
+                                    }
+                                </div>
                             </div>
-                        </div>
-                    ))}
+                        ))}
                 </section>
 
                 {/* Chat Bottom */}
-                <section className="bg-gray-50 sticky bottom-0 z-50 shadow-sm mx-1">
+                <section className="bg-gray-50 sticky bottom-0 z-50 shadow-sm mx-1 dark:bg-gray-900 px-1 dark:text-white">
                     <form>
-                        <div className="w-full border rounded-3xl h-12 flex items-center">
-                            <CameraIcon className="h-7 w-7 cursor-pointer text-gray-500 ml-2" />
+                        <div className="w-full border rounded-3xl h-12 flex items-center dark:border-none">
+                            <CameraIcon className="h-7 w-7 cursor-pointer text-gray-500 ml-2 dark:text-gray-200" />
                             <input
                                 placeholder="Message.."
                                 className="mx-2 flex-1 outline-none text-md focus:ring-0 bg-transparent"
@@ -128,10 +135,11 @@ const Chat = () => {
                                 name={text}
                                 onChange={(e) => setText(e.target.value)}
                             />
-                            <MicrophoneIcon className="h-7 w-7 cursor-pointer text-gray-500" />
-                            <PhotographIcon className="mx-2 h-7 w-7 cursor-pointer text-gray-500" />
+                            <MicrophoneIcon className="h-7 w-7 cursor-pointer text-gray-500 dark:text-gray-200" />
+                            <PhotographIcon className="mx-2 h-7 w-7 cursor-pointer text-gray-500 dark:text-gray-200" />
                             <button
                                 type="submit"
+                                hidden={true}
                                 onClick={sendMessage}
                                 disabled={text ? false : true}
                                 className="mr-3 font-semibold text-sm text-blue-500 disabled:text-gray-400">

@@ -22,7 +22,7 @@ const Header = ({ darkMode, setDarkMode }) => {
                 <div className="flex justify-between max-w-6xl px-5 lg:mx-auto dark:shadow-gray-600 dark:border-gray-500 dark:bg-gray-900 py-1">
                     {/* Header */}
                     <h1 className="dark:text-white italic flex items-center font-bold font-serif text-[20px]">
-                        Instagram
+                        InstaPro
                     </h1>
 
                     {/* Search */}
