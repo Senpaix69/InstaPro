@@ -82,9 +82,9 @@ const Chats = () => {
     if (!session) return <Loading />
     return (
         <div className={`h-screen overflow-y-scroll scrollbar-hide ${darkMode ? "" : "dark"}`}>
-            <div className='flex flex-col justify-between max-w-6xl md:mx-5 lg:mx-auto h-screen'>
+            <div className='flex flex-col justify-between max-w-6xl md:mx-5 lg:mx-auto h-screen dark:bg-gray-900'>
                 <Header />
-                <div className='bg-gray-100 flex justify-center h-full dark:bg-gray-900 dark:text-gray-200'>
+                <div className='bg-gray-100 flex justify-center dark:text-gray-200'>
                     <div className='flex flex-col shadow-md md:w-[700px] w-full bg-white dark:bg-gray-900'>
                         <button className='w-full flex text-lg justify-center items-center p-3 mb-2 shadow-md'>
                             <UserCircleIcon className='h-6 w-6 mr-2' />
