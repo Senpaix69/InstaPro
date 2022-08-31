@@ -17,7 +17,7 @@ const Header = ({ darkMode, setDarkMode }) => {
     const [open, setOpen] = useRecoilState(modelState);
     const router = useRouter();
     return (
-        <div className={`shadow-sm bg-white sticky top-0 z-50`}>
+        <div className={`shadow-sm sticky top-0 z-50`}>
             {session && (
                 <div className="flex justify-between max-w-6xl px-5 lg:mx-auto dark:shadow-gray-600 dark:border-gray-500 dark:bg-gray-900 py-1">
                     {/* Header */}

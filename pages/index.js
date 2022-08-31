@@ -33,7 +33,7 @@ export default function Home() {
   }, [session])
 
   return (
-    <div className={`bg-gray-50 h-screen overflow-y-scroll scrollbar-hide ${darkMode ? "" : "dark"}`}>
+    <div className={`bg-gray-50 h-screen overflow-y-scroll scrollbar-hide ${darkMode ? "" : "dark bg-gray-900"}`}>
       <Head>
         <title>Insta-2.0</title>
         <link rel="icon" href="/favicon.ico" />
