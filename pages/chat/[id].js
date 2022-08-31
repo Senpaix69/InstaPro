@@ -5,7 +5,7 @@ import { useRef, useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import { useDocumentData } from 'react-firebase-hooks/firestore'
-import { collection, doc, addDoc, serverTimestamp } from "firebase/firestore";
+import { collection, doc, addDoc, serverTimestamp, deleteDoc } from "firebase/firestore";
 import { db } from "../../firebase";
 import Loading from '../../components/Loading';
 import getChatMessages from '../../utils/getChatMessages';
@@ -23,7 +23,7 @@ const Chat = () => {
     const messages = getChatMessages(id);
     const users = getUserActivity();
     const [darkMode, setDarkMode] = useState(false);
-
+    
     useEffect(() => {
         const theme = JSON.parse(localStorage.getItem('theme'))
         setDarkMode(theme);
@@ -45,8 +45,11 @@ const Chat = () => {
     }
     useEffect(scrollToBottom, [messages]);
 
-    const unsendMessage = async (id) => {
-        alert("Unsend Message is deactivate right now");
+    const unsendMessage = async (msgID) => {
+        if(confirm("Unsend Message?")){
+            await deleteDoc(doc(db, "chats", id, "messages", msgID));
+            console.log("Deleted");
+        }
     }
 
     return (
@@ -69,8 +72,8 @@ const Chat = () => {
                                 />
                             </div>
                         </div>
-                        <div>
-                            <h1 className="font-bold text-left h-[20px]">{loading ? "Loading" : getOtherEmail(chat, session?.user)}</h1>
+                        <div className="text-left">
+                            <h1 className="font-bold h-[20px]">{loading ? "Loading" : getOtherEmail(chat, session?.user)}</h1>
                             <span className="text-xs md:text-sm text-gray-400">active </span>
                             <Moment fromNow className="text-xs md:text-sm text-gray-400">
                                 {users && users[users.findIndex((user) => user.username === getOtherEmail(chat, session?.user))]?.timeStamp?.toDate()}
@@ -86,28 +89,28 @@ const Chat = () => {
                     </div>
                     {loading ? <Loading /> :
                         messages?.map((msg, i) => (
-                            <div ref={messagesEndRef} key={i} className={`flex mt-1 ${msg?.username === session?.user.username ? "justify-end" : ""}`}>
+                            <div ref={messagesEndRef} key={i} className={`flex mt-1 ${msg?.data().username === session?.user.username ? "justify-end" : ""}`}>
                                 <div className="flex items-center rounded-md w-fit max-w-xs py-1 px-2 relative">
-                                    <div className={`absolute top-1 rounded-full ${msg?.username === session?.user.username ? "right-2" : ""}`}>
+                                    <div className={`absolute top-1 rounded-full ${msg?.data().username === session?.user.username ? "right-2" : ""}`}>
                                         <div className="flex items-center justify-center object-contain">
                                             <div className="relative w-7 h-7">
                                                 <Image
                                                     loading='eager'
                                                     layout="fill"
-                                                    src={msg?.userImg}
+                                                    src={msg?.data().userImg}
                                                     alt='prof'
                                                     className='rounded-full'
                                                 />
                                             </div>
                                         </div>
                                     </div>
-                                    <p className={`${msg?.username === session?.user.username ? "mr-9 bg-green-200" : "ml-9 bg-blue-200"} p-2 rounded-lg`}>{msg?.text}
+                                    <p className={`${msg?.data().username === session?.user.username ? "mr-9 bg-green-200" : "ml-9 bg-blue-200"} p-2 rounded-lg`}>{msg?.data().text}
                                         <Moment fromNow className="ml-2 text-[10px] text-gray-500">
-                                            {msg?.timeStamp?.toDate()}
+                                            {msg?.data()?.timeStamp?.toDate()}
                                         </Moment>
                                     </p>
 
-                                    {msg?.username === session?.user.username &&
+                                    {msg?.data().username === session?.user.username &&
                                         <>
                                             <XCircleIcon className="h-7 w-7 absolute -left-6 cursor-pointer text-gray-800 overflow-hidden dark:text-gray-200"
                                                 onClick={() => unsendMessage(msg.id)}

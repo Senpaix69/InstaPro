@@ -90,11 +90,11 @@ const Post = ({ id, username, userImg, img, caption, timeStamp }) => {
                     <XCircleIcon className='w-8 h-8 text-gray-500 mr-3 cursor-pointer dark:text-gray-200' onClick={deletePost} /> :
                     <DotsHorizontalIcon className='btn pr-3 dark:text-gray-200' />}
             </div>
-            <div className='relative w-full h-[400px] md:h-[500px] bg-white'>
+            <div className='relative w-full h-[400px] md:h-[500px] dark:bg-black'>
                 <Image
                     loading='eager'
                     layout='fill'
-                    objectFit='scale-down'
+                    objectFit='contain'
                     src={img} alt='cover' />
             </div>
 

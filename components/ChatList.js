@@ -1,6 +1,8 @@
 import Image from 'next/image';
 import Moment from 'react-moment';
 import getChatMessages from '../utils/getChatMessages';
+import { deleteDoc, doc } from 'firebase/firestore';
+import { db } from '../firebase';
 
 const ChatList = ({ redirect, profImg, username, id }) => {
     const messages = getChatMessages(id);
@@ -8,9 +10,13 @@ const ChatList = ({ redirect, profImg, username, id }) => {
     if (messages?.length) {
         message = messages[messages.length - 1];
     }
+
     const deleteChat = async () => {
-        alert("Delete chat is not active right now");
+        if (confirm("Do You really want to delete this chat?")) {
+            await deleteDoc(doc(db, "chats", id));
+        }
     }
+
     return (
         <div className='relative hover:bg-gray-200 dark:hover:bg-gray-800'>
             <button className='absolute flex items-center right-5 cursor-pointer bg-gray-500 text-gray-200 text-sm font-semibold mt-2 px-2 py-[1.5px] rounded-lg shadow-sm' onClick={deleteChat}>
@@ -33,10 +39,10 @@ const ChatList = ({ redirect, profImg, username, id }) => {
                     <h1 className='font-semibold -mt-1 h-[22px]'>{username}</h1>
                     <div className='flex text-sm w-full justify-between items-center pr-2'>
                         <span className='text-gray-400 w-[70%] overflow-hidden truncate'>
-                            {message?.text.length > 0 ? message.text : "loading.."}
+                            {message?.data().text.length > 0 ? message.data().text : "loading.."}
                         </span>
                         <Moment fromNow className='text-[9px] text-gray-400'>
-                            {message?.timeStamp?.toDate()}
+                            {message?.data().timeStamp?.toDate()}
                         </Moment>
                     </div>
                 </div>

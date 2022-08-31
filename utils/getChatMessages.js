@@ -1,12 +1,12 @@
-import { useCollectionData } from "react-firebase-hooks/firestore";
+import { useCollection } from "react-firebase-hooks/firestore";
 import { query, collection, orderBy } from "firebase/firestore";
 import { db } from "../firebase";
 
 const getChatMessages = (id) => {
-    const [messages, loading] = useCollectionData(query(collection(db, `chats/${id}/messages`), orderBy("timeStamp", "asc")));
+    const [messages, loading] = useCollection(query(collection(db, `chats/${id}/messages`), orderBy("timeStamp", "asc")));
 
     if(!loading) {
-        return messages;
+        return messages.docs;
     }
 }
 
