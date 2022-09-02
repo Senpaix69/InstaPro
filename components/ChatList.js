@@ -5,11 +5,7 @@ import { deleteDoc, doc } from 'firebase/firestore';
 import { db } from '../firebase';
 
 const ChatList = ({ redirect, profImg, username, id }) => {
-    const messages = getChatMessages(id);
-    let message;
-    if (messages?.length) {
-        message = messages[messages.length - 1];
-    }
+    const message = getChatMessages(id, "temp");
 
     const deleteChat = async () => {
         if (confirm("Do You really want to delete this chat?")) {
