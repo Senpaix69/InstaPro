@@ -5,11 +5,13 @@ import Model from "../components/Model";
 import { useSession } from "next-auth/react";
 import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
 import { db } from "../firebase";
-import { useEffect, useState } from "react";
+import { useRecoilState } from 'recoil';
+import { themeState } from "../atoms/theme";
+import { useEffect } from "react";
 
 export default function Home() {
   const { data: session } = useSession();
-  const [darkMode, setDarkMode] = useState(false);
+  const [darkMode, setDarkMode] = useRecoilState(themeState);
 
   useEffect(() => {
     const theme = JSON.parse(localStorage.getItem('theme'))

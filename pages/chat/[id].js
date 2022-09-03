@@ -52,6 +52,11 @@ const Chat = () => {
         }
     }
 
+
+    const addMedia = async () => {
+        console.log("object");
+    }
+
     return (
         <div className={` ${darkMode ? "bg-gray-100" : "dark bg-gray-900"}`}>
             <div className='max-w-6xl lg:mx-auto flex justify-center'>
@@ -128,7 +133,7 @@ const Chat = () => {
                     </section>
 
                     {/* Chat Bottom */}
-                    <section className="bg-gray-50 sticky bottom-0 z-50 shadow-sm mx-1 dark:bg-gray-900 px-1 dark:text-white">
+                    <section className="bg-gray-50 sticky bottom-0 z-50 shadow-sm mx-1 dark:bg-gray-900 px-1 dark:text-white rounded-3xl">
                         <form>
                             <div className="w-full border rounded-3xl h-12 flex items-center dark:border-none">
                                 <CameraIcon className="h-7 w-7 cursor-pointer text-gray-500 ml-2 dark:text-gray-200" />
@@ -140,7 +145,7 @@ const Chat = () => {
                                     onChange={(e) => setText(e.target.value)}
                                 />
                                 <MicrophoneIcon className="h-7 w-7 cursor-pointer text-gray-500 dark:text-gray-200" />
-                                <PhotographIcon className="mx-2 h-7 w-7 cursor-pointer text-gray-500 dark:text-gray-200" />
+                                <PhotographIcon className="mx-2 h-7 w-7 cursor-pointer text-gray-500 dark:text-gray-200" onClick={addMedia}/>
                                 <button
                                     type="submit"
                                     hidden={true}

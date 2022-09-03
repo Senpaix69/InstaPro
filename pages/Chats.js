@@ -12,6 +12,8 @@ import getOtherEmail from '../utils/getOtherEmail';
 import getOtherProfImage from '../utils/getOtherProfImage';
 import ChatList from '../components/ChatList';
 import getUserActivity from '../utils/getUserActivity';
+import { useRecoilState } from 'recoil';
+import { themeState } from '../atoms/theme';
 
 const Chats = () => {
     const { data: session } = useSession();
@@ -20,12 +22,7 @@ const Chats = () => {
     const [snapshot, loading] = useCollection(collection(db, "chats"));
     const chats = snapshot?.docs.map(doc => ({ id: doc.id, ...doc.data() }));
     const values = getUserActivity();
-    const [darkMode, setDarkMode] = useState(false);
-
-    useEffect(() => {
-        const theme = JSON.parse(localStorage.getItem('theme'))
-        setDarkMode(theme);
-    }, []);
+    const [darkMode, setDarkMode] = useRecoilState(themeState);
 
     const chatExits = (email) => {
         let valid = false;
