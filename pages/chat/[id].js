@@ -136,7 +136,10 @@ const Chat = () => {
                                             </div>
                                         </div>
                                         <p className={`${msg?.data().username === session?.user.username ? "mr-9 bg-green-200" : "ml-9 bg-blue-200"} p-2 rounded-lg`}>{msg?.data().text}
-                                            {msg.data().image && <img src={msg.data().image} alt='img'/>}
+                                            {msg.data().image &&
+                                                <div className="relative border rounded-lg border-gray-400 shadow-md bg-white w-64 h-64 mt-2">
+                                                    <Image src={msg.data().image} alt='img' layout="fill" objectFit="scale-down" loading='eager' />
+                                                </div>}
                                             <Moment fromNow className="ml-2 text-[10px] text-gray-500">
                                                 {msg?.data()?.timeStamp?.toDate()}
                                             </Moment>
@@ -166,7 +169,7 @@ const Chat = () => {
                                     <img className='object-contain cursor-pointer h-20'
                                         src={selectFile} alt='file'
                                         onClick={() => setSelectFile(null)} />
-                                        <h1>Status: </h1>
+                                    <h1>Status: </h1>
                                     {uploading ? <h1>Uploading...</h1> : <h1>Loaded</h1>}
                                 </div>
                             }
