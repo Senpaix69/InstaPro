@@ -5,8 +5,9 @@ import { useRef, useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import { useDocumentData } from 'react-firebase-hooks/firestore'
-import { collection, doc, addDoc, serverTimestamp, deleteDoc } from "firebase/firestore";
-import { db } from "../../firebase";
+import { collection, doc, addDoc, serverTimestamp, deleteDoc, updateDoc } from "firebase/firestore";
+import { db, storage } from "../../firebase";
+import { ref, getDownloadURL, uploadString } from 'firebase/storage';
 import Loading from '../../components/Loading';
 import getChatMessages from '../../utils/getChatMessages';
 import getOtherEmail from '../../utils/getOtherEmail';
@@ -14,8 +15,9 @@ import getOtherProfImage from '../../utils/getOtherProfImage';
 import getUserActivity from "../../utils/getUserActivity";
 
 const Chat = () => {
-    const { data: session } = useSession();
     const [text, setText] = useState("");
+    const [uploading, setUploading] = useState(false);
+    const { data: session } = useSession();
     const router = useRouter();
     const { id } = router.query;
     const messagesEndRef = useRef(null);
@@ -23,6 +25,8 @@ const Chat = () => {
     const messages = getChatMessages(id);
     const users = getUserActivity();
     const [darkMode, setDarkMode] = useState(false);
+    const [selectFile, setSelectFile] = useState(null);
+    const filePickerRef = useRef(null);
 
     useEffect(() => {
         const theme = JSON.parse(localStorage.getItem('theme'))
@@ -32,14 +36,30 @@ const Chat = () => {
     const sendMessage = async (e) => {
         e.preventDefault();
         const msgToSend = text;
+        setUploading(true);
         setText("");
-        await addDoc(collection(db, 'chats', id, 'messages'), {
+
+        const docRef = await addDoc(collection(db, 'chats', id, 'messages'), {
             text: msgToSend,
             username: session.user.username,
             userImg: session.user.image,
             timeStamp: serverTimestamp(),
         })
+
+        if (selectFile) {
+            const imageRef = ref(storage, `chats/${docRef.id}/image`);
+            await uploadString(imageRef, selectFile, "data_url").then(async () => {
+                const downloadURL = await getDownloadURL(imageRef);
+
+                await updateDoc(doc(db, 'chats', id, 'messages', docRef.id), {
+                    image: downloadURL,
+                });
+            });
+            setSelectFile(null);
+        }
+        setUploading(false);
     }
+
     const scrollToBottom = () => {
         messagesEndRef?.current?.scrollIntoView({ behavior: "smooth" })
     }
@@ -48,14 +68,19 @@ const Chat = () => {
     const unsendMessage = async (msgID) => {
         if (confirm("Unsend Message?")) {
             await deleteDoc(doc(db, "chats", id, "messages", msgID));
-            console.log("Deleted");
         }
     }
 
 
-    const addMedia = async () => {
-        console.log("object");
-    }
+    const addMedia = (e) => {
+        const read = new FileReader();
+        if (e.target.files[0]) {
+            read.readAsDataURL(e.target.files[0]);
+        }
+        read.onload = (readEvent) => {
+            setSelectFile(readEvent.target.result);
+        };
+    };
 
     return (
         <div className={` ${darkMode ? "bg-gray-100" : "dark bg-gray-900"}`}>
@@ -91,7 +116,7 @@ const Chat = () => {
                     {/* Chat Body */}
                     <section className='flex-1'>
                         <div className="m-2 p-4 mb-4 text-sm text-green-700 bg-green-100 rounded-lg dark:bg-green-200 dark:text-green-800" role="alert">
-                            <span className="font-medium">Chat Alert!</span> You can send chat only for now,  have fun 😊.
+                            <span className="font-medium">Chat Alert!</span> You can send/unsend text and images,  have fun 😊.
                         </div>
                         {loading ? <Loading /> :
                             messages?.map((msg, i) => (
@@ -111,6 +136,7 @@ const Chat = () => {
                                             </div>
                                         </div>
                                         <p className={`${msg?.data().username === session?.user.username ? "mr-9 bg-green-200" : "ml-9 bg-blue-200"} p-2 rounded-lg`}>{msg?.data().text}
+                                            {msg.data().image && <img src={msg.data().image} alt='img'/>}
                                             <Moment fromNow className="ml-2 text-[10px] text-gray-500">
                                                 {msg?.data()?.timeStamp?.toDate()}
                                             </Moment>
@@ -135,6 +161,15 @@ const Chat = () => {
                     {/* Chat Bottom */}
                     <section className="bg-gray-50 sticky bottom-0 z-50 shadow-sm mx-1 dark:bg-gray-900 px-1 dark:text-white rounded-3xl">
                         <form>
+                            {selectFile &&
+                                <div className="flex gap-5 items-center py-1 px-5 text-semibold italic">
+                                    <img className='object-contain cursor-pointer h-20'
+                                        src={selectFile} alt='file'
+                                        onClick={() => setSelectFile(null)} />
+                                        <h1>Status: </h1>
+                                    {uploading ? <h1>Uploading...</h1> : <h1>Loaded</h1>}
+                                </div>
+                            }
                             <div className="w-full border rounded-3xl h-12 flex items-center dark:border-none">
                                 <CameraIcon className="h-7 w-7 cursor-pointer text-gray-500 ml-2 dark:text-gray-200" />
                                 <input
@@ -145,7 +180,12 @@ const Chat = () => {
                                     onChange={(e) => setText(e.target.value)}
                                 />
                                 <MicrophoneIcon className="h-7 w-7 cursor-pointer text-gray-500 dark:text-gray-200" />
-                                <PhotographIcon className="mx-2 h-7 w-7 cursor-pointer text-gray-500 dark:text-gray-200" onClick={addMedia}/>
+                                <div>
+                                    <PhotographIcon className="mx-2 h-7 w-7 cursor-pointer text-gray-500 dark:text-gray-200" onClick={() => filePickerRef.current.click()} />
+                                    <div>
+                                        <input ref={filePickerRef} type='file' hidden onChange={addMedia} />
+                                    </div>
+                                </div>
                                 <button
                                     type="submit"
                                     hidden={true}

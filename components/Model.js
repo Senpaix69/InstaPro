@@ -30,7 +30,7 @@ const Model = () => {
         
         const imageRef = ref(storage, `posts/${docRef.id}/image`);
 
-        await uploadString(imageRef, selectFile, "data_url").then(async (snapshot) => {
+        await uploadString(imageRef, selectFile, "data_url").then(async () => {
             const downloadURL = await getDownloadURL(imageRef);
 
             await updateDoc(doc(db, "posts", docRef.id), {
