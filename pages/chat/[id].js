@@ -137,7 +137,7 @@ const Chat = () => {
                                         </div>
                                         <p className={`${msg?.data().username === session?.user.username ? "mr-9 bg-green-200" : "ml-9 bg-blue-200"} p-2 rounded-lg`}>{msg?.data().text}
                                             {msg.data().image &&
-                                                <div className="relative border rounded-lg border-gray-400 shadow-md bg-white w-64 h-64 mt-2">
+                                                <div className="relative border border-gray-400 shadow-md bg-white w-64 h-64 mt-2">
                                                     <Image src={msg.data().image} alt='img' layout="fill" objectFit="scale-down" loading='eager' />
                                                 </div>}
                                             <Moment fromNow className="ml-2 text-[10px] text-gray-500">
@@ -162,7 +162,7 @@ const Chat = () => {
                     </section>
 
                     {/* Chat Bottom */}
-                    <section className="bg-gray-50 sticky bottom-0 z-50 shadow-sm mx-1 dark:bg-gray-900 px-1 dark:text-white rounded-[50px] p-1">
+                    <section className="bg-gray-50 sticky bottom-0 z-50 shadow-sm mx-1 dark:bg-gray-900 px-1 dark:text-white rounded-3xl">
                         <form>
                             {selectFile &&
                                 <div className="flex gap-5 items-center py-1 px-5 text-semibold italic">
