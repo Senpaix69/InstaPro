@@ -47,6 +47,7 @@ export default function Example({ session, setOpen, signOut, router, darkMode, s
                         <Menu.Item>
                             {({ active }) => (
                                 <button
+                                    onClick={() => router.push('/profile')}
                                     className={classNames(
                                         active ? 'dark:bg-gray-700 bg-gray-300 text-gray-900' : 'text-gray-700',
                                         'block px-4 py-3 text-sm w-full dark:text-gray-200'
@@ -54,7 +55,7 @@ export default function Example({ session, setOpen, signOut, router, darkMode, s
                                 >
                                     <div className='flex'>
                                         <UserCircleIcon className='h-5 w-5 mr-2 dark:text-gray-200' />
-                                        Profile [Not Active]
+                                        Profile [In Working]
                                     </div>
                                 </button>
                             )}
@@ -117,7 +118,7 @@ export default function Example({ session, setOpen, signOut, router, darkMode, s
                                     <button
                                         onClick={() => setDarkMode(!darkMode)}
                                         className={classNames(
-                                            active ? 'dark:bg-gray-700 bg-gray-300 text-gray-900' : 'text-gray-700',
+                                            active ? 'dark:bg-gray-700 bg-gray-300 text-gray-900  mb-3' : 'text-gray-700  mb-3',
                                             'block px-4 py-3 text-sm w-full dark:text-gray-200'
                                         )}
                                     >
@@ -134,7 +135,7 @@ export default function Example({ session, setOpen, signOut, router, darkMode, s
                                     <button
                                         onClick={signOut}
                                         className={classNames(
-                                            active ? 'dark:bg-gray-700 bg-gray-300 text-gray-900' : 'text-gray-700',
+                                            active ? 'dark:bg-gray-700 bg-gray-300 text-gray-900' : 'text-gray-700 border-t-[1px] border-t-gray-400',
                                             'block px-4 py-3 text-sm w-full dark:text-gray-200'
                                         )}
                                     >
