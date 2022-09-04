@@ -174,7 +174,7 @@ const Chat = () => {
                                     <h1>Status: </h1>
                                     {uploading ? <h1>Uploading...</h1> : <h1>Loaded</h1>}
                                 </div>}
-                            <div className="w-full border rounded-3xl h-12 flex items-center dark:border-none">
+                            <div className="w-full border rounded-3xl h-14 flex items-center dark:border-none">
                                 <CameraIcon className="h-9 w-9 cursor-pointer text-gray-500 ml-2 dark:text-gray-200" onClick={() => filePickerRef.current.click()} />
                                 <input
                                     placeholder="Message.."
