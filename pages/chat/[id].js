@@ -1,4 +1,4 @@
-import { ArrowLeftIcon, CameraIcon, MicrophoneIcon, PhotographIcon, XCircleIcon } from "@heroicons/react/solid";
+import { ArrowLeftIcon, CameraIcon, MicrophoneIcon, PhotographIcon, XCircleIcon, ArrowSmRightIcon } from "@heroicons/react/solid";
 import Moment from "react-moment";
 import Image from "next/image";
 import { useRef, useState, useEffect } from "react";
@@ -71,7 +71,6 @@ const Chat = () => {
         }
     }
 
-
     const addMedia = (e) => {
         const read = new FileReader();
         if (e.target.files[0]) {
@@ -116,7 +115,7 @@ const Chat = () => {
                     {/* Chat Body */}
                     <section className='flex-1'>
                         <div className="m-2 p-4 mb-4 text-sm text-green-700 bg-green-100 rounded-lg dark:bg-green-200 dark:text-green-800" role="alert">
-                            <span className="font-medium">Chat Alert!</span> You can send/unsend text and images,  have fun 😊.
+                            <span className="font-medium">Chat Alert!</span> You can send/unsend text and images, have fun 😊.
                         </div>
                         {loading ? <Loading /> :
                             messages?.map((msg, i) => (
@@ -137,8 +136,8 @@ const Chat = () => {
                                         </div>
                                         <p className={`${msg?.data().username === session?.user.username ? "mr-9 bg-green-200" : "ml-9 bg-blue-200"} p-2 rounded-lg`}>{msg?.data().text}
                                             {msg.data().image &&
-                                                <div className="relative border border-gray-400 shadow-md bg-white w-64 h-64 mt-2">
-                                                    <Image src={msg.data().image} alt='img' layout="fill" objectFit="scale-down" loading='eager' />
+                                                <div className="mt-2 shadow-md p-2">
+                                                    <img src={msg.data().image} alt='img' />
                                                 </div>}
                                             <Moment fromNow className="ml-2 text-[10px] text-gray-500">
                                                 {msg?.data()?.timeStamp?.toDate()}
@@ -165,14 +164,13 @@ const Chat = () => {
                     <section className="bg-gray-50 sticky bottom-0 z-50 shadow-sm mx-1 dark:bg-gray-900 px-1 dark:text-white rounded-3xl">
                         <form>
                             {selectFile &&
-                                <div className="flex gap-5 items-center py-1 px-5 text-semibold italic">
+                                <div className="flex gap-5 items-center p-5 text-semibold italic">
                                     <img className='object-contain cursor-pointer h-20'
                                         src={selectFile} alt='file'
                                         onClick={() => setSelectFile(null)} />
                                     <h1>Status: </h1>
                                     {uploading ? <h1>Uploading...</h1> : <h1>Loaded</h1>}
-                                </div>
-                            }
+                                </div>}
                             <div className="w-full border rounded-3xl h-12 flex items-center dark:border-none">
                                 <CameraIcon className="h-7 w-7 cursor-pointer text-gray-500 ml-2 dark:text-gray-200" />
                                 <input
@@ -192,9 +190,8 @@ const Chat = () => {
                                 <button
                                     type="submit"
                                     onClick={sendMessage}
-                                    disabled={text ? false : true}
-                                    className="mr-3 font-semibold text-sm text-blue-500 disabled:text-gray-400">
-                                    send
+                                    disabled={text || selectFile ? false : true}>
+                                    <ArrowSmRightIcon className={`mr-3 h-9 w-9 cursor-pointer text-blue-500 ${text || selectFile ? "text-blue-500" : "text-gray-500"}`} />
                                 </button>
                             </div>
                         </form>
