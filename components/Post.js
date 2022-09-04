@@ -73,6 +73,7 @@ const Post = ({ id, username, userImg, img, caption, timeStamp }) => {
     }
 
     const downloadPic = () => {
+        console.log(img);
         const downloadImage = () => {
             saveAs(img, 'image.jpg')
         }
