@@ -185,7 +185,7 @@ const Chat = () => {
                                         onChange={(e) => setText(e.target.value)}
                                     />
                                 </div>
-                                <div className="flex items-center">
+                                <div className="flex items-center pr-3">
                                     <MicrophoneIcon className="h-7 w-7 cursor-pointer text-gray-500 dark:text-gray-200" />
                                     <div>
                                         <PhotographIcon className="mx-2 h-8 w-8 cursor-pointer text-gray-500 dark:text-gray-200" onClick={() => filePickerRef.current.click()} />
