@@ -137,7 +137,7 @@ const Chat = () => {
                                         <p className={`${msg?.data().username === session?.user.username ? "mr-9 bg-green-200" : "ml-9 bg-blue-200"} p-2 rounded-lg`}>{msg?.data().text}
                                             {msg.data().image &&
                                                 <div className="mt-2 shadow-md p-2">
-                                                    <img src={msg.data().image} alt='img' />
+                                                    <Image src={msg.data().image} alt='img' width='500px' height='700px' objectFit="contain" loading="eager" />
                                                 </div>}
                                             <Moment fromNow className="ml-2 text-[10px] text-gray-500">
                                                 {msg?.data()?.timeStamp?.toDate()}
@@ -164,8 +164,11 @@ const Chat = () => {
                     <section className="bg-gray-50 sticky bottom-0 z-50 shadow-sm mx-1 dark:bg-gray-900 px-1 dark:text-white rounded-3xl">
                         <form>
                             {selectFile &&
-                                <div className="flex gap-5 items-center p-5 text-semibold italic">
-                                    <img className='object-contain cursor-pointer h-20'
+                                <div className="relative flex gap-5 items-center p-5 text-semibold italic">
+                                    <Image
+                                        height='100px'
+                                        width='100px'
+                                        className='object-contain cursor-pointer'
                                         src={selectFile} alt='file'
                                         onClick={() => setSelectFile(null)} />
                                     <h1>Status: </h1>
