@@ -175,17 +175,17 @@ const Chat = () => {
                                     {uploading ? <h1>Uploading...</h1> : <h1>Loaded</h1>}
                                 </div>}
                             <div className="w-full border rounded-3xl h-12 flex justify-between items-center dark:border-none">
-                                <div className="flex items-center">
+                                <div className="flex items-center flex-1">
                                     <CameraIcon className="h-9 w-9 cursor-pointer text-gray-500 ml-2 dark:text-gray-200 bg-red-400 rounded-full p-1" onClick={() => filePickerRef.current.click()} />
                                     <input
                                         placeholder="Message..."
-                                        className="mx-2 outline-none text-md focus:ring-0 bg-transparent"
+                                        className="mx-2 outline-none text-md focus:ring-0 bg-transparent w-full"
                                         value={text}
                                         name={text}
                                         onChange={(e) => setText(e.target.value)}
                                     />
                                 </div>
-                                <div className="flex items-center pr-3">
+                                <div className="flex items-center p-1">
                                     <MicrophoneIcon className="h-7 w-7 cursor-pointer text-gray-500 dark:text-gray-200" />
                                     <div>
                                         <PhotographIcon className="mx-2 h-8 w-8 cursor-pointer text-gray-500 dark:text-gray-200" onClick={() => filePickerRef.current.click()} />
