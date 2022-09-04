@@ -174,28 +174,32 @@ const Chat = () => {
                                     <h1>Status: </h1>
                                     {uploading ? <h1>Uploading...</h1> : <h1>Loaded</h1>}
                                 </div>}
-                            <div className="w-full border rounded-3xl h-12 flex items-center dark:border-none">
-                                <CameraIcon className="h-9 w-9 cursor-pointer text-gray-500 ml-2 dark:text-gray-200 bg-red-400 rounded-full p-1" onClick={() => filePickerRef.current.click()} />
-                                <input
-                                    placeholder="Message.."
-                                    className="mx-2 flex-1 outline-none text-md focus:ring-0 bg-transparent"
-                                    value={text}
-                                    name={text}
-                                    onChange={(e) => setText(e.target.value)}
-                                />
-                                <MicrophoneIcon className="h-7 w-7 cursor-pointer text-gray-500 dark:text-gray-200" />
-                                <div>
-                                    <PhotographIcon className="mx-2 h-8 w-8 cursor-pointer text-gray-500 dark:text-gray-200" onClick={() => filePickerRef.current.click()} />
-                                    <div>
-                                        <input ref={filePickerRef} type='file' hidden onChange={addMedia} />
-                                    </div>
+                            <div className="w-full border rounded-3xl h-12 flex justify-between items-center dark:border-none">
+                                <div className="flex items-center">
+                                    <CameraIcon className="h-9 w-9 cursor-pointer text-gray-500 ml-2 dark:text-gray-200 bg-red-400 rounded-full p-1" onClick={() => filePickerRef.current.click()} />
+                                    <input
+                                        placeholder="Message..."
+                                        className="mx-2 outline-none text-md focus:ring-0 bg-transparent"
+                                        value={text}
+                                        name={text}
+                                        onChange={(e) => setText(e.target.value)}
+                                    />
                                 </div>
-                                <button
-                                    type="submit"
-                                    onClick={sendMessage}
-                                    disabled={text || selectFile ? false : true}>
-                                    <ArrowSmRightIcon className={`mr-2 h-9 w-9 cursor-pointer text-blue-500 ${text || selectFile ? "text-blue-500" : "text-gray-500"}`} />
-                                </button>
+                                <div className="flex items-center">
+                                    <MicrophoneIcon className="h-7 w-7 cursor-pointer text-gray-500 dark:text-gray-200" />
+                                    <div>
+                                        <PhotographIcon className="mx-2 h-8 w-8 cursor-pointer text-gray-500 dark:text-gray-200" onClick={() => filePickerRef.current.click()} />
+                                        <div>
+                                            <input ref={filePickerRef} type='file' hidden onChange={addMedia} />
+                                        </div>
+                                    </div>
+                                    <button
+                                        type="submit"
+                                        onClick={sendMessage}
+                                        disabled={text || selectFile ? false : true}>
+                                        <ArrowSmRightIcon className={`mr-2 h-9 w-9 cursor-pointer text-blue-500 ${text || selectFile ? "text-blue-500" : "text-gray-500"}`} />
+                                    </button>
+                                </div>
                             </div>
                         </form>
                     </section>
