@@ -191,7 +191,6 @@ const Chat = () => {
                                 </div>
                                 <button
                                     type="submit"
-                                    hidden={true}
                                     onClick={sendMessage}
                                     disabled={text ? false : true}
                                     className="mr-3 font-semibold text-sm text-blue-500 disabled:text-gray-400">
