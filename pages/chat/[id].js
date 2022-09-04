@@ -162,7 +162,7 @@ const Chat = () => {
                     </section>
 
                     {/* Chat Bottom */}
-                    <section className="bg-gray-50 sticky bottom-0 z-50 shadow-sm mx-1 dark:bg-gray-900 px-1 dark:text-white rounded-3xl py-1">
+                    <section className="bg-gray-50 sticky bottom-0 z-50 shadow-sm mx-1 dark:bg-gray-900 px-1 dark:text-white rounded-3xl p-1">
                         <form>
                             {selectFile &&
                                 <div className="flex gap-5 items-center py-1 px-5 text-semibold italic">
