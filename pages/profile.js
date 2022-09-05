@@ -18,8 +18,8 @@ const Profile = () => {
         <div className={`${darkMode ? "bg-gray-50 " : "dark bg-gray-900"} h-screen overflow-y-scroll scrollbar-hide flex justify-center`}>
             <div className="max-w-6xl dark:text-gray-200 flex-1 overflow-x-scroll scrollbar-hide">
                 <Header darkMode={darkMode} setDarkMode={setDarkMode} />
-                <div className="relative w-full p-3 flex flex-col">
-                    <div className="flex px-2">
+                <div className="relative w-full p-1 px-3 flex flex-col">
+                    <div className="flex px-2 relative md:justify-center">
                         <div className="relative h-20 w-20 md:h-24 md:w-24 mr-10">
                             <Image
                                 src={session.user?.image}
@@ -29,7 +29,7 @@ const Profile = () => {
                                 className="rounded-full"
                             />
                         </div>
-                        <div className="flex w-64 md:w-80 ml-10 justify-between md:max-w-2xl mt-5 px-4">
+                        <div className="absolute top-0 right-6 flex w-72 md:w-80 ml-10 justify-between md:max-w-2xl mt-5 px-4">
                             <button className="flex flex-col items-center">
                                 <p className="font-bold">110</p>
                                 <p className="text-sm mt-1 text-gray-400">Posts</p>
