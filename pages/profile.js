@@ -29,13 +29,13 @@ const Profile = () => {
                                 className="rounded-full"
                             />
                         </div>
-                        <div className="absolute top-0 right-0 flex w-64 md:w-80 ml-10 justify-between md:max-w-2xl mt-5 px-4">
+                        <div className="absolute top-0 right-0 flex w-64 md:w-80 ml-10 justify-between md:max-w-2xl mt-5 px-4 text-lg">
                             <button className="flex flex-col items-center">
                                 <p className="font-bold">110</p>
                                 <p className="text-sm mt-1 text-gray-400">Posts</p>
                             </button>
                             <button className="flex flex-col items-center">
-                                <p className="font-bold">15M</p>
+                                <p className="font-bold">15B</p>
                                 <p className="text-sm mt-1 text-gray-400">Followers</p>
                             </button>
                             <button className="flex flex-col items-center">
