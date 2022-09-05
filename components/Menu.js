@@ -44,22 +44,23 @@ export default function Example({ session, setOpen, signOut, router, darkMode, s
                                     </button>
                                 )}
                             </Menu.Item>}
-                        <Menu.Item>
-                            {({ active }) => (
-                                <button
-                                    onClick={() => router.push('/profile')}
-                                    className={classNames(
-                                        active ? 'dark:bg-gray-700 bg-gray-300 text-gray-900' : 'text-gray-700',
-                                        'block px-4 py-3 text-sm w-full dark:text-gray-200'
-                                    )}
-                                >
-                                    <div className='flex'>
-                                        <UserCircleIcon className='h-5 w-5 mr-2 dark:text-gray-200' />
-                                        Profile [In Working]
-                                    </div>
-                                </button>
-                            )}
-                        </Menu.Item>
+                        {router.asPath !== '/profile' &&
+                            <Menu.Item>
+                                {({ active }) => (
+                                    <button
+                                        onClick={() => router.push('/profile')}
+                                        className={classNames(
+                                            active ? 'dark:bg-gray-700 bg-gray-300 text-gray-900' : 'text-gray-700',
+                                            'block px-4 py-3 text-sm w-full dark:text-gray-200'
+                                        )}
+                                    >
+                                        <div className='flex'>
+                                            <UserCircleIcon className='h-5 w-5 mr-2 dark:text-gray-200' />
+                                            Profile [In Working]
+                                        </div>
+                                    </button>
+                                )}
+                            </Menu.Item>}
                         {router.asPath !== '/Chats' &&
                             <Menu.Item>
                                 {({ active }) => (
