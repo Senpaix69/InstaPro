@@ -8,7 +8,7 @@ import { useState } from "react";
 import Stories from "../components/Stories";
 import Posts from "../components/Posts";
 
-const profile = () => {
+const Profile = () => {
     const { data: session } = useSession();
     const [bio, setBio] = useState('Boy Play Boy Ni Bs Ashiq Mizaj Hai');
     const [darkMode, setDarkMode] = useRecoilState(themeState);
@@ -57,4 +57,4 @@ const profile = () => {
     )
 }
 
-export default profile;
+export default Profile;
