@@ -161,7 +161,7 @@ const Chat = () => {
                     </section>
 
                     {/* Chat Bottom */}
-                    <section className="bg-gray-50 sticky bottom-0 z-50 shadow-sm mx-1 dark:bg-gray-900 px-1 dark:text-white rounded-3xl">
+                    <section className="bg-gray-50 sticky bottom-0 z-50 shadow-sm mx-1 px-1 dark:text-white rounded-3xl dark:bg-gray-900">
                         <form>
                             {selectFile &&
                                 <div className="relative flex gap-5 items-center p-5 text-semibold italic">
@@ -176,7 +176,9 @@ const Chat = () => {
                                 </div>}
                             <div className="w-full border rounded-3xl h-12 flex justify-between items-center dark:border-none">
                                 <div className="flex items-center flex-1">
-                                    <CameraIcon className="h-9 w-9 cursor-pointer text-gray-500 ml-2 dark:text-gray-200 bg-red-400 rounded-full p-1" onClick={() => filePickerRef.current.click()} />
+                                    <div>
+                                        <CameraIcon className="h-9 w-9 cursor-pointer text-gray-500 ml-2 dark:text-gray-200 bg-red-400 rounded-full p-1" onClick={() => filePickerRef.current.click()} />
+                                    </div>
                                     <input
                                         placeholder="Message..."
                                         className="mx-2 outline-none text-md focus:ring-0 bg-transparent w-full"
@@ -185,7 +187,7 @@ const Chat = () => {
                                         onChange={(e) => setText(e.target.value)}
                                     />
                                 </div>
-                                <div className="flex items-center p-1">
+                                <div className="flex items-center">
                                     <MicrophoneIcon className="h-7 w-7 cursor-pointer text-gray-500 dark:text-gray-200" />
                                     <div>
                                         <PhotographIcon className="mx-2 h-8 w-8 cursor-pointer text-gray-500 dark:text-gray-200" onClick={() => filePickerRef.current.click()} />
