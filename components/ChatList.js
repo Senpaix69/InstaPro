@@ -15,7 +15,7 @@ const ChatList = ({ redirect, profImg, username, id }) => {
 
     return (
         <div className='relative hover:bg-gray-200 dark:hover:bg-gray-800'>
-            <button className='absolute flex items-center right-5 cursor-pointer bg-gray-500 text-gray-200 text-sm font-semibold mt-2 px-2 py-[1.5px] rounded-lg shadow-sm' onClick={deleteChat}>
+            <button className='absolute right-4 cursor-pointer bg-gray-500 text-gray-200 text-sm font-semibold mt-2 px-2 py-[1.5px] rounded-lg shadow-sm' onClick={deleteChat}>
                 delete
             </button>
             <div onClick={() => redirect(id)} className='flex items-center w-full py-2 px-3 cursor-pointer truncate'>
@@ -37,7 +37,7 @@ const ChatList = ({ redirect, profImg, username, id }) => {
                         <span className='text-gray-400 w-[70%] overflow-hidden truncate'>
                             {message?.data().text.length > 0 ? message.data().text : "loading.."}
                         </span>
-                        <Moment fromNow className='text-[9px] text-gray-400'>
+                        <Moment fromNow className='text-[9px] text-gray-400 mt-2'>
                             {message?.data().timeStamp?.toDate()}
                         </Moment>
                     </div>
