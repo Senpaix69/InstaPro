@@ -171,6 +171,7 @@ const Post = ({ id, username, userImg, img, caption, timeStamp, router }) => {
                         <Image
                             src={img}
                             layout='fill'
+                            objectFit='cover'
                             loading='eager'
                             alt='image'
                         />
