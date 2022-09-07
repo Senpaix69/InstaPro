@@ -6,11 +6,13 @@ import Header from "../components/Header";
 import Posts from "../components/Posts";
 import ProfileSec from "../components/ProfileSec";
 import { postView } from "../atoms/postView";
+import { useState } from "react";
 
 const Profile = () => {
     const { data: session } = useSession();
     const [darkMode, setDarkMode] = useRecoilState(themeState);
     const [view, setView] = useRecoilState(postView);
+    const [totalPosts, setTotalPosts] = useState(0);
 
     if (!session) return <Loading />
     return (
@@ -19,9 +21,9 @@ const Profile = () => {
                 {!view &&
                     <>
                         <Header darkMode={darkMode} setDarkMode={setDarkMode} />
-                        <ProfileSec image={session.user.image} username={session.user.username} />
+                        <ProfileSec image={session.user.image} username={session.user.username} posts={totalPosts} />
                     </>}
-                <Posts />
+                <Posts setTotalPosts={setTotalPosts} />
                 <button disabled={!view} onClick={() => setView(false)} className={`w-full md:max-w-6xl bg-gray-500 py-2 font-bold uppercase absolute bottom-0 z-50 transition duration-200 ${view ? "translate-y-0 dark:text-green-800 dark:bg-green-300" : "translate-y-10 dark:text-gray-900 dark:bg-gray-900"}`}>close view</button>
             </div>
         </div>

@@ -8,23 +8,24 @@ import { useSession } from "next-auth/react";
 import { postView } from "../atoms/postView";
 import { useRecoilState } from "recoil";
 
-const Posts = () => {
+const Posts = ({ setTotalPosts }) => {
     const [posts, setPosts] = useState([]);
     const { data: session } = useSession();
     const router = useRouter();
     const [view] = useRecoilState(postView);
 
     useEffect(() => {
-        if (router.asPath === "/") {
+        if (router.pathname === "/") {
             onSnapshot(query(collection(db, "posts"), orderBy('timeStamp', 'desc')),
                 (snapshot) => {
                     setPosts(snapshot.docs);
                 }
             )
-        } else {
+        } else if(router.pathname === "/profile") {
             onSnapshot(query(collection(db, "posts"), where("username", "==", session?.user?.username), orderBy('timeStamp', 'desc')),
                 (snapshot) => {
                     setPosts(snapshot.docs);
+                    setTotalPosts(snapshot.docs.length);
                 }
             )
         }
