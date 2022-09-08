@@ -42,33 +42,35 @@ const Chats = () => {
 
     const addUser = async () => {
         const uName = prompt("Enter username: ")?.split(' ').join('').toLowerCase();
-        if (uName?.length && uName !== session.user.username) {
-            if (!chatExits(uName)) {
-                const ind = values.findIndex((user) => user.username === uName);
-                if (ind !== -1 && !loading) {
-                    const time = Timestamp.now();
-                    await addDoc(collection(db, "chats"), {
-                        users:
-                            [
-                                values[ind],
-                                {
-                                    username: session.user.username,
-                                    uid: session.user.uid,
-                                    profImg: session.user.image,
-                                    timeStamp: time
-                                },
-                            ]
-                    }).then(() => {
-                        alert("Chat Added Successfully");
-                    })
+        if (uName?.length) {
+            if (uName !== session.user.username) {
+                if (!chatExits(uName)) {
+                    const ind = values.findIndex((user) => user.username === uName);
+                    if (ind !== -1 && !loading) {
+                        const time = Timestamp.now();
+                        await addDoc(collection(db, "chats"), {
+                            users:
+                                [
+                                    values[ind],
+                                    {
+                                        username: session.user.username,
+                                        uid: session.user.uid,
+                                        profImg: session.user.image,
+                                        timeStamp: time
+                                    },
+                                ]
+                        }).then(() => {
+                            alert("Chat Added Successfully");
+                        })
+                    } else {
+                        alert("User Not Found");
+                    }
                 } else {
-                    alert("User Not Found");
+                    alert("Chat already exits");
                 }
             } else {
-                alert("Chat already exits");
+                alert("You can't add yourself");
             }
-        } else {
-            alert("Error Please Add Proper Username");
         }
     }
 

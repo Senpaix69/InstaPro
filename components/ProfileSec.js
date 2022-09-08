@@ -1,20 +1,43 @@
 import Image from "next/image";
-import { useState } from "react";
-
+import { useEffect, useState } from "react";
+import { db } from "../firebase";
+import { setDoc, doc, getDoc, serverTimestamp, updateDoc } from "firebase/firestore";
 
 const ProfileSec = ({ image, username, posts }) => {
-    const [bio, setBio] = useState('Temp');
-    const [name, setName] = useState('Temp');
+    const [bio, setBio] = useState('');
+    const [name, setName] = useState('');
     const [textBio, setTextBio] = useState('');
     const [textName, setTextName] = useState('');
+    const [followers, setFollowers] = useState(0);
+    const [followings, setFollowings] = useState(0);
     const [editProf, setEditProf] = useState(false);
 
-    const saveEditing = () => {
-        if (textBio.trim().length > 0) {
-            setBio(textBio);
-        }
-        if (textName.trim().length > 0) {
-            setName(textName);
+    useEffect(() => {
+        getDoc(doc(db, "profile", username)).then((userData) => {
+            setBio(userData.data()?.bio ? userData.data()?.bio : "Bio");
+            setName(userData.data()?.fullname ? userData.data()?.fullname : "Name");
+        })
+    }, [])
+
+    const saveEditing = async () => {
+        const data = await getDoc(doc(db, "profile", username));
+        if (textBio.trim().length > 0 && textName.trim().length > 0) {
+            if (!data.exists()) {
+                await setDoc(doc(db, "profile", username), {
+                    username: username,
+                    profImg: image,
+                    timeStamp: serverTimestamp(),
+                    bio: textBio,
+                    fullname: textName,
+                });
+            } else {
+                updateDoc(doc(db, "profile", username), {
+                    bio: textBio,
+                    fullname: textName,
+                })
+            }
+            setBio(textBio)
+            setName(textName)
         }
         setEditProf(false);
     }
@@ -43,11 +66,11 @@ const ProfileSec = ({ image, username, posts }) => {
                         <p className="text-sm mt-1 text-gray-400">Posts</p>
                     </button>
                     <button className="flex flex-col items-center">
-                        <p className="font-bold">15B</p>
+                        <p className="font-bold">{followers}</p>
                         <p className="text-sm mt-1 text-gray-400">Followers</p>
                     </button>
                     <button className="flex flex-col items-center">
-                        <p className="font-bold">20</p>
+                        <p className="font-bold">{followings}</p>
                         <p className="text-sm mt-1 text-gray-400">Followings</p>
                     </button>
                 </div>

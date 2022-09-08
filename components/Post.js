@@ -52,6 +52,8 @@ const Post = ({ id, username, userImg, img, caption, timeStamp, router }) => {
         } else {
             await setDoc(doc(db, "posts", id, "likes", session.user.uid), {
                 username: session.user.username,
+                userImg: session.user.image,
+                timeStamp: serverTimestamp()
             });
         }
     };
@@ -105,11 +107,11 @@ const Post = ({ id, username, userImg, img, caption, timeStamp, router }) => {
                             <DotsHorizontalIcon className='btn pr-3 dark:text-gray-200' />}
                     </div>
                     <div className='relative w-full h-[400px] md:h-[500px] dark:bg-black'>
-                        <Image
+                        {img && <Image
                             loading='eager'
                             layout='fill'
                             objectFit='contain'
-                            src={img} alt='cover' />
+                            src={img} alt='cover' />}
                     </div>
 
                     <div className='flex justify-between px-4 pt-4'>
@@ -127,7 +129,7 @@ const Post = ({ id, username, userImg, img, caption, timeStamp, router }) => {
 
                     <p className='px-5 py-2 shadow-sm dark:shadow-lg dark:text-gray-200'>
                         {likes.length > 0 && (
-                            <span className='font-bold mb-1 flex'>{likes.length} {likes.length === 1 ? "like" : "likes"}</span>
+                            <button onClick={() => router.push(`like/${id}`)} className='font-bold mb-1 flex'>{likes.length} {likes.length === 1 ? "like" : "likes"}</button>
                         )}
                         <span className='font-bold mr-1'>{username} </span>
                         <span className='text-sm'>{caption}</span>

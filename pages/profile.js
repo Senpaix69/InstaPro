@@ -6,13 +6,18 @@ import Header from "../components/Header";
 import Posts from "../components/Posts";
 import ProfileSec from "../components/ProfileSec";
 import { postView } from "../atoms/postView";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const Profile = () => {
     const { data: session } = useSession();
     const [darkMode, setDarkMode] = useRecoilState(themeState);
     const [view, setView] = useRecoilState(postView);
     const [totalPosts, setTotalPosts] = useState(0);
+
+    useEffect(() => {
+        localStorage.setItem("theme", JSON.stringify(darkMode));
+    }, [darkMode])
+
 
     if (!session) return <Loading />
     return (
