@@ -1,6 +1,6 @@
 import Loading from "../../components/Loading";
 import { db } from "../../firebase";
-import { useCollectionData } from "react-firebase-hooks/firestore";;
+import { useCollection } from "react-firebase-hooks/firestore";;
 import { useRouter } from "next/router";
 import { useRecoilState } from "recoil";
 import { themeState } from "../../atoms/theme";
@@ -8,28 +8,71 @@ import Image from "next/image";
 import Moment from "react-moment";
 import { ArrowLeftIcon } from "@heroicons/react/solid";
 import { HeartIcon, EmojiHappyIcon } from "@heroicons/react/outline";
-import { collection, query, orderBy, addDoc, serverTimestamp } from "firebase/firestore";
+import { collection, query, orderBy, addDoc, Timestamp, serverTimestamp, deleteDoc, doc, updateDoc } from "firebase/firestore";
 import { useState } from "react";
 import { useSession } from "next-auth/react";
-const LikeList = () => {
+
+const CommentList = () => {
     const { data: session } = useSession();
     const router = useRouter();
     const { postid } = router.query;
-    const [comments, loading] = useCollectionData(query(collection(db, `posts/${postid}/comments`), orderBy("timeStamp", 'desc')));
+    const [comments, loading] = useCollection(query(collection(db, `posts/${postid}/comments`), orderBy("timeStamp", 'desc')));
     const [darkTheme] = useRecoilState(themeState);
+    const [subCommentRef, setSubCommentRef] = useState({});
     const [comment, setComment] = useState("");
 
     const postComment = async (e) => {
         e.preventDefault();
+        if (subCommentRef?.id && comment.indexOf("@") !== -1) {
+            addSubComment(subCommentRef.id, subCommentRef.data()?.subcomments);
+        } else {
+            const commentToSend = comment;
+            setComment('');
+            await addDoc(collection(db, `posts/${postid}/comments`), {
+                comment: commentToSend,
+                username: session.user.username,
+                userImg: session.user.image,
+                timeStamp: serverTimestamp(),
+                subcomments: [],
+            })
+        }
+        setSubCommentRef({});
+    }
+
+    const addSubComment = async (id, prevCom) => {
+        const time = Timestamp.now();
         const commentToSend = comment;
         setComment('');
-
-        await addDoc(collection(db, `posts/${postid}/comments`), {
-            comment: commentToSend,
-            username: session.user.username,
-            userImg: session.user.image,
-            timeStamp: serverTimestamp(),
+        await updateDoc(doc(db, `posts/${postid}/comments/${id}`), {
+            subcomments: [...prevCom, {
+                username: session.user.username,
+                userImg: session.user.image,
+                timeStamp: time,
+                comment: commentToSend,
+            }],
         })
+        setSubCommentRef({});
+    }
+
+    const triggerUsername = (comment, username) => {
+        setComment("@" + username + " ");
+        setSubCommentRef(comment);
+    }
+
+    const deleteComment = async (id) => {
+        if (confirm("Do You really want to delete this comment?")) {
+            await deleteDoc(doc(db, `posts/${postid}/comments/${id}`));
+        }
+    }
+
+    const deleteSubComment = async (comment, indexOfSubComment) => {
+        const newSubComment = comment.data().subcomments?.filter((_, i) => i !== indexOfSubComment);
+
+        if (newSubComment && confirm("Do You really want to delete this comment?")) {
+            await updateDoc(doc(db, `posts/${postid}/comments/${comment.id}`), {
+                subcomments: newSubComment,
+            })
+        }
     }
     return (
         <div className={`${!darkTheme ? "dark bg-gray-900" : ""} h-screen overflow-y-scroll scrollbar-hide`}>
@@ -40,14 +83,14 @@ const LikeList = () => {
                 </div>
                 {loading ? <Loading /> :
                     <div className="m-3">
-                        {comments?.map((comment, i) => (
+                        {comments.docs?.map((comment, i) => (
                             <div key={i} className="mb-5">
                                 <div key={i} className="w-full flex">
                                     <div className="relative h-10 w-10">
-                                        {comment.userImg && <Image
+                                        {comment.data().userImg && <Image
                                             loading="eager"
                                             alt="image"
-                                            src={comment.userImg}
+                                            src={comment.data().userImg}
                                             height='40px'
                                             width='40px'
                                             className="rounded-full"
@@ -55,17 +98,44 @@ const LikeList = () => {
                                     </div>
                                     <div className="flex-1 ml-2 mr-1">
                                         <p className='text-sm'>
-                                            <span onClick={comment.username === session?.user?.username ? () => router.push("/profile") : () => router.push("/")} className='font-bold cursor-pointer'>{comment.username} </span>
-                                            {comment.comment}
+                                            <span onClick={comment.data().username === session?.user?.username ? () => router.push("/profile") : () => router.push("/")} className='font-bold cursor-pointer'>{comment.data().username} </span>
+                                            {comment.data().comment}
                                         </p>
                                     </div>
                                     <HeartIcon className="h-5 w-5 btn" />
                                 </div>
                                 <div className="mt-1 text-xs text-gray-400 px-12 flex space-x-3 font-semibold">
-                                    <Moment fromNow>{comment.timeStamp?.toDate()}</Moment>
-                                    <button>Reply</button>
-                                    <button>Copy</button>
+                                    <Moment fromNow>{comment.data().timeStamp?.toDate()}</Moment>
+                                    <button onClick={() => triggerUsername(comment, comment.data().username)}>Reply</button>
+                                    {comment.data().username === session?.user.username && <button onClick={() => deleteComment(comment.id)}>Delete</button>}
                                 </div>
+                                {comment.data().subcomments?.map((subCom, index) => (
+                                    <div key={index} className="ml-14 mt-5">
+                                        <div className="w-full flex">
+                                            <div className="relative h-6 w-6">
+                                                {comment.data().userImg && <Image
+                                                    loading="eager"
+                                                    alt="image"
+                                                    src={subCom.userImg}
+                                                    height='30px'
+                                                    width='30px'
+                                                    className="rounded-full"
+                                                />}
+                                            </div>
+                                            <div className="flex-1 ml-2 mr-1">
+                                                <p className='text-sm'>
+                                                    <span onClick={subCom.username === session?.user?.username ? () => router.push("/profile") : () => router.push("/")} className='font-bold cursor-pointer'>{subCom.username} </span>
+                                                    {subCom.comment}
+                                                </p>
+                                            </div>
+                                            <HeartIcon className="h-5 w-5 btn" />
+                                        </div>
+                                        <div className="mt-1 text-xs text-gray-400 px-12 flex space-x-3 font-semibold">
+                                            <Moment fromNow>{subCom.timeStamp?.toDate()}</Moment>
+                                            <button onClick={() => triggerUsername(comment, subCom.username)}>Reply</button>
+                                            {subCom.username === session?.user.username && <button onClick={() => deleteSubComment(comment, index)}>Delete</button>}
+                                        </div>
+                                    </div>))}
                             </div>
                         ))}
                     </div>}
@@ -79,4 +149,4 @@ const LikeList = () => {
     )
 }
 
-export default LikeList;
+export default CommentList;
