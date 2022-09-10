@@ -4,9 +4,9 @@ import { useRef, useState } from 'react';
 const Notification = () => {
     let hasNewDeploy = useHasNewDeploy();
     return (
-        <div className={`p-2 text-white text-sm absolute bg-gray-600 bottom-2 left-1 rounded-lg flex items-center transition duration-200 ${hasNewDeploy ? "translate-x-0" : "-translate-x-56"}`}>
+        <div className={`p-2 text-gray-900 text-sm absolute font-semibold bg-blue-300 bottom-2 left-1 rounded-lg shadow-xl flex items-center transition duration-200 ${hasNewDeploy ? "translate-x-0" : "-translate-x-56"}`}>
             <p>New version avaiable!</p>
-            <button className="ml-2 underline cursor-pointer text-gray-300 hover:text-white"
+            <button className="ml-2 underline cursor-pointer hover:text-blue-800"
                 onClick={() => window.location.reload()}>
                 Refresh
             </button>
