@@ -87,7 +87,7 @@ const Chats = () => {
                     <div className='flex flex-col shadow-md md:w-[700px] w-full'>
                         <button className='w-full flex text-lg justify-center items-center p-3 mb-2 shadow-md'>
                             <UserCircleIcon className='h-6 w-6 mr-2' />
-                            <h1 className='font-bold hover:underline'>{session.user.username}</h1>
+                            <h1 onClick={() => router.push("/profile")} className='font-bold hover:underline'>{session.user.username}</h1>
                         </button>
                         <div className='flex items-center'>
                             <p className='font-bold ml-5 mb-2 flex-1'>Messages</p>

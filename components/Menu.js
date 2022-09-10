@@ -56,7 +56,7 @@ export default function Example({ session, setOpen, signOut, router, darkMode, s
                                     >
                                         <div className='flex'>
                                             <UserCircleIcon className='h-5 w-5 mr-2 dark:text-gray-200' />
-                                            Profile [In Working]
+                                            Profile
                                         </div>
                                     </button>
                                 )}

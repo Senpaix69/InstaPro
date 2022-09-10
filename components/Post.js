@@ -1,6 +1,6 @@
 import {
     BookmarkIcon,
-    ChatIcon,
+    ChatAlt2Icon,
     EmojiHappyIcon,
     DotsHorizontalIcon,
     HeartIcon,
@@ -98,7 +98,7 @@ const Post = ({ id, username, userImg, img, caption, timeStamp, router }) => {
                                 src={userImg} alt='img' />
                             <span className="top-0 -right-1 absolute  w-3 h-3 bg-green-400 border-2 border-white dark:border-gray-800 rounded-full"></span>
                         </div>
-                        <p className='flex-1 font-bold dark:text-gray-200'> {username} </p>
+                        <p onClick={username === session?.user?.username ? () => router.push("/profile") : () => router.push("/")} className='flex-1 font-bold dark:text-gray-200 cursor-pointer'> {username} </p>
                         <Moment fromNow className='mr-2 text-[10px]'>
                             {timeStamp?.toDate()}
                         </Moment>
@@ -118,7 +118,7 @@ const Post = ({ id, username, userImg, img, caption, timeStamp, router }) => {
                         <div className='flex space-x-3 items-center'>
                             {hasLike ? <HeartIconFilled onClick={likePost} className='btn text-red-500' />
                                 : <HeartIcon onClick={likePost} className='btn' />}
-                            <ChatIcon className='btn' />
+                            <ChatAlt2Icon className='btn' onClick={() => router.push(`comment/${id}`)} />
                             <PaperAirplaneIcon className='btn pt-1 rotate-90' />
                         </div>
                         <div className='flex space-x-3 items-center'>
@@ -136,32 +136,12 @@ const Post = ({ id, username, userImg, img, caption, timeStamp, router }) => {
                     </p>
 
                     {comments.length > 0 && (
-                        <div className='pl-5 pt-2 h-20 overflow-y-scroll scrollbar-thumb-gray-300 scrollbar-thin dark:bg-gray-900 dark:text-gray-200'>
-                            {comments.map((comment) => (
-                                <div key={comment.id} className='flex items-center space-x-2 mb-3'>
-                                    <div className='relative h-7 w-7 rounded-full'>
-                                        <Image
-                                            loading='eager'
-                                            layout='fill'
-                                            src={comment.data().userImg}
-                                            alt='userimg'
-                                            className='rounded-full'
-                                        />
-                                    </div>
-                                    <p className='text-sm flex-1'>
-                                        <span className='font-bold'>{comment.data().username} </span>
-                                        {comment.data().comment}
-                                    </p>
-                                    <Moment fromNow className='text-[9px] text-gray-400 pr-5'>
-                                        {comment.data().timeStamp?.toDate()}
-                                    </Moment>
-                                </div>
-                            ))}
-                        </div>
+                        <button onClick={() => router.push(`comment/${id}`)} className='px-4 text-sm text-gray-500'>
+                            View {comments.length} {comments.length === 1 ? "comment" : "comments"}
+                        </button>
                     )}
 
-
-                    <form className='flex items-center py-2 px-4'>
+                    <form className='flex items-center py-1 px-4'>
                         <EmojiHappyIcon className='h-7 dark:text-gray-200' />
                         <input value={comment} onChange={(e) => setComment(e.target.value)} className='border-none flex-1 outline-none focus:ring-0 dark:bg-transparent dark:placeholder:text-gray-400 dark:text-white' placeholder='add a comment...' type='text' />
                         <button type='submit' disabled={!comment.trim()} onClick={postComment} className='font-semibold text-blue-500 disabled:text-gray-400'>Post</button>
