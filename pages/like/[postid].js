@@ -20,7 +20,7 @@ const LikeList = () => {
     return (
         <div className={`${!darkTheme ? "dark bg-gray-900" : ""} h-screen overflow-y-scroll scrollbar-hide`}>
             <div className="w-full md:max-w-3xl m-auto dark:text-gray-200">
-                <div className="flex space-x-3 px-3 items-center bg-blue-500 dark:bg-gray-900 text-white h-14">
+                <div className="flex space-x-3 px-3 items-center bg-blue-500 dark:bg-gray-900 text-white h-16">
                     <ArrowLeftIcon className="h-6 w-6 cursor-pointer" onClick={() => router.back()} />
                     <h1 className="text-lg font-bold">Likes</h1>
                 </div>
