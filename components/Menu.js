@@ -25,7 +25,7 @@ export default function Example({ session, setOpen, signOut, router, darkMode, s
                 leaveFrom="transform opacity-100 scale-100"
                 leaveTo="transform opacity-0 scale-95"
             >
-                <Menu.Items className="origin-top-right absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none dark:bg-black">
+                <Menu.Items className="origin-top-right absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none dark:bg-black font-semibold">
                     <div>
                         {router.asPath !== '/' &&
                             <Menu.Item>
@@ -33,7 +33,7 @@ export default function Example({ session, setOpen, signOut, router, darkMode, s
                                     <button
                                         onClick={() => router.push('/')}
                                         className={classNames(
-                                            active ? 'dark:bg-gray-700 bg-gray-300 text-gray-900' : 'text-gray-700',
+                                            active ? 'dark:bg-blue-700 bg-blue-500 text-white' : 'text-black',
                                             'block px-4 py-3 text-sm w-full dark:text-gray-200'
                                         )}
                                     >
@@ -50,7 +50,7 @@ export default function Example({ session, setOpen, signOut, router, darkMode, s
                                     <button
                                         onClick={() => router.push('/profile')}
                                         className={classNames(
-                                            active ? 'dark:bg-gray-700 bg-gray-300 text-gray-900' : 'text-gray-700',
+                                            active ? 'dark:bg-blue-700 bg-blue-500 text-white' : 'text-black',
                                             'block px-4 py-3 text-sm w-full dark:text-gray-200'
                                         )}
                                     >
@@ -67,7 +67,7 @@ export default function Example({ session, setOpen, signOut, router, darkMode, s
                                     <button
                                         onClick={() => setOpen(true)}
                                         className={classNames(
-                                            active ? 'dark:bg-gray-700 bg-gray-300 text-gray-900' : 'text-gray-700',
+                                            active ? 'dark:bg-blue-700 bg-blue-500 text-white' : 'text-black',
                                             'block px-4 py-3 text-sm w-full dark:text-gray-200'
                                         )}
                                     >
@@ -84,7 +84,7 @@ export default function Example({ session, setOpen, signOut, router, darkMode, s
                                     <button
                                         onClick={() => router.push('/Chats')}
                                         className={classNames(
-                                            active ? 'dark:bg-gray-700 bg-gray-300 text-gray-900' : 'text-gray-700',
+                                            active ? 'dark:bg-blue-700 bg-blue-500 text-white' : 'text-black',
                                             'block px-4 py-3 text-sm w-full dark:text-gray-200'
                                         )}
                                     >
@@ -102,7 +102,7 @@ export default function Example({ session, setOpen, signOut, router, darkMode, s
                                     target='_blank'
                                     rel='noreferrer'
                                     className={classNames(
-                                        active ? 'dark:bg-gray-700 bg-gray-300 text-gray-900' : 'text-gray-700',
+                                        active ? 'dark:bg-blue-700 bg-blue-500 text-white' : 'text-black',
                                         'block px-4 py-3 text-sm w-full dark:text-gray-200'
                                     )}
                                 >
@@ -119,7 +119,7 @@ export default function Example({ session, setOpen, signOut, router, darkMode, s
                                     <button
                                         onClick={() => setDarkMode(!darkMode)}
                                         className={classNames(
-                                            active ? 'dark:bg-gray-700 bg-gray-300 text-gray-900  mb-3' : 'text-gray-700  mb-3',
+                                            active ? 'dark:bg-blue-700 bg-blue-500 text-white' : 'text-black',
                                             'block px-4 py-3 text-sm w-full dark:text-gray-200'
                                         )}
                                     >
@@ -136,7 +136,7 @@ export default function Example({ session, setOpen, signOut, router, darkMode, s
                                     <button
                                         onClick={signOut}
                                         className={classNames(
-                                            active ? 'dark:bg-gray-700 bg-gray-300 text-gray-900' : 'text-gray-700 border-t-[1px] border-t-gray-400',
+                                            active ? 'dark:bg-blue-700 bg-blue-500 text-white' : 'text-black',
                                             'block px-4 py-3 text-sm w-full dark:text-gray-200'
                                         )}
                                     >

@@ -33,7 +33,7 @@ const Posts = ({ setTotalPosts }) => {
     );
 
     return (
-        <div className={`${router.asPath !== '/' && !view ? "flex flex-wrap p-3 justify-center" : ""}`}>
+        <div className={`${router.asPath !== '/' && !view ? "flex flex-wrap p-3 justify-left" : ""}`}>
             {posts?.length === 0 ? <Loading /> :
                 posts?.map((post) => (
                     <Post
