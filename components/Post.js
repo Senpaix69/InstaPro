@@ -89,7 +89,7 @@ const Post = ({ id, username, userImg, img, caption, timeStamp, router }) => {
         <div>
             {router.asPath === '/' || view ?
                 <div className='bg-white border rounded-sm my-2 shadow-md dark:bg-gray-900 dark:border-gray-800'>
-                    <div className='flex items-center py-2 px-[5px] shadow-md bg-blue-700 dark:bg-gray-900 text-white'>
+                    <div className='flex items-center py-2 px-[5px] shadow-md bg-blue-500 dark:bg-gray-900 text-white'>
                         <div className='relative rounded-full h-9 w-9 border mr-3 ml-2'>
                             <Image
                                 loading='eager'
@@ -114,7 +114,7 @@ const Post = ({ id, username, userImg, img, caption, timeStamp, router }) => {
                             src={img} alt='cover' />}
                     </div>
 
-                    <div className='flex justify-between px-3 py-2 bg-blue-700 dark:bg-gray-900 text-white items-center'>
+                    <div className='flex justify-between px-3 py-2 bg-blue-500 dark:bg-gray-900 text-white items-center'>
                         <div className='flex space-x-3 items-center'>
                             {hasLike ? <HeartIconFilled onClick={likePost} className='btn text-red-500' />
                                 : <HeartIcon onClick={likePost} className='btn' />}
