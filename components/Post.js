@@ -168,7 +168,7 @@ const Post = ({ id, username, userImg, img, caption, timeStamp, router }) => {
                     </form>
                 </div>
                 :
-                <div className='mx-[1.5px] bg-gray-400 dark:bg-black'>
+                <div className='mx-[1.5px] bg-blue-200 dark:bg-black'>
                     <button onClick={() => setView(true)} className='relative h-28 w-28 md:h-[155px] md:w-[155px]'>
                         <Image
                             src={img}
