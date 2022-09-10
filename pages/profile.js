@@ -29,7 +29,7 @@ const Profile = () => {
                         <ProfileSec image={session.user.image} username={session.user.username} posts={totalPosts} />
                     </>}
                 <Posts setTotalPosts={setTotalPosts} />
-                <button disabled={!view} onClick={() => setView(false)} className={`w-full md:max-w-6xl bg-gray-500 py-2 font-bold uppercase absolute bottom-0 z-50 transition duration-200 ${view ? "translate-y-0 dark:text-green-800 dark:bg-green-300" : "translate-y-10 dark:text-gray-900 dark:bg-gray-900"}`}>close view</button>
+                <button disabled={!view} onClick={() => setView(false)} className={`w-full md:max-w-6xl text-white py-2 font-bold uppercase absolute bottom-0 z-50 transition duration-200 ${view ? "translate-y-0 dark:bg-blue-700" : "translate-y-10 dark:text-gray-900 dark:bg-gray-900"}`}>close view</button>
             </div>
         </div>
     )
