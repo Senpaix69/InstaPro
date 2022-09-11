@@ -24,7 +24,7 @@ const CommentList = () => {
 
     const postComment = async (e) => {
         e.preventDefault();
-        if (subCommentRef?.id && comment.indexOf("@") !== -1) {
+        if (subCommentRef?.id && comment?.indexOf("@") !== -1) {
             addSubComment(subCommentRef.id, subCommentRef.data()?.subcomments);
         } else {
             const commentToSend = comment;
