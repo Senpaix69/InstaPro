@@ -26,7 +26,7 @@ const Feed = () => {
               <span className="font-medium">Chat Updates!</span>
               <p>1: You can now send images in chat</p>
               <p>2: You can now delete chat and unsend texts</p>
-              <span className="font-medium">Alert!</span> You can't follow/unfollow user for now
+              <span className="font-medium">Alert!</span> You can not follow/unfollow user for now
             </div>
             <Stories />
             <Posts />
