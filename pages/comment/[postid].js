@@ -1,6 +1,6 @@
 import Loading from "../../components/Loading";
 import { db } from "../../firebase";
-import { useCollection } from "react-firebase-hooks/firestore";;
+import { useCollection, useDocumentData } from "react-firebase-hooks/firestore";;
 import { useRouter } from "next/router";
 import { useRecoilState } from "recoil";
 import { themeState } from "../../atoms/theme";
@@ -17,6 +17,7 @@ const CommentList = () => {
     const router = useRouter();
     const { postid } = router.query;
     const [comments, loading] = useCollection(query(collection(db, `posts/${postid}/comments`), orderBy("timeStamp", 'desc')));
+    const [post] = useDocumentData(doc(db, "posts", postid));
     const [darkTheme] = useRecoilState(themeState);
     const [subCommentRef, setSubCommentRef] = useState({});
     const [comment, setComment] = useState("");
@@ -81,22 +82,44 @@ const CommentList = () => {
                     <ArrowLeftIcon className="h-6 w-6 cursor-pointer" onClick={() => router.back()} />
                     <h1 className="text-lg font-bold">Comments</h1>
                 </div>
+                {post?.caption &&
+                    <div className="m-3 flex border-b-2 border-gray-600 pb-4 mb-5">
+                        <div className="relative h-10 w-10">
+                            {post.profImg && <Image
+                                loading="eager"
+                                alt="image"
+                                src={post.profImg}
+                                height='40px'
+                                width='40px'
+                                className="rounded-full"
+                            />}
+                        </div>
+                        <div className="ml-3 flex-1 mr-3">
+                            <p className='text-md'>
+                                <span onClick={post.username === session?.user?.username ? () => router.push("/profile") : () => router.push("/")} className='font-bold cursor-pointer'>{post.username} </span>
+                                {post.caption}
+                            </p>
+                            <Moment fromNow className="text-xs font-semibold text-gray-400">{post.timeStamp?.toDate()}</Moment>
+                        </div>
+                    </div>}
                 {loading ? <Loading /> :
                     <div className="m-3">
                         {comments.docs?.map((comment, i) => (
                             <div key={i} className="mb-5">
-                                <div key={i} className="w-full flex">
-                                    <div className="relative h-10 w-10">
-                                        {comment.data().userImg && <Image
-                                            loading="eager"
-                                            alt="image"
-                                            src={comment.data().userImg}
-                                            height='40px'
-                                            width='40px'
-                                            className="rounded-full"
-                                        />}
+                                <div key={i} className="relative w-full flex">
+                                    <div className="absolute">
+                                        <div className="relative h-10 w-10">
+                                            {comment.data().userImg && <Image
+                                                loading="eager"
+                                                alt="image"
+                                                src={comment.data().userImg}
+                                                height='40px'
+                                                width='40px'
+                                                className="rounded-full"
+                                            />}
+                                        </div>
                                     </div>
-                                    <div className="flex-1 ml-2 mr-1">
+                                    <div className="ml-12 flex-1 mr-3">
                                         <p className='text-sm'>
                                             <span onClick={comment.data().username === session?.user?.username ? () => router.push("/profile") : () => router.push("/")} className='font-bold cursor-pointer'>{comment.data().username} </span>
                                             {comment.data().comment}
@@ -111,18 +134,20 @@ const CommentList = () => {
                                 </div>
                                 {comment.data().subcomments?.map((subCom, index) => (
                                     <div key={index} className="ml-14 mt-5">
-                                        <div className="w-full flex">
-                                            <div className="relative h-6 w-6">
-                                                {comment.data().userImg && <Image
-                                                    loading="eager"
-                                                    alt="image"
-                                                    src={subCom.userImg}
-                                                    height='30px'
-                                                    width='30px'
-                                                    className="rounded-full"
-                                                />}
+                                        <div className="w-full flex relative">
+                                            <div className="absolute">
+                                                <div className="relative h-9 w-9">
+                                                    {comment.data().userImg && <Image
+                                                        loading="eager"
+                                                        alt="image"
+                                                        src={subCom.userImg}
+                                                        height='35px'
+                                                        width='35px'
+                                                        className="rounded-full"
+                                                    />}
+                                                </div>
                                             </div>
-                                            <div className="flex-1 ml-2 mr-1">
+                                            <div className="flex-1 ml-11 mr-3">
                                                 <p className='text-sm'>
                                                     <span onClick={subCom.username === session?.user?.username ? () => router.push("/profile") : () => router.push("/")} className='font-bold cursor-pointer'>{subCom.username} </span>
                                                     {subCom.comment}
@@ -130,7 +155,7 @@ const CommentList = () => {
                                             </div>
                                             <HeartIcon className="h-5 w-5 btn" />
                                         </div>
-                                        <div className="mt-1 text-xs text-gray-400 px-12 flex space-x-3 font-semibold">
+                                        <div className="mt-1 text-xs text-gray-400 px-11 flex space-x-3 font-semibold">
                                             <Moment fromNow>{subCom.timeStamp?.toDate()}</Moment>
                                             <button onClick={() => triggerUsername(comment, subCom.username)}>Reply</button>
                                             {subCom.username === session?.user.username && <button onClick={() => deleteSubComment(comment, index)}>Delete</button>}
