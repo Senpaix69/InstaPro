@@ -17,14 +17,14 @@ const CommentList = () => {
     const router = useRouter();
     const { postid } = router.query;
     const [comments, loading] = useCollection(query(collection(db, `posts/${postid}/comments`), orderBy("timeStamp", 'desc')));
-    const [post] = useDocumentData(doc(db, "posts", postid));
+    const [post] = useDocumentData(doc(db, `posts/${postid}`));
     const [darkTheme] = useRecoilState(themeState);
     const [subCommentRef, setSubCommentRef] = useState({});
     const [comment, setComment] = useState("");
 
     const postComment = async (e) => {
         e.preventDefault();
-        if (subCommentRef?.id && comment?.indexOf("@") !== -1) {
+        if (subCommentRef?.id && comment.indexOf("@") !== -1) {
             addSubComment(subCommentRef.id, subCommentRef.data()?.subcomments);
         } else {
             const commentToSend = comment;
