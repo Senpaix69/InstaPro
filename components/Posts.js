@@ -1,4 +1,4 @@
-import { collection, onSnapshot, orderBy, query, where } from "firebase/firestore";
+import { collection, getDocs, onSnapshot, orderBy, query, where } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import { db } from "../firebase";
 import Post from "./Post";
@@ -8,7 +8,7 @@ import { useSession } from "next-auth/react";
 import { postView } from "../atoms/postView";
 import { useRecoilState } from "recoil";
 
-const Posts = ({ setTotalPosts }) => {
+const Posts = ({ setTotalPosts, profile }) => {
     const [posts, setPosts] = useState([]);
     const { data: session } = useSession();
     const router = useRouter();
@@ -21,16 +21,18 @@ const Posts = ({ setTotalPosts }) => {
                     setPosts(snapshot.docs);
                 }
             )
-        } else if(router.pathname === "/profile") {
-            onSnapshot(query(collection(db, "posts"), where("username", "==", session?.user?.username), orderBy('timeStamp', 'desc')),
-                (snapshot) => {
-                    setPosts(snapshot.docs);
-                    setTotalPosts(snapshot.docs.length);
-                }
-            )
         }
-    }, []
+    }, [router.pathname]
     );
+
+    useEffect(() => {
+        if (router.pathname !== "/") {
+            getDocs(query(collection(db, "posts"), where("username", "==", profile), orderBy('timeStamp', 'desc'))).then((snapshot) => {
+                setPosts(snapshot?.docs);
+                setTotalPosts(snapshot.docs?.length);
+            })
+        }
+    }, [profile, router.pathname])
 
     return (
         <div className={`${router.asPath !== '/' && !view ? "flex flex-wrap p-3 justify-left" : ""}`}>

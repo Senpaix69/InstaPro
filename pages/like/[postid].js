@@ -49,7 +49,7 @@ const LikeList = () => {
                                         className="rounded-full"
                                     />}
                                     <div className="ml-3">
-                                        <h1 onClick={like.username === session?.user?.username ? () => router.push("/profile") : () => router.push("/")} className="font-bold mt-1 cursor-pointer">{like.username}</h1>
+                                        <h1 onClick={() => router.push(`/profile/${like.username}`)} className="font-bold mt-1 cursor-pointer">{like.username}</h1>
                                         {like.timeStamp &&
                                             <Moment className="text-gray-400 text-xs align-text-top" fromNow>{like.timeStamp.toDate()}</Moment>}
                                     </div>

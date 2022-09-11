@@ -102,7 +102,7 @@ const Chat = () => {
                                     />
                                 </div>
                             </div>
-                            <div className="text-left">
+                            <div onClick={() => router.push(`/profile/${getOtherEmail(chat, session?.user)}`)} className="text-left">
                                 <h1 className="font-bold h-[20px]">{loading ? "Loading" : getOtherEmail(chat, session?.user)}</h1>
                                 <span className="text-xs md:text-sm text-gray-400">active </span>
                                 <Moment fromNow className="text-xs md:text-sm text-gray-400">

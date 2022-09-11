@@ -96,7 +96,7 @@ const CommentList = () => {
                         </div>
                         <div className="ml-3 flex-1 mr-3">
                             <p className='text-md'>
-                                <span onClick={post.username === session?.user?.username ? () => router.push("/profile") : () => router.push("/")} className='font-bold cursor-pointer'>{post.username} </span>
+                                <span onClick={() => router.push(`/profile/${post.username}`)} className='font-bold cursor-pointer'>{post.username} </span>
                                 {post.caption}
                             </p>
                             <Moment fromNow className="text-xs font-semibold text-gray-400">{post.timeStamp?.toDate()}</Moment>
@@ -121,7 +121,7 @@ const CommentList = () => {
                                     </div>
                                     <div className="ml-12 flex-1 mr-3">
                                         <p className='text-sm'>
-                                            <span onClick={comment.data().username === session?.user?.username ? () => router.push("/profile") : () => router.push("/")} className='font-bold cursor-pointer'>{comment.data().username} </span>
+                                            <span onClick={() => router.push(`/profile/${comment.data().username}`)} className='font-bold cursor-pointer'>{comment.data().username} </span>
                                             {comment.data().comment}
                                         </p>
                                     </div>
@@ -149,7 +149,7 @@ const CommentList = () => {
                                             </div>
                                             <div className="flex-1 ml-11 mr-3">
                                                 <p className='text-sm'>
-                                                    <span onClick={subCom.username === session?.user?.username ? () => router.push("/profile") : () => router.push("/")} className='font-bold cursor-pointer'>{subCom.username} </span>
+                                                    <span onClick={() => router.push(`/profile/${subCom.username}`)} className='font-bold cursor-pointer'>{subCom.username} </span>
                                                     {subCom.comment}
                                                 </p>
                                             </div>

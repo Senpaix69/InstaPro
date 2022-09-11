@@ -1,23 +1,14 @@
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { db } from "../firebase";
 import { setDoc, doc, getDoc, serverTimestamp, updateDoc } from "firebase/firestore";
 
-const ProfileSec = ({ image, username, posts }) => {
-    const [bio, setBio] = useState('');
-    const [name, setName] = useState('');
+const ProfileSec = ({ image, username, posts, bio, setBio, name, setName, session }) => {
     const [textBio, setTextBio] = useState('');
     const [textName, setTextName] = useState('');
     const [followers, setFollowers] = useState(0);
     const [followings, setFollowings] = useState(0);
     const [editProf, setEditProf] = useState(false);
-
-    useEffect(() => {
-        getDoc(doc(db, "profile", username)).then((userData) => {
-            setBio(userData.data()?.bio ? userData.data()?.bio : "Bio");
-            setName(userData.data()?.fullname ? userData.data()?.fullname : "Name");
-        })
-    }, [])
 
     const saveEditing = async () => {
         const data = await getDoc(doc(db, "profile", username));
@@ -53,7 +44,7 @@ const ProfileSec = ({ image, username, posts }) => {
             <div className="flex px-2 relative md:justify-center">
                 <div className="relative h-20 w-20 md:h-24 md:w-24 mr-10">
                     <Image
-                        src={image}
+                        src={image ? image : "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460__340.png"}
                         layout="fill"
                         loading="eager"
                         alt="profile"
@@ -78,10 +69,12 @@ const ProfileSec = ({ image, username, posts }) => {
             {!editProf &&
                 <div className="mt-1 flex flex-col md:items-center">
                     <h1 className="font-semibold text-sm">{username}</h1>
-                    <h1 className="font-semibold text-lg">~ {name}</h1>
+                    <h1 className="font-semibold text-lg"><span className="text-gray-400">~</span> {name}</h1>
                     <p className="text-sm">{bio}</p>
                 </div>}
-            <button onClick={() => setEditProf(true)} hidden={editProf} className="w-full mt-8 py-1 dark:bg-black border border-gray-700 rounded-md dark:hover:bg-gray-600 hover:bg-blue-500 hover:text-white font-semibold shadow-sm">Edit Profile</button>
+            {(username && username === session.user.username) ?
+                <button onClick={() => setEditProf(true)} hidden={editProf} className="w-full mt-8 py-1 dark:bg-black border border-gray-700 rounded-md dark:hover:bg-gray-600 bg-blue-500 text-white font-semibold shadow-sm">Edit Profile</button> :
+                <button className="w-full mt-8 py-1 dark:bg-black border border-gray-700 rounded-md dark:hover:bg-gray-600 bg-blue-500 text-white font-semibold shadow-sm">Follow</button>}
             {editProf &&
                 <div className="mt-5 w-full md:max-w-6xl relative">
                     <p className="text-xs ml-3">Name</p>
@@ -92,8 +85,8 @@ const ProfileSec = ({ image, username, posts }) => {
                     <div className="border-b-2 ml-3 mr-3"></div>
                     <div className="relative h-10">
                         <div className="flex space-x-4 absolute bottom-1 right-3 text-white text-sm font-semibold">
-                            <button onClick={saveEditing} className="bg-blue-500 px-2 rounded-lg">Save</button>
-                            <button onClick={cancelEditing} className="bg-gray-500 px-2 rounded-lg">Cancel</button>
+                            <button onClick={saveEditing} className="bg-blue-500 w-20 h-7 rounded-lg">Save</button>
+                            <button onClick={cancelEditing} className="bg-gray-500 w-20 h-7 rounded-lg">Cancel</button>
                         </div>
                     </div>
                 </div>}

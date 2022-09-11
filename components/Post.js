@@ -98,7 +98,7 @@ const Post = ({ id, username, userImg, img, caption, timeStamp, router }) => {
                                 src={userImg} alt='img' />
                             <span className="top-0 -right-1 absolute  w-3 h-3 bg-green-400 border-2 border-white dark:border-gray-800 rounded-full"></span>
                         </div>
-                        <p onClick={username === session?.user?.username ? () => router.push("/profile") : () => router.push("/")} className='flex-1 font-bold dark:text-gray-200 cursor-pointer'> {username} </p>
+                        <p onClick={(username === session?.user?.username ? () => router.push(`/profile/${session?.user?.username}`) : () => router.push(`/profile/${username}`))} className='flex-1 font-bold dark:text-gray-200 cursor-pointer'> {username} </p>
                         <Moment fromNow className='mr-2 text-[10px]'>
                             {timeStamp?.toDate()}
                         </Moment>

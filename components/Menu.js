@@ -44,11 +44,11 @@ export default function Example({ session, setOpen, signOut, router, darkMode, s
                                     </button>
                                 )}
                             </Menu.Item>}
-                        {router.asPath !== '/profile' &&
+                        {router.asPath !== `/profile/${session?.user?.username}` &&
                             <Menu.Item>
                                 {({ active }) => (
                                     <button
-                                        onClick={() => router.push('/profile')}
+                                        onClick={() => router.push(`/profile/${session?.user?.username}`)}
                                         className={classNames(
                                             active ? 'dark:bg-blue-700 bg-blue-500 text-white' : 'text-black',
                                             'block px-4 py-3 text-sm w-full dark:text-gray-200'
