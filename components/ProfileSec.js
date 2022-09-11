@@ -1,7 +1,7 @@
 import Image from "next/image";
 import { useState } from "react";
 import { db } from "../firebase";
-import { setDoc, doc, getDoc, serverTimestamp, updateDoc } from "firebase/firestore";
+import { doc, getDoc, updateDoc } from "firebase/firestore";
 
 const ProfileSec = ({ image, username, posts, bio, setBio, name, setName, session }) => {
     const [textBio, setTextBio] = useState('');
@@ -13,20 +13,10 @@ const ProfileSec = ({ image, username, posts, bio, setBio, name, setName, sessio
     const saveEditing = async () => {
         const data = await getDoc(doc(db, "profile", username));
         if (textBio.trim().length > 0 && textName.trim().length > 0) {
-            if (!data.exists()) {
-                await setDoc(doc(db, "profile", username), {
-                    username: username,
-                    profImg: image,
-                    timeStamp: serverTimestamp(),
-                    bio: textBio,
-                    fullname: textName,
-                });
-            } else {
-                updateDoc(doc(db, "profile", username), {
-                    bio: textBio,
-                    fullname: textName,
-                })
-            }
+            updateDoc(doc(db, "profile", username), {
+                bio: textBio,
+                fullname: textName,
+            })
             setBio(textBio)
             setName(textName)
         }

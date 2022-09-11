@@ -14,6 +14,20 @@ const Feed = () => {
       {session ? (
         <>
           <section className="col-span-2">
+            <div className="m-2 p-4 mb-4 text-sm text-blue-700 bg-blue-100 rounded-lg dark:bg-blue-200 dark:text-blue-800" role="alert">
+              <span className="font-medium">Feed Updates!</span>
+              <p>1: You can now post comments and reply to a comment</p>
+              <p>2: You can delete comments and also delete you sub-comments</p>
+              <p>3: You can check which user has liked the posts</p>
+              <span className="font-medium">Profile Updates!</span>
+              <p>1: You can check other users profile by clicking on usernames</p>
+              <p>2: You can check your own profile</p>
+              <p>3: You can modify you profile name and bio</p>
+              <span className="font-medium">Chat Updates!</span>
+              <p>1: You can now send images in chat</p>
+              <p>2: You can now delete chat and unsend texts</p>
+              <span className="font-medium">Alert!</span> You can't follow/unfollow user for now
+            </div>
             <Stories />
             <Posts />
             <Notification />

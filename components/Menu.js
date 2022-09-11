@@ -2,11 +2,9 @@ import { Fragment } from 'react';
 import { Menu, Transition } from '@headlessui/react';
 import { HomeIcon, UserCircleIcon, PlusCircleIcon, ChatAlt2Icon, SparklesIcon, ArrowCircleLeftIcon, MoonIcon, SunIcon } from '@heroicons/react/solid';
 
-
 function classNames(...classes) {
     return classes.filter(Boolean).join(' ')
 }
-
 
 export default function Example({ session, setOpen, signOut, router, darkMode, setDarkMode }) {
 
