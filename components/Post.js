@@ -127,7 +127,7 @@ const Post = ({ id, username, userImg, img, caption, timeStamp, router }) => {
                         </div>
                     </div>
 
-                    <p className='px-4 shadow-sm dark:shadow-lg dark:text-gray-200'>
+                    <p className='px-4 dark:text-gray-200'>
                         {likes.length > 0 && (
                             <button onClick={() => router.push(`like/${id}`)} className='font-bold mb-1 flex'>{likes.length} {likes.length === 1 ? "like" : "likes"}</button>
                         )}

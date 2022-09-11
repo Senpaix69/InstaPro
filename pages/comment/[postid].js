@@ -61,7 +61,7 @@ const CommentList = () => {
     }
 
     const deleteComment = async (id) => {
-        if (confirm("Do You really want to delete this comment?")) {
+        if (confirm("Do you really want to delete this comment?")) {
             await deleteDoc(doc(db, `posts/${postid}/comments/${id}`));
         }
     }
@@ -69,7 +69,7 @@ const CommentList = () => {
     const deleteSubComment = async (comment, indexOfSubComment) => {
         const newSubComment = comment.data().subcomments?.filter((_, i) => i !== indexOfSubComment);
 
-        if (newSubComment && confirm("Do You really want to delete this comment?")) {
+        if (newSubComment && confirm("Do you really want to delete this comment?")) {
             await updateDoc(doc(db, `posts/${postid}/comments/${comment.id}`), {
                 subcomments: newSubComment,
             })
