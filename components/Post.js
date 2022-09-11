@@ -59,7 +59,7 @@ const Post = ({ id, username, userImg, img, caption, timeStamp, router }) => {
     };
 
     const deletePost = async () => {
-        if (confirm("Do You really want to delete this post?")) {
+        if (confirm("Do you really want to delete this post?")) {
             await deleteDoc(doc(db, "posts", id));
         }
     };
@@ -136,7 +136,7 @@ const Post = ({ id, username, userImg, img, caption, timeStamp, router }) => {
                     </p>
 
                     {comments.length > 0 && (
-                        <button onClick={() => router.push(`comment/${id}`)} className='px-4 text-sm text-gray-500'>
+                        <button onClick={() => router.push(`comment/${id}`)} className='px-4 text-sm text-gray-400'>
                             View {comments.length} {comments.length === 1 ? "comment" : "comments"}
                         </button>
                     )}

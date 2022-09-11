@@ -32,7 +32,7 @@ const LikeList = () => {
                 </div>
                 <div className="mx-3 mt-5 flex justify-between items-center mb-2">
                     <h1 className="font-semibold">LIKED BY</h1>
-                    <p className="text-gray-400 text-sm">{likes?.length} Likes</p>
+                    <p className="text-gray-400 text-sm">{likes?.length} {likes?.length === 1 ? "Like" : "Likes"}</p>
                 </div>
                 <div className="mx-3 border-b-2 border-gray-500"></div>
                 {loading ? <Loading /> :
