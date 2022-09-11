@@ -9,9 +9,8 @@ import Moment from "react-moment";
 import { ArrowLeftIcon } from "@heroicons/react/solid";
 import { SearchIcon } from "@heroicons/react/outline";
 import { collection, query, orderBy } from "firebase/firestore";
-import { useSession } from "next-auth/react";
+
 const LikeList = () => {
-    const { data: session } = useSession();
     const router = useRouter();
     const { postid } = router.query;
     const [likes, loading] = useCollectionData(query(collection(db, `posts/${postid}/likes`), orderBy("timeStamp", 'desc')));

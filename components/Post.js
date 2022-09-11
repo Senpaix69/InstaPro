@@ -98,7 +98,7 @@ const Post = ({ id, username, userImg, img, caption, timeStamp, router }) => {
                                 src={userImg} alt='img' />
                             <span className="top-0 -right-1 absolute  w-3 h-3 bg-green-400 border-2 border-white dark:border-gray-800 rounded-full"></span>
                         </div>
-                        <p onClick={(username === session?.user?.username ? () => router.push(`/profile/${session?.user?.username}`) : () => router.push(`/profile/${username}`))} className='flex-1 font-bold dark:text-gray-200 cursor-pointer'> {username} </p>
+                        <p onClick={() => router.push(`/profile/${username}`)} className='flex-1 font-bold dark:text-gray-200 cursor-pointer'> {username} </p>
                         <Moment fromNow className='mr-2 text-[10px]'>
                             {timeStamp?.toDate()}
                         </Moment>
@@ -126,17 +126,16 @@ const Post = ({ id, username, userImg, img, caption, timeStamp, router }) => {
                             <BookmarkIcon className='btn' />
                         </div>
                     </div>
-
                     <p className='px-4 dark:text-gray-200'>
                         {likes.length > 0 && (
-                            <button onClick={() => router.push(`like/${id}`)} className='font-bold mb-1 flex'>{likes.length} {likes.length === 1 ? "like" : "likes"}</button>
+                            <button onClick={() => router.push(`/like/${id}`)} className='font-bold mb-1 flex'>{likes.length} {likes.length === 1 ? "like" : "likes"}</button>
                         )}
                         <span className='font-bold mr-1'>{username} </span>
                         <span className='text-sm'>{caption}</span>
                     </p>
 
                     {comments.length > 0 && (
-                        <button onClick={() => router.push(`comment/${id}`)} className='px-4 text-sm text-gray-400'>
+                        <button onClick={() => router.push(`/comment/${id}`)} className='px-4 text-sm text-gray-400'>
                             View {comments.length} {comments.length === 1 ? "comment" : "comments"}
                         </button>
                     )}
