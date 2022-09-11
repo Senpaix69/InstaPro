@@ -77,10 +77,10 @@ const CommentList = () => {
     }
     return (
         <div className={`${!darkTheme ? "dark bg-gray-900" : ""} h-screen overflow-y-scroll scrollbar-hide`}>
-            <div className="w-full md:max-w-3xl m-auto dark:text-gray-200">
+            <div className="w-full md:max-w-3xl m-auto dark:text-gray-200 flex flex-col h-screen relative">
 
                 {/* comments header */}
-                <section className="absolute top-0 z-40 w-full md:max-w-3xl">
+                <section className="sticky top-0 z-50 w-full md:max-w-3xl">
                     <div className="flex space-x-3 px-3 items-center bg-blue-500 dark:bg-gray-900 text-white h-16">
                         <ArrowLeftIcon className="h-6 w-6 cursor-pointer" onClick={() => router.back()} />
                         <h1 className="text-lg font-bold">Comments</h1>
@@ -88,7 +88,7 @@ const CommentList = () => {
                 </section>
 
                 {/* comments Body */}
-                <section className="my-20">
+                <section className="flex-1 overflow-y-scroll scrollbar-hide">
                     {post?.caption &&
                         <div className="m-3 flex border-b-2 border-gray-600 pb-4 mb-5">
                             <div className="relative h-10 w-10">
@@ -175,7 +175,7 @@ const CommentList = () => {
 
                 {/* comments bottom */}
                 <section>
-                    <form className='flex items-center py-2 px-4 absolute bottom-0 z-50 bg-white dark:bg-gray-900 w-full md:max-w-3xl'>
+                    <form className='flex items-center py-2 px-4 sticky bottom-0 z-50 bg-white dark:bg-gray-900 w-full md:max-w-3xl'>
                         <EmojiHappyIcon className='h-7 dark:text-gray-200' />
                         <input value={comment} onChange={(e) => setComment(e.target.value)} className='border-none flex-1 outline-none focus:ring-0 dark:bg-transparent dark:placeholder:text-gray-400 dark:text-white' placeholder='add a comment...' type='text' />
                         <button type='submit' disabled={!comment.trim()} onClick={postComment} className='font-semibold text-blue-500 disabled:text-gray-400'>Post</button>

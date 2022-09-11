@@ -21,7 +21,7 @@ const LikeList = () => {
             <div className="w-full md:max-w-3xl m-auto dark:text-gray-200">
 
                 {/* likes header */}
-                <section className="absolute top-0 z-40 w-full md:max-w-3xl bg-white dark:bg-gray-900">
+                <section className="sticky top-0 z-50 w-full md:max-w-3xl bg-white dark:bg-gray-900">
                     <div className="flex space-x-3 px-3 items-center bg-blue-500 dark:bg-gray-900 text-white h-16">
                         <ArrowLeftIcon className="h-6 w-6 cursor-pointer" onClick={() => router.back()} />
                         <h1 className="text-lg font-bold">Likes</h1>
@@ -40,7 +40,7 @@ const LikeList = () => {
                     <div className="mx-3 border-b-2 border-gray-500"></div>
                 </section>
 
-                <section className="mt-44">
+                <section className="flex-1 overflow-y-scroll scrollbar-hide">
                     {loading ? <Loading /> :
                         <div className="mx-3">
                             {likes?.map((like, i) => (
