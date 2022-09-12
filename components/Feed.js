@@ -15,7 +15,7 @@ const Feed = () => {
         <>
           <section className="col-span-2">
             <div className="m-2 p-4 mb-4 text-sm text-blue-700 bg-blue-100 rounded-lg dark:bg-blue-200 dark:text-blue-800">
-              <span className="font-bold">CAUTION!</span> <span className="font-bold  text-red-500">Isbah's BirthDay: 30th September</span>
+              <span className="font-bold">CAUTION!</span> <span className="font-bold  text-red-500">Isbah BirthDay: 30th September</span>
               <p className="font-medium">Feed Updates!</p>
               <p>1: You can now post comments and reply to a comment</p>
               <p>2: You can delete comments and also delete you sub-comments</p>
