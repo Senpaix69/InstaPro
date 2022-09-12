@@ -18,7 +18,7 @@ const Feed = () => {
               <span className="font-bold">CAUTION!</span> <span className="font-bold  text-red-500">Isbah BirthDay: 30th September</span>
               <p className="font-medium">Feed Updates!</p>
               <p>1: You can now post comments and reply to a comment</p>
-              <p>2: You can delete comments and also delete you sub-comments</p>
+              <p>2: You can delete comments and also delete your sub-comments</p>
               <p>3: You can check which user has liked the posts</p>
               <span className="font-medium">Profile Updates!</span>
               <p>1: You can check other users profile by clicking on usernames</p>
