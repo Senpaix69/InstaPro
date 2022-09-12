@@ -49,7 +49,7 @@ export default function Home() {
   }, [session])
 
   return (
-    <div className={`h-screen overflow-y-scroll scrollbar-hide ${darkMode ? "bg-gray-50" : "dark bg-gray-900"}`}>
+    <div className={`h-screen overflow-y-scroll scrollbar-hide ${darkMode ? "bg-gray-50" : "dark bg-black"}`}>
       <Head>
         <title>InstaPro</title>
         <link rel="icon" href="/favicon.ico" />

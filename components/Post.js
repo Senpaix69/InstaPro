@@ -118,7 +118,7 @@ const Post = ({ id, username, userImg, img, caption, timeStamp, router }) => {
                         <div className='flex space-x-3 items-center'>
                             {hasLike ? <HeartIconFilled onClick={likePost} className='btn text-red-500' />
                                 : <HeartIcon onClick={likePost} className='btn' />}
-                            <ChatAlt2Icon className='btn' onClick={() => router.push(`comment/${id}`)} />
+                            <ChatAlt2Icon className='btn' onClick={() => router.push(`/comment/${id}`)} />
                             <PaperAirplaneIcon className='btn pt-1 rotate-90' />
                         </div>
                         <div className='flex space-x-3 items-center'>

@@ -42,7 +42,7 @@ const Profile = () => {
                     {!view &&
                         <>
                             <Header darkMode={darkMode} setDarkMode={setDarkMode} />
-                            <ProfileSec image={user?.profImg} username={user?.username} posts={totalPosts} profile={profile} bio={bio} setBio={setBio} name={name} setName={setName} session={session} />
+                            <ProfileSec image={profile === session?.user.username ? session?.user?.image : user?.profImg} username={profile === session?.user.username ? session?.user?.username : user?.username} posts={totalPosts} profile={profile} bio={bio} setBio={setBio} name={name} setName={setName} session={session} />
                         </>}
                     <Posts setTotalPosts={setTotalPosts} profile={profile} />
                     <button disabled={!view} onClick={() => setView(false)} className={`w-full md:max-w-6xl text-white py-2 font-bold uppercase absolute bottom-0 z-50 transition duration-200 ${view ? "translate-y-0 dark:bg-blue-700" : "translate-y-10 dark:text-gray-900 dark:bg-gray-900"}`}>close view</button>

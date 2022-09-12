@@ -22,6 +22,7 @@ const Chat = () => {
     const { id } = router.query;
     const messagesEndRef = useRef(null);
     const [chat, loading] = useDocumentData(doc(db, `chats/${id}`));
+    const [sending, setSending] = useState(false);
     const messages = getChatMessages(id);
     const users = getUserActivity();
     const [darkMode, setDarkMode] = useState(false);
@@ -36,9 +37,12 @@ const Chat = () => {
     const sendMessage = async (e) => {
         e.preventDefault();
         const msgToSend = text;
+        const imgRef = selectFile;
         setUploading(true);
+        setSelectFile(null);
         setText("");
-
+        if (imgRef)
+            setSending(true);
         const docRef = await addDoc(collection(db, 'chats', id, 'messages'), {
             text: msgToSend,
             username: session.user.username,
@@ -48,14 +52,15 @@ const Chat = () => {
 
         if (selectFile) {
             const imageRef = ref(storage, `chats/${docRef.id}/image`);
-            await uploadString(imageRef, selectFile, "data_url").then(async () => {
+            await uploadString(imageRef, imgRef, "data_url").then(async () => {
                 const downloadURL = await getDownloadURL(imageRef);
 
                 await updateDoc(doc(db, 'chats', id, 'messages', docRef.id), {
                     image: downloadURL,
                 });
             });
-            setSelectFile(null);
+            setSending(false);
+            imgRef = null;
         }
         setUploading(false);
     }
@@ -134,25 +139,28 @@ const Chat = () => {
                                                 </div>
                                             </div>
                                         </div>
-                                        <p className={`${msg?.data().username === session?.user.username ? "mr-9 bg-green-200" : "ml-9 bg-blue-200"} p-2 rounded-lg`}>{msg?.data().text}
+                                        <div className={`${msg?.data().username === session?.user.username ? "mr-9 bg-green-200" : "ml-9 bg-blue-200"} p-2 rounded-lg`}>
+                                            <div>{msg?.data().text}</div>
                                             {msg.data().image &&
                                                 <div className="mt-2 shadow-md p-2">
-                                                    <Image src={msg.data().image} alt='img' width='500px' height='700px' objectFit="contain" loading="eager" />
+                                                    <img src={msg.data().image} alt='img' />
                                                 </div>}
-                                            <Moment fromNow className="ml-2 text-[10px] text-gray-500">
-                                                {msg?.data()?.timeStamp?.toDate()}
-                                            </Moment>
-                                        </p>
+                                            <div className="flex text-gray-500 mt-1 justify-end pl-5">
+                                                <Moment fromNow className="text-[10px]">
+                                                    {msg?.data()?.timeStamp?.toDate()}
+                                                </Moment>
+                                                <span className="ml-1 text-sm font-semibold text-gray-700 bg-transparent rounded-full">
+                                                    <svg aria-hidden="true" className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd"></path></svg>
+                                                    <span className="sr-only">deliverd</span>
+                                                </span>
+                                            </div>
+                                        </div>
 
                                         {msg?.data().username === session?.user.username &&
                                             <>
                                                 <XCircleIcon className="h-7 w-7 absolute -left-6 cursor-pointer text-gray-800 overflow-hidden dark:text-gray-200"
                                                     onClick={() => unsendMessage(msg.id)}
                                                 />
-                                                <span className="absolute right-10 top-2 items-center p-[1.5px] mr-2 text-sm font-semibold text-gray-700 bg-transparent rounded-full">
-                                                    <svg aria-hidden="true" className="w-2 h-2" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd"></path></svg>
-                                                    <span className="sr-only">deliverd</span>
-                                                </span>
                                             </>
                                         }
                                     </div>
@@ -163,7 +171,7 @@ const Chat = () => {
                     {/* Chat Bottom */}
                     <section className="bg-gray-50 sticky bottom-0 z-50 shadow-sm mx-1 px-1 dark:text-white rounded-3xl dark:bg-gray-900">
                         <form>
-                            {selectFile &&
+                            {sending ? <p className="font-bold p-4 mr-3 text-blue-500 w-full text-right">Uploading Image</p> : selectFile &&
                                 <div className="relative flex gap-5 items-center p-5 text-semibold italic">
                                     <Image
                                         height='100px'

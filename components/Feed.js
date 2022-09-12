@@ -10,11 +10,11 @@ const Feed = () => {
   const { data: session } = useSession();
 
   return (
-    <main className="grid grid-cols-1 md:grid-cols-2 md:max-w-3xl xl:grid-cols-3 xl:max-w-6xl mx-auto dark:bg-gray-900">
+    <main className="grid grid-cols-1 md:grid-cols-2 md:max-w-3xl xl:grid-cols-3 xl:max-w-6xl mx-auto dark:bg-black">
       {session ? (
         <>
           <section className="col-span-2">
-            <div className="m-2 p-4 mb-4 text-sm text-blue-700 bg-blue-100 rounded-lg dark:bg-blue-200 dark:text-blue-800" role="alert">
+            <div className="m-2 p-4 mb-4 text-sm text-blue-700 bg-blue-100 rounded-lg dark:bg-blue-200 dark:text-blue-800">
               <span className="font-medium">Feed Updates!</span>
               <p>1: You can now post comments and reply to a comment</p>
               <p>2: You can delete comments and also delete you sub-comments</p>
