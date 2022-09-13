@@ -76,7 +76,7 @@ const ProfileSec = ({ posts, session, profile, setShowFollowers, setShowFollowin
                         className="rounded-full"
                     /> :
                         <Image
-                            src={user?.profImg}
+                            src={user?.profImg ? user.profImg : "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460__340.png"}
                             layout="fill"
                             loading="eager"
                             alt="profile"
