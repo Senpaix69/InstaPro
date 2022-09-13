@@ -37,7 +37,7 @@ const Header = ({ darkMode, setDarkMode }) => {
                     {/* Right Section */}
                     <div className="flex items-center space-x-4 justify-end">
                         <Menu darkMode={darkMode} setDarkMode={setDarkMode} setOpen={setOpen} signOut={signOut} session={session} router={router} />
-                        <div className="md:flex hidden items-center space-x-4 justify-end">
+                        <div className="xl:flex hidden items-center space-x-4 justify-end">
                             <HomeIcon onClick={() => router.push('/')} className="navBtn dark:text-gray-200" />
                             <div className="relative navBtn dark:text-gray-200">
                                 <PaperAirplaneIcon onClick={() => router.push('/Chats')} className="navBtn rotate-45" />
