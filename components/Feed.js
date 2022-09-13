@@ -22,12 +22,12 @@ const Feed = () => {
               <p>3: You can check which user has liked the posts</p>
               <span className="font-medium">Profile Updates!</span>
               <p>1: You can check other users profile by clicking on usernames</p>
-              <p>2: You can check your own profile</p>
-              <p>3: You can modify you profile name and bio</p>
+              <p>2: You can follow and unfollow users</p>
+              <p>3: You can check your own profile</p>
+              <p>4: You can modify you profile name and bio</p>
               <span className="font-medium">Chat Updates!</span>
               <p>1: You can now send images in chat</p>
               <p>2: You can now delete chat and unsend texts</p>
-              <span className="font-medium">Alert!</span> You can not follow/unfollow user for now
             </div>
             
             <Stories />

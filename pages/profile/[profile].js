@@ -5,11 +5,13 @@ import Login from '../../pages/login';
 import Header from "../../components/Header";
 import Posts from "../../components/Posts";
 import ProfileSec from "../../components/ProfileSec";
+import FollowList from "../../components/FollowList";
 import { postView } from "../../atoms/postView";
 import { useEffect, useState } from "react";
-import { useRouter } from "next/router";
-import { getDoc, doc } from "firebase/firestore";
 import { db } from "../../firebase";
+import { useRouter } from "next/router";
+import { collection } from "firebase/firestore";
+import { useCollectionData } from 'react-firebase-hooks/firestore';
 
 
 const Profile = () => {
@@ -18,36 +20,36 @@ const Profile = () => {
     const [darkMode, setDarkMode] = useRecoilState(themeState);
     const [view, setView] = useRecoilState(postView);
     const [totalPosts, setTotalPosts] = useState(0);
-    const [user, setUser] = useState({});
-    const [bio, setBio] = useState('');
-    const [name, setName] = useState('');
+    const [showFollowers, setShowFollowers] = useState(false);
+    const [showFollowings, setShowFollowings] = useState(false);
     const { profile } = router?.query;
+
+    const [followers] = useCollectionData(collection(db, `profile/${profile}/followers`));
+    const [followings, loading] = useCollectionData(collection(db, `profile/${profile}/followings`));
 
     useEffect(() => {
         localStorage.setItem("theme", JSON.stringify(darkMode));
     }, [darkMode])
 
-    useEffect(() => {
-        getDoc(doc(db, `profile/${profile}`)).then((userData) => {
-            setBio(userData.data()?.bio ? userData.data()?.bio : "Bio");
-            setName(userData.data()?.fullname ? userData.data()?.fullname : "Name");
-            setUser(userData.data());
-        })
-    }, [profile])
-
     return (
         <>
             {session ? <div className={`relative ${darkMode ? "bg-gray-50 " : "dark bg-gray-900"} h-screen overflow-y-scroll scrollbar-hide flex justify-center`}>
                 <div className="max-w-6xl min-w-[380px] dark:text-gray-200 flex-1 overflow-x-scroll scrollbar-hide">
-                    {!view &&
+                    {showFollowers && <FollowList setShowFollowers={setShowFollowers} follow={true} followers={followers} router={router} />}
+                    {showFollowings && <FollowList setShowFollowings={setShowFollowings} followings={followings} router={router} />}
+                    {!showFollowers && !showFollowings && !loading &&
                         <>
-                            <Header darkMode={darkMode} setDarkMode={setDarkMode} />
-                            <ProfileSec image={profile === session?.user.username ? session?.user?.image : user?.profImg} username={profile === session?.user.username ? session?.user?.username : user?.username} posts={totalPosts} profile={profile} bio={bio} setBio={setBio} name={name} setName={setName} session={session} />
+                            {!view &&
+                                <>
+                                    <Header darkMode={darkMode} setDarkMode={setDarkMode} />
+                                    <ProfileSec posts={totalPosts} session={session} profile={profile} setShowFollowers={setShowFollowers} setShowFollowings={setShowFollowings} followers={followers} followings={followings} />
+                                </>}
+                            <Posts setTotalPosts={setTotalPosts} profile={profile} />
+                            <button disabled={!view} onClick={() => setView(false)} className={`w-full md:max-w-6xl text-white py-2 font-bold uppercase absolute bottom-0 z-50 transition duration-200 ${view ? "translate-y-0 dark:bg-blue-700" : "translate-y-10 dark:text-gray-900 dark:bg-gray-900"}`}>close view</button>
                         </>}
-                    <Posts setTotalPosts={setTotalPosts} profile={profile} />
-                    <button disabled={!view} onClick={() => setView(false)} className={`w-full md:max-w-6xl text-white py-2 font-bold uppercase absolute bottom-0 z-50 transition duration-200 ${view ? "translate-y-0 dark:bg-blue-700" : "translate-y-10 dark:text-gray-900 dark:bg-gray-900"}`}>close view</button>
                 </div>
-            </div > : <Login />}
+            </div > : <Login />
+            }
         </>
     )
 }

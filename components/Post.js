@@ -27,6 +27,10 @@ const Post = ({ id, username, userImg, img, caption, timeStamp, router }) => {
     const [hasLike, setHasLike] = useState(false);
     const [view, setView] = useRecoilState(postView);
 
+    useEffect(() => {
+        setView(false);
+    }, [router])
+
     useEffect(
         () =>
             onSnapshot(collection(db, "posts", id, "likes"),
@@ -90,7 +94,7 @@ const Post = ({ id, username, userImg, img, caption, timeStamp, router }) => {
             {router.asPath === '/' || view ?
                 <div className='bg-white border rounded-sm my-2 shadow-md dark:bg-gray-900 dark:border-gray-800'>
                     <div className='flex items-center py-2 px-[5px] shadow-md bg-blue-500 dark:bg-gray-900 text-white'>
-                        <div className='relative rounded-full h-9 w-9 border mr-3 ml-2'>
+                        <div className='relative rounded-full h-9 w-9 mr-3 ml-2'>
                             <Image
                                 loading='eager'
                                 layout='fill'

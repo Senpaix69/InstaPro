@@ -96,8 +96,7 @@ const CommentList = () => {
                                     loading="eager"
                                     alt="image"
                                     src={post.profImg}
-                                    height='40px'
-                                    width='40px'
+                                    layout="fill"
                                     className="rounded-full"
                                 />}
                             </div>
@@ -120,8 +119,7 @@ const CommentList = () => {
                                                     loading="eager"
                                                     alt="image"
                                                     src={comment.data().userImg}
-                                                    height='40px'
-                                                    width='40px'
+                                                    layout="fill"
                                                     className="rounded-full"
                                                 />}
                                             </div>
@@ -143,13 +141,12 @@ const CommentList = () => {
                                         <div key={index} className="ml-14 mt-5">
                                             <div className="w-full flex relative">
                                                 <div className="absolute">
-                                                    <div className="relative h-9 w-9">
+                                                    <div className="relative h-7 w-7">
                                                         {comment.data().userImg && <Image
                                                             loading="eager"
                                                             alt="image"
                                                             src={subCom.userImg}
-                                                            height='35px'
-                                                            width='35px'
+                                                            layout="fill"
                                                             className="rounded-full"
                                                         />}
                                                     </div>
