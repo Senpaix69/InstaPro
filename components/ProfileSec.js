@@ -76,7 +76,7 @@ const ProfileSec = ({ posts, session, profile, setShowFollowers, setShowFollowin
                         className="rounded-full"
                     /> :
                         <Image
-                            src={user?.profImg ? user.profImg : "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTagSIpNvrU1N3lvzrWDoSf5oJzABckJ3HbMw&usqp=CAU"}
+                            src={user?.profImg}
                             layout="fill"
                             loading="eager"
                             alt="profile"
