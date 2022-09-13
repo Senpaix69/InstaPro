@@ -29,6 +29,7 @@ const Feed = () => {
               <p>2: You can now delete chat and unsend texts</p>
               <span className="font-medium">Alert!</span> You can not follow/unfollow user for now
             </div>
+            
             <Stories />
             <Posts />
             <Notification />
