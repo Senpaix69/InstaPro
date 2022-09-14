@@ -2,7 +2,7 @@ import { signIn } from "next-auth/react";
 
 const Login = () => {
     return (
-        <div className="flex flex-col m-auto col-span-3 items-center mt-20 shadow-lg rounded-lg w-full md:w-1/2 h-screen p-20 dark:bg-gray-900">
+        <div className="absolute flex flex-col m-auto col-span-3 items-center justify-center mt-20 shadow-lg rounded-lg w-full md:w-1/2 h-screen p-20 dark:bg-gray-900">
             <h1 className="dark:text-white italic flex items-center font-bold font-serif text-[50px]">
                 Instagram
             </h1>
