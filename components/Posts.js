@@ -9,7 +9,7 @@ import { postView } from "../atoms/postView";
 import { useRecoilState } from "recoil";
 
 const Posts = ({ setTotalPosts, profile }) => {
-    const [posts, setPosts] = useState([]);
+    const [posts, setPosts] = useState(undefined);
     const { data: session } = useSession();
     const router = useRouter();
     const [view] = useRecoilState(postView);
@@ -36,7 +36,7 @@ const Posts = ({ setTotalPosts, profile }) => {
 
     return (
         <div className={`${router.asPath !== '/' && !view ? `grid ${posts?.length ? "grid-cols-3" : "grid-cols-1"} place-items-center md:flex md:flex-wrap p-3 justify-left` : ""}`}>
-            {posts?.length === 0 ? <Loading /> :
+            {posts === undefined ? <Loading /> :
                 posts?.map((post) => (
                     <Post
                         key={post.id}
@@ -49,6 +49,8 @@ const Posts = ({ setTotalPosts, profile }) => {
                         router={router}
                     />
                 ))}
+                {posts?.length === 0 && 
+                <h1 className="font-bold mt-[30%] text-gray-400">No posts yet</h1>}
         </div>
     )
 }

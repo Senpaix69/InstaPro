@@ -24,7 +24,7 @@ const CommentList = () => {
 
     const postComment = async (e) => {
         e.preventDefault();
-        if (subCommentRef?.id && comment?.indexOf("@") !== -1) {
+        if (subCommentRef?.id) {
             addSubComment(subCommentRef.id, subCommentRef.data()?.subcomments);
         } else {
             const commentToSend = comment;
@@ -55,9 +55,12 @@ const CommentList = () => {
         setSubCommentRef({});
     }
 
-    const triggerUsername = (comment, username) => {
-        setComment("@" + username + " ");
+    const triggerUsername = (comment) => {
         setSubCommentRef(comment);
+    }
+
+    const cancelSubComment = () => {
+        setSubCommentRef({});
     }
 
     const deleteComment = async (id) => {
@@ -134,7 +137,7 @@ const CommentList = () => {
                                     </div>
                                     <div className="mt-1 text-xs text-gray-400 px-12 flex space-x-3 font-semibold">
                                         <Moment fromNow>{comment.data().timeStamp?.toDate()}</Moment>
-                                        <button onClick={() => triggerUsername(comment, comment.data().username)}>Reply</button>
+                                        <button onClick={() => triggerUsername(comment)}>Reply</button>
                                         {comment.data().username === session?.user.username && <button onClick={() => deleteComment(comment.id)}>Delete</button>}
                                     </div>
                                     {comment.data().subcomments?.map((subCom, index) => (
@@ -171,8 +174,12 @@ const CommentList = () => {
                 </section>
 
                 {/* comments bottom */}
-                <section>
-                    <form className='flex items-center py-2 px-4 sticky bottom-0 z-50 bg-white dark:bg-gray-900 w-full md:max-w-3xl'>
+                <section className="py-2 px-4">
+                    {subCommentRef?.id && <div className="text-md flex justify-between text-gray-400 font-medium my-2">
+                        replying to @{subCommentRef.data().username}
+                        <button onClick={cancelSubComment}>cancel</button>
+                    </div>}
+                    <form className='flex items-center sticky bottom-0 z-50 bg-white dark:bg-gray-900 w-full md:max-w-3xl'>
                         <EmojiHappyIcon className='h-7 dark:text-gray-200' />
                         <input value={comment} onChange={(e) => setComment(e.target.value)} className='border-none flex-1 outline-none focus:ring-0 dark:bg-transparent dark:placeholder:text-gray-400 dark:text-white' placeholder='add a comment...' type='text' />
                         <button type='submit' disabled={!comment.trim()} onClick={postComment} className='font-semibold text-blue-500 disabled:text-gray-400'>Post</button>
