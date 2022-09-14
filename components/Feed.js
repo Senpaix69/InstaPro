@@ -18,7 +18,7 @@ const Feed = () => {
         <>
           <section className="col-span-2">
             {update &&
-              <div className="m-2 p-4 mb-4 text-sm text-blue-700 bg-blue-100 rounded-lg dark:bg-blue-200 dark:text-blue-800">
+              <div className="m-2 p-4 mb-4 text-sm text-blue-700 bg-blue-100 rounded-lg dark:bg-gray-900 dark:text-gray-300">
                 <span className="font-bold">CAUTION!</span> <span className="font-bold  text-red-500">Isbah BirthDay: 30th September</span>
                 <p className="font-medium">Feed Updates!</p>
                 <p>1: You can now post comments and reply to a comment</p>
@@ -32,7 +32,7 @@ const Feed = () => {
                 <span className="font-medium">Chat Updates!</span>
                 <p>1: You can now send images in chat</p>
                 <p>2: You can now delete chat and unsend texts</p>
-                <button onClick={() => setUpdate(false)} className="w-full bg-blue-400 rounded-md text-md py-1 shadow-md mt-6 text-white font-medium">close</button>
+                <button onClick={() => setUpdate(false)} className="w-full bg-blue-400 rounded-md text-md py-1 shadow-md mt-6 text-white dark:bg-gray-600 font-medium">close</button>
               </div>}
 
             <Stories />

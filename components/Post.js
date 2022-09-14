@@ -153,14 +153,15 @@ const Post = ({ id, username, userImg, img, caption, timeStamp, router }) => {
                     </form>
                 </div>
                 :
-                <div className='m-[1.5px] bg-blue-200 dark:bg-black'>
-                    <button onClick={() => setView(true)} className='relative h-28 w-28 md:h-[155px] md:w-[155px]'>
+                <div className='bg-blue-200 dark:bg-black rounded-md m-[1.5px]'>
+                    <button onClick={() => setView(true)} className='relative h-36 w-36 md:h-[155px] md:w-[155px] rounded-md'>
                         <Image
                             src={img}
                             layout='fill'
                             objectFit='cover'
                             loading='eager'
                             alt='image'
+                            className='rounded-md'
                         />
                     </button>
                 </div>

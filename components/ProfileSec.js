@@ -86,15 +86,15 @@ const ProfileSec = ({ posts, session, profile, setShowFollowers, setShowFollowin
                 <div className="absolute top-0 right-0 flex w-64 xl:w-80 ml-10 justify-between md:max-w-2xl mt-5 px-4 text-lg">
                     <button className="flex flex-col items-center">
                         <p className="font-bold">{posts}</p>
-                        <p className="text-sm mt-1 text-gray-400">Posts</p>
+                        <p className="text-sm mt-1 text-gray-200">Posts</p>
                     </button>
                     <button onClick={() => setShowFollowers(true)} className="flex flex-col items-center">
                         <p className="font-bold">{followers ? followers.length : 0}</p>
-                        <p className="text-sm mt-1 text-gray-400">Followers</p>
+                        <p className="text-sm mt-1 text-gray-200">Followers</p>
                     </button>
                     <button onClick={() => setShowFollowings(true)} className="flex flex-col items-center">
                         <p className="font-bold">{followings ? followings.length : 0}</p>
-                        <p className="text-sm mt-1 text-gray-400">Followings</p>
+                        <p className="text-sm mt-1 text-gray-200">Followings</p>
                     </button>
                     {profile !== session.user.username && followings && <div className="bg-gray-100 border border-gray-700 dark:bg-black text-sm text-center w-[226px] xl:w-[290px] py-1 rounded-md absolute -bottom-10 font-semibold">
                         <span className={`${followYou ? "text-green-500" : "text-red-500"}`}>{followYou ? "Follows You" : "Not Follows You"}</span>
@@ -106,12 +106,12 @@ const ProfileSec = ({ posts, session, profile, setShowFollowers, setShowFollowin
                 <div className="mt-1 flex flex-col md:items-center">
                     <h1 className="font-semibold text-sm">{profile === session?.user.username ? session?.user?.username : user?.username}</h1>
                     <h1 className="font-semibold text-lg"><span className="text-gray-400">~</span> {name}</h1>
-                    <p className="text-sm">{bio}</p>
+                    <p className="text-sm text-gray-200">{bio}</p>
                 </div>}
 
             {(profile === session.user.username) ?
-                <button onClick={() => setEditProf(true)} hidden={editProf} className="w-full mt-8 py-1 dark:bg-black border border-gray-700 rounded-md dark:hover:bg-gray-600 bg-blue-500 text-white font-semibold shadow-sm">Edit Profile</button> :
-                <button onClick={!hasFollowed ? followUser : unFollowUser} className="w-full mt-8 py-1 dark:bg-black border border-gray-700 rounded-md dark:hover:bg-gray-600 bg-blue-500 text-white font-semibold shadow-sm">{hasFollowed ? "Unfollow" : "Follow"}</button>}
+                <button onClick={() => setEditProf(true)} hidden={editProf} className="w-full max-w-xl mx-auto mt-8 py-1 dark:bg-gray-700 border border-gray-700 rounded-2xl dark:hover:bg-gray-600 bg-blue-500 text-white font-semibold shadow-sm">Edit Profile</button> :
+                <button onClick={!hasFollowed ? followUser : unFollowUser} className="w-full max-w-xl mt-8 mx-auto py-1 dark:bg-black border border-gray-700 rounded-md dark:hover:bg-gray-600 bg-blue-500 text-white font-semibold shadow-sm">{hasFollowed ? "Unfollow" : "Follow"}</button>}
 
             {editProf &&
                 <div className="mt-5 w-full md:max-w-6xl relative">
