@@ -4,13 +4,11 @@ import { db } from "../firebase";
 import Post from "./Post";
 import Loading from './Loading';
 import { useRouter } from "next/router";
-import { useSession } from "next-auth/react";
 import { postView } from "../atoms/postView";
 import { useRecoilState } from "recoil";
 
 const Posts = ({ setTotalPosts, profile }) => {
     const [posts, setPosts] = useState(undefined);
-    const { data: session } = useSession();
     const router = useRouter();
     const [view] = useRecoilState(postView);
 
