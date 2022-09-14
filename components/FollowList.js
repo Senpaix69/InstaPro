@@ -44,7 +44,7 @@ const FollowList = ({ setShowFollowers, setShowFollowings, follow, followers, fo
                                     className="rounded-full"
                                 />}
                                 <div className="ml-3">
-                                    <h1 onClick={() => router.push(`/profile/${user.username}`)} className="font-bold mt-1 cursor-pointer">{user.username}</h1>
+                                    <button onClick={() => router.push(`/profile/${user.username}`)} className="font-bold mt-1 cursor-pointer">{user.username}</button>
                                     {user.timeStamp &&
                                         <div className="flex items-center space-x-1">
                                             <span className="text-gray-400 text-xs">Followed: </span>

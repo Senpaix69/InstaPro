@@ -25,7 +25,7 @@ export default function Example({ session, setOpen, signOut, router, darkMode, s
             >
                 <Menu.Items className="origin-top-right absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none dark:bg-black font-semibold">
                     <div>
-                        {router.asPath !== '/' &&
+                        {router.pathname !== '/' &&
                             <Menu.Item>
                                 {({ active }) => (
                                     <button
@@ -42,7 +42,7 @@ export default function Example({ session, setOpen, signOut, router, darkMode, s
                                     </button>
                                 )}
                             </Menu.Item>}
-                        {router.asPath !== `/profile/${session?.user?.username}` &&
+                        {router.pathname !== `/profile/${session?.user?.username}` &&
                             <Menu.Item>
                                 {({ active }) => (
                                     <button
@@ -59,7 +59,7 @@ export default function Example({ session, setOpen, signOut, router, darkMode, s
                                     </button>
                                 )}
                             </Menu.Item>}
-                        {router.asPath !== '/Chats' &&
+                        {router.pathname !== '/Chats' && !router.pathname.includes("/profile") &&
                             <Menu.Item>
                                 {({ active }) => (
                                     <button
@@ -76,7 +76,7 @@ export default function Example({ session, setOpen, signOut, router, darkMode, s
                                     </button>
                                 )}
                             </Menu.Item>}
-                        {router.asPath !== '/Chats' &&
+                        {router.pathname !== '/Chats' &&
                             <Menu.Item>
                                 {({ active }) => (
                                     <button
@@ -111,7 +111,7 @@ export default function Example({ session, setOpen, signOut, router, darkMode, s
                                 </a>
                             )}
                         </Menu.Item>
-                        {router.asPath !== '/Chats' &&
+                        {router.pathname !== '/Chats' &&
                             <Menu.Item>
                                 {({ active }) => (
                                     <button
@@ -128,7 +128,7 @@ export default function Example({ session, setOpen, signOut, router, darkMode, s
                                     </button>
                                 )}
                             </Menu.Item>}
-                        {router.asPath !== '/Chats' &&
+                        {router.pathname !== '/Chats' &&
                             <Menu.Item>
                                 {({ active }) => (
                                     <button
