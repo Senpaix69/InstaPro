@@ -94,15 +94,17 @@ const Post = ({ id, username, userImg, img, caption, timeStamp, router }) => {
             {router.asPath === '/' || view ?
                 <div className='bg-white border rounded-sm my-2 shadow-md dark:bg-gray-900 dark:border-gray-800'>
                     <div className='flex items-center py-2 px-[5px] shadow-md bg-blue-500 dark:bg-gray-900 text-white'>
-                        <div className='relative rounded-full h-9 w-9 mr-3 ml-2'>
-                            <Image
-                                loading='eager'
-                                layout='fill'
-                                className='rounded-full'
-                                src={userImg} alt='img' />
-                            <span className="top-0 -right-1 absolute  w-3 h-3 bg-green-400 border-2 border-white dark:border-gray-800 rounded-full"></span>
+                        <div className='flex flex-1'>
+                            <div className='relative rounded-full h-9 w-9 mr-3 ml-2'>
+                                <Image
+                                    loading='eager'
+                                    layout='fill'
+                                    className='rounded-full'
+                                    src={userImg} alt='img' />
+                                <span className="top-0 -right-1 absolute  w-3 h-3 bg-green-400 border-2 border-white dark:border-gray-800 rounded-full"></span>
+                            </div>
+                            <button onClick={() => router.push(`/profile/${username}`)} className='font-bold dark:text-gray-200 cursor-pointer w-auto'> {username} </button>
                         </div>
-                        <p onClick={() => router.push(`/profile/${username}`)} className='flex-1 font-bold dark:text-gray-200 cursor-pointer'> {username} </p>
                         <Moment fromNow className='mr-2 text-[10px]'>
                             {timeStamp?.toDate()}
                         </Moment>
@@ -134,7 +136,7 @@ const Post = ({ id, username, userImg, img, caption, timeStamp, router }) => {
                         {likes.length > 0 && (
                             <button onClick={() => router.push(`/like/${id}`)} className='font-bold mb-1 flex'>{likes.length} {likes.length === 1 ? "like" : "likes"}</button>
                         )}
-                        <span className='font-bold mr-1'>{username} </span>
+                        <button onClick={() => router.push(`/profile/${username}`)}className='font-bold mr-1'>{username} </button>
                         <span className='text-sm'>{caption}</span>
                     </p>
 
@@ -151,7 +153,7 @@ const Post = ({ id, username, userImg, img, caption, timeStamp, router }) => {
                     </form>
                 </div>
                 :
-                <div className='mx-[1.5px] bg-blue-200 dark:bg-black'>
+                <div className='m-[1.5px] bg-blue-200 dark:bg-black'>
                     <button onClick={() => setView(true)} className='relative h-28 w-28 md:h-[155px] md:w-[155px]'>
                         <Image
                             src={img}

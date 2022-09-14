@@ -3,14 +3,8 @@ import { useEffect, useState } from "react";
 import Moment from "react-moment";
 import Image from "next/image";
 
-const FollowList = ({ setShowFollowers, setShowFollowings, follow, followers, followings, router }) => {
+const FollowList = ({ setShowFollowers, setShowFollowings, follow, followers, followings, router, currUsername }) => {
     const [show, setShow] = useState([]);
-
-    const navigate = (user) => {
-        router.push(`/profile/${user}`)
-        followings ? setShowFollowings(false) : setShowFollowers(false);
-    }
-
     useEffect(() => {
         if (followers) {
             setShow([...followers])
@@ -18,7 +12,7 @@ const FollowList = ({ setShowFollowers, setShowFollowings, follow, followers, fo
             setShow([...followings])
         }
     }, [followers, followings])
-    console.log(show);
+
     return (
         <div>
             {/* Followers header */}
@@ -50,7 +44,7 @@ const FollowList = ({ setShowFollowers, setShowFollowings, follow, followers, fo
                                     className="rounded-full"
                                 />}
                                 <div className="ml-3">
-                                    <h1 onClick={() => navigate(user.username)} className="font-bold mt-1 cursor-pointer">{user.username}</h1>
+                                    <h1 onClick={() => router.push(`/profile/${user.username}`)} className="font-bold mt-1 cursor-pointer">{user.username}</h1>
                                     {user.timeStamp &&
                                         <div className="flex items-center space-x-1">
                                             <span className="text-gray-400 text-xs">Followed: </span>
@@ -58,7 +52,8 @@ const FollowList = ({ setShowFollowers, setShowFollowings, follow, followers, fo
                                         </div>}
                                 </div>
                             </div>
-                            <button className="bg-blue-500 py-1 px-6 text-sm font-semibold rounded-md text-white">Follow</button>
+                            {user.username !== currUsername && <button onClick={() => router.push(`/profile/${user.username}`)} className="bg-slate-600 py-1 px-6 text-xs font-semibold rounded-md text-white">
+                                Profile</button>}
                         </div>
                     ))}
                 </div>

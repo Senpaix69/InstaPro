@@ -10,7 +10,7 @@ import { postView } from "../../atoms/postView";
 import { useEffect, useState } from "react";
 import { db } from "../../firebase";
 import { useRouter } from "next/router";
-import { collection } from "firebase/firestore";
+import { collection, query, orderBy } from "firebase/firestore";
 import { useCollectionData } from 'react-firebase-hooks/firestore';
 
 
@@ -24,19 +24,24 @@ const Profile = () => {
     const [showFollowings, setShowFollowings] = useState(false);
     const { profile } = router?.query;
 
-    const [followers] = useCollectionData(collection(db, `profile/${profile}/followers`));
-    const [followings, loading] = useCollectionData(collection(db, `profile/${profile}/followings`));
+    const [followers] = useCollectionData(query(collection(db, `profile/${profile}/followers`), orderBy("timeStamp", "desc")));
+    const [followings, loading] = useCollectionData(query(collection(db, `profile/${profile}/followings`), orderBy("timeStamp", "desc")));
+
+    useEffect(() => {
+        followings ? setShowFollowings(false) : setShowFollowers(false);
+    }, [followings])
 
     useEffect(() => {
         localStorage.setItem("theme", JSON.stringify(darkMode));
+
     }, [darkMode])
 
     return (
         <>
             {session ? <div className={`relative ${darkMode ? "bg-gray-50 " : "dark bg-gray-900"} h-screen overflow-y-scroll scrollbar-hide flex justify-center`}>
                 <div className="max-w-6xl min-w-[380px] dark:text-gray-200 flex-1 overflow-x-scroll scrollbar-hide">
-                    {showFollowers && <FollowList setShowFollowers={setShowFollowers} follow={true} followers={followers} router={router} />}
-                    {showFollowings && <FollowList setShowFollowings={setShowFollowings} followings={followings} router={router} />}
+                    {showFollowers && <FollowList setShowFollowers={setShowFollowers} follow={true} followers={followers} router={router} currUsername={session?.user.username} />}
+                    {showFollowings && <FollowList setShowFollowings={setShowFollowings} followings={followings} router={router} currUsername={session?.user.username} />}
                     {!showFollowers && !showFollowings && !loading &&
                         <>
                             {!view &&

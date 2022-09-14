@@ -9,9 +9,11 @@ import Moment from "react-moment";
 import { ArrowLeftIcon } from "@heroicons/react/solid";
 import { SearchIcon } from "@heroicons/react/outline";
 import { collection, query, orderBy } from "firebase/firestore";
+import { useSession } from "next-auth/react";
 
 const LikeList = () => {
     const router = useRouter();
+    const { data: session } = useSession();
     const { postid } = router.query;
     const [likes, loading] = useCollectionData(query(collection(db, `posts/${postid}/likes`), orderBy("timeStamp", 'desc')));
     const [darkTheme] = useRecoilState(themeState);
@@ -35,7 +37,7 @@ const LikeList = () => {
                     </div>
                     <div className="mx-3 mt-5 flex justify-between items-center mb-2">
                         <h1 className="font-semibold">LIKED BY</h1>
-                        <p className="text-gray-400 text-sm">{likes?.length} {likes?.length === 1 ? "Like" : "Likes"}</p>
+                        {likes?.length && <p className="text-gray-400 text-sm">{likes.length} {likes.length === 1 ? "Like" : "Likes"}</p>}
                     </div>
                     <div className="mx-3 border-b-2 border-gray-500"></div>
                 </section>
@@ -60,7 +62,8 @@ const LikeList = () => {
                                                 <Moment className="text-gray-400 text-xs align-text-top" fromNow>{like.timeStamp.toDate()}</Moment>}
                                         </div>
                                     </div>
-                                    <button className="bg-blue-500 py-1 px-6 text-sm font-semibold rounded-md text-white">Follow</button>
+                                    {like.username !== session?.user.username && <button onClick={() => router.push(`/profile/${like.username}`)} className="bg-slate-600 py-1 px-6 text-xs font-semibold rounded-md text-white">
+                                        Profile</button>}
                                 </div>
                             ))}
                         </div>}
