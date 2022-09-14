@@ -42,7 +42,7 @@ export default function Example({ session, setOpen, signOut, router, darkMode, s
                                     </button>
                                 )}
                             </Menu.Item>}
-                        {router.pathname !== `/profile/${session?.user?.username}` &&
+                        {router.asPath !== `/profile/${session?.user?.username}` &&
                             <Menu.Item>
                                 {({ active }) => (
                                     <button
