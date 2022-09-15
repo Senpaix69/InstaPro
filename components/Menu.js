@@ -1,75 +1,66 @@
-import MiniProfile from "./MiniProfile";
-import Posts from "./Posts";
-import Stories from "./Stories";
-import Suggestions from "./Suggestions";
-import { useSession } from 'next-auth/react';
-import Login from "../pages/login";
-import Notification from "./Notification";
-import { showUpdate } from '../atoms/showUpdate';
-import { useRecoilState } from "recoil";
-import { useEffect, useState } from "react";
+import { HomeIcon, PlusCircleIcon, ChatAlt2Icon, MoonIcon, SunIcon, SearchIcon, ArrowCircleRightIcon } from '@heroicons/react/solid';
+import { HomeIcon as AHomeIcon, PlusCircleIcon as APlusCircleIcon, ChatAlt2Icon as AChatAlt2Icon, SearchIcon as ASearchIcon } from '@heroicons/react/outline'
+import Image from 'next/image';
+import { useState } from 'react';
 
-const Feed = () => {
-  const { data: session } = useSession();
-  const [update, setUpdate] = useState(true);
-  const [timer, setTimer] = useState(false);
-  const [showNotification, setShowNotification] = useState(false);
+const Menu = ({ session, setOpen, signOut, router, darkMode, setDarkMode, open }) => {
+    const [active, setActive] = useState("");
 
-  useEffect(() => {
-    if (!update) {
-      setTimer(false);
-      setTimeout(() => {
-        setShowNotification(false);
-      }, 900)
-    } else {
-      setTimeout(() => {
-        setShowNotification(true);
-        setTimeout(() => {
-          setTimer(true)
-        }, 300)
-      }, 3000)
+    useState(() => {
+        setActive(router.pathname);
+    }, [router])
+
+    const handleAdd = () => {
+        router.replace("/");
+        setOpen(true);
     }
-  }, [update])
 
-  return (
-    <main className="grid grid-cols-1 max-w-6xl xl:grid-cols-3 mx-auto dark:bg-black scroll-smooth">
-      {session ? (
-        <>
-          <section className="col-span-2">
-            <div hidden={!showNotification} className={`m-2 p-4 text-sm text-blue-700 bg-blue-100 rounded-lg dark:bg-gray-900 scroll-smooth dark:text-gray-300 transition-all duration-1000 ${timer ? "" : "-mt-[380px] -translate-y-full"}`}>
-              <span className="font-bold">CAUTION!</span> <span className="font-bold  text-red-500">Isbah BirthDay: 30th September</span>
-              <p className="font-medium">Feed Updates!</p>
-              <p>1: You can now post comments and reply to a comment</p>
-              <p>2: You can delete comments and also delete your sub-comments</p>
-              <p>3: You can check which user has liked the posts</p>
-              <span className="font-medium">Profile Updates!</span>
-              <p>1: You can check other users profile by clicking on usernames</p>
-              <p>2: You can follow and unfollow users</p>
-              <p>3: You can check your own profile</p>
-              <p>4: You can modify you profile name and bio</p>
-              <span className="font-medium">Chat Updates!</span>
-              <p>1: You can now send images in chat</p>
-              <p>2: You can now delete chat and unsend texts</p>
-              <button onClick={() => setUpdate(false)} className="w-full bg-blue-400 rounded-md text-md py-1 shadow-md mt-6 text-white dark:bg-gray-600 font-medium">close</button>
+    return (
+        <div className='xl:hidden max-w-6xl mx-auto'>
+            <div className="flex items-center space-x-2">
+                <div onClick={() => setDarkMode(!darkMode)}>
+                    {darkMode ? <MoonIcon className='h-8 w-8 my-2 btn' /> :
+                        <SunIcon className='h-8 w-8 my-2 btn' />}
+                </div>
+                {router.pathname.includes("/profile") &&
+                    <ArrowCircleRightIcon onClick={signOut} className='h-8 w-8 my-2 btn' />}
             </div>
-
-            <Stories />
-            <Posts />
-            <Notification />
-          </section>
-
-          <section className="hidden xl:inline-grid md:col-span-1">
-            <div className="fixed top-20">
-              <MiniProfile />
-              <Suggestions />
+            <div className=' bg-white text-black dark:bg-gray-900 dark:text-gray-100 fixed bottom-0 w-full left-0 z-50 border-t border-gray-600'>
+                <ul className='flex justify-between py-3 px-5'>
+                    <li onClick={() => router.push("/")}>
+                        {active === "/" ?
+                            <HomeIcon className='h-7 w-7 btn' /> :
+                            <AHomeIcon className='h-7 w-7 btn' />}
+                    </li>
+                    <li>
+                        {active.includes("Search") ?
+                            <SearchIcon className='h-7 w-7 btn' /> :
+                            <ASearchIcon className='h-7 w-7 btn' />}
+                    </li>
+                    <li onClick={handleAdd}>
+                        {open ?
+                            <PlusCircleIcon className='h-7 w-7 btn' /> :
+                            <APlusCircleIcon className='h-7 w-7 btn' />}
+                    </li>
+                    <li onClick={() => router.push("/Chats")}>
+                        {active.includes("Chat") ?
+                            <ChatAlt2Icon className='h-7 w-7 btn' /> :
+                            <AChatAlt2Icon className='h-7 w-7 btn' />}
+                    </li>
+                    <li onClick={() => router.push(`/profile/${session?.user.username}`)}>
+                        <div className="relative h-7 w-7 rounded-full cursor-pointer btn">
+                            <Image src={session?.user?.image}
+                                alt='Profile Pic'
+                                loading='eager'
+                                layout='fill'
+                                className='rounded-full'
+                            />
+                        </div>
+                    </li>
+                </ul>
             </div>
-          </section>
-        </>
-      ) : (
-        <Login />
-      )}
-    </main >
-  )
+        </div>
+    )
 }
 
-export default Feed;
+export default Menu;

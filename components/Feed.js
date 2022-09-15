@@ -11,7 +11,7 @@ import { useEffect, useState } from "react";
 
 const Feed = () => {
   const { data: session } = useSession();
-  const [update, setUpdate] = useState(true);
+  const [update, setUpdate] = useRecoilState(showUpdate);
   const [timer, setTimer] = useState(false);
   const [showNotification, setShowNotification] = useState(false);
 
