@@ -25,7 +25,7 @@ const Menu = ({ session, setOpen, signOut, router, darkMode, setDarkMode, open }
                 {router.pathname.includes("/profile") &&
                     <ArrowCircleRightIcon onClick={signOut} className='h-8 w-8 my-2 btn' />}
             </div>
-            <div className=' bg-white text-black dark:bg-gray-900 dark:text-gray-100 fixed bottom-0 w-full left-0 z-50 border-t border-gray-600'>
+            <div className=' bg-white text-black dark:bg-gray-900 dark:text-gray-100 fixed bottom-0 w-full left-0 z-40 border-t border-gray-600'>
                 <ul className='flex justify-between py-3 px-5'>
                     <li onClick={() => router.push("/")}>
                         {active === "/" ?
