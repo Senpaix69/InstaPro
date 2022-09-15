@@ -45,7 +45,7 @@ const Profile = () => {
                                     <ProfileSec posts={totalPosts} session={session} profile={profile} setShowFollowers={setShowFollowers} setShowFollowings={setShowFollowings} followers={followers} followings={followings} />
                                 </>}
                             <Posts setTotalPosts={setTotalPosts} profile={profile} />
-                            <button disabled={!view} onClick={() => setView(false)} className={`w-full md:max-w-6xl text-white py-2 font-bold uppercase absolute bottom-0 z-50 transition duration-200 ${view ? "translate-y-0 dark:bg-blue-700" : "translate-y-10 dark:text-gray-900 dark:bg-gray-900"}`}>close view</button>
+                            <button disabled={!view} onClick={() => setView(false)} className={`w-full md:max-w-6xl text-white py-2 font-bold uppercase absolute bottom-0 z-40 transition duration-200 ${view ? "translate-y-0 dark:bg-blue-700" : "translate-y-10 dark:text-gray-900 dark:bg-gray-900"}`}>close view</button>
                         </>}
                 </div>
             </div > : <Login />

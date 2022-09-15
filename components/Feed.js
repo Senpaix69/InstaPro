@@ -11,25 +11,32 @@ import { useEffect, useState } from "react";
 
 const Feed = () => {
   const { data: session } = useSession();
-  const [update, setUpdate] = useRecoilState(showUpdate);
+  const [update, setUpdate] = useState(true);
   const [timer, setTimer] = useState(false);
+  const [showNotification, setShowNotification] = useState(false);
 
   useEffect(() => {
     if (!update) {
       setTimer(false);
+      setTimeout(() => {
+        setShowNotification(false);
+      }, 900)
     } else {
       setTimeout(() => {
-        setTimer(true)
+        setShowNotification(true);
+        setTimeout(() => {
+          setTimer(true)
+        }, 300)
       }, 3000)
     }
   }, [update])
 
   return (
-    <main className="grid grid-cols-1 max-w-6xl xl:grid-cols-3 mx-auto dark:bg-black">
+    <main className="grid grid-cols-1 max-w-6xl xl:grid-cols-3 mx-auto dark:bg-black scroll-smooth">
       {session ? (
         <>
           <section className="col-span-2">
-            <div className={`m-2 mb-4 p-4 text-sm text-blue-700 bg-blue-100 rounded-lg dark:bg-gray-900 dark:text-gray-300 transition-all duration-700 scroll-smooth ${timer ? "mt-4" : "-mt-[355px]"}`}>
+            <div hidden={!showNotification} className={`m-2 p-4 text-sm text-blue-700 bg-blue-100 rounded-lg dark:bg-gray-900 scroll-smooth dark:text-gray-300 transition-all duration-1000 ${timer ? "" : "-mt-[380px] -translate-y-full"}`}>
               <span className="font-bold">CAUTION!</span> <span className="font-bold  text-red-500">Isbah BirthDay: 30th September</span>
               <p className="font-medium">Feed Updates!</p>
               <p>1: You can now post comments and reply to a comment</p>
