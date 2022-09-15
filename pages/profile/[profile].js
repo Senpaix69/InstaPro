@@ -31,11 +31,6 @@ const Profile = () => {
         followings ? setShowFollowings(false) : setShowFollowers(false);
     }, [followings])
 
-    useEffect(() => {
-        localStorage.setItem("theme", JSON.stringify(darkMode));
-
-    }, [darkMode])
-
     return (
         <>
             {session ? <div className={`relative ${darkMode ? "bg-gray-50 " : "dark bg-gray-900"} h-screen overflow-y-scroll scrollbar-hide flex justify-center`}>

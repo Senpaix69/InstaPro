@@ -13,21 +13,14 @@ const Feed = () => {
   const { data: session } = useSession();
   const [update, setUpdate] = useRecoilState(showUpdate);
   const [timer, setTimer] = useState(false);
-  const [showNotification, setShowNotification] = useState(false);
 
   useEffect(() => {
     if (!update) {
       setTimer(false);
-      setTimeout(() => {
-        setShowNotification(false);
-      }, 500)
     } else {
       setTimeout(() => {
-        setShowNotification(true);
-        setTimeout(() => {
-          setTimer(true)
-        }, 300)
-      }, 500)
+        setTimer(true)
+      }, 3000)
     }
   }, [update])
 
@@ -36,7 +29,7 @@ const Feed = () => {
       {session ? (
         <>
           <section className="col-span-2">
-            <div hidden={!showNotification} className={`m-2 p-4 mb-4 text-sm text-blue-700 bg-blue-100 rounded-lg dark:bg-gray-900 dark:text-gray-300 transition-all duration-700 ${timer ? "translate-x-0" : "-translate-x-full"}`}>
+            <div className={`m-2 mb-4 p-4 text-sm text-blue-700 bg-blue-100 rounded-lg dark:bg-gray-900 dark:text-gray-300 transition-all duration-700 scroll-smooth ${timer ? "mt-4" : "-mt-[355px]"}`}>
               <span className="font-bold">CAUTION!</span> <span className="font-bold  text-red-500">Isbah BirthDay: 30th September</span>
               <p className="font-medium">Feed Updates!</p>
               <p>1: You can now post comments and reply to a comment</p>

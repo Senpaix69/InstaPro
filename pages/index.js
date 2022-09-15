@@ -19,10 +19,6 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    localStorage.setItem('theme', JSON.stringify(darkMode))
-  }, [darkMode]);
-
-  useEffect(() => {
     const addUser = async () => {
       await setDoc(doc(db, "users", session.user.username), {
         username: session.user.username,

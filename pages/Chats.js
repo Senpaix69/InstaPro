@@ -82,7 +82,7 @@ const Chats = () => {
     return (
         <div className={`h-screen overflow-y-scroll scrollbar-hide ${darkMode ? "bg-gray-200" : "dark bg-gray-900"}`}>
             <div className='flex flex-col justify-between max-w-6xl md:mx-5 lg:mx-auto'>
-                <Header />
+                <Header setDarkMode={setDarkMode} />
                 <div className='bg-gray-100 flex justify-center dark:text-gray-200 dark:bg-gray-900 h-screen'>
                     <div className='flex flex-col shadow-md md:w-[700px] w-full'>
                         <button className='w-full flex text-lg justify-center items-center p-3 mb-2 shadow-md'>

@@ -6,6 +6,7 @@ import {
 import { HomeIcon } from '@heroicons/react/solid';
 import { useSession, signOut } from "next-auth/react";
 import { useRouter } from "next/router";
+import { useEffect } from 'react';
 import { useRecoilState } from 'recoil';
 import { modelState } from "../atoms/modelAtom";
 import Menu from './Menu';
@@ -15,12 +16,17 @@ const Header = ({ darkMode, setDarkMode }) => {
     const { data: session } = useSession();
     const [open, setOpen] = useRecoilState(modelState);
     const router = useRouter();
+
+    useEffect(() => {
+        localStorage.setItem("theme", JSON.stringify(darkMode));
+    }, [darkMode])
+
     return (
         <div className={`shadow-sm sticky top-0 z-50 text-white`}>
             {session && (
                 <div className="flex bg-blue-500 justify-between max-w-6xl px-5 lg:mx-auto dark:shadow-gray-600 dark:border-gray-500 dark:bg-gray-900 py-1">
                     {/* Header */}
-                    <h1 className="dark:text-white italic flex items-center font-bold font-serif text-[20px]">
+                    <h1 className="dark:text-white flex items-center font-semibold italic font-sans text-[20px]">
                         InstaPro
                     </h1>
 
@@ -36,7 +42,7 @@ const Header = ({ darkMode, setDarkMode }) => {
 
                     {/* Right Section */}
                     <div className="flex items-center space-x-4 justify-end">
-                        <Menu darkMode={darkMode} setDarkMode={setDarkMode} setOpen={setOpen} signOut={signOut} session={session} router={router} />
+                        <Menu darkMode={darkMode} setDarkMode={setDarkMode} setOpen={setOpen} signOut={signOut} session={session} router={router} open={open} />
                         <div className="xl:flex hidden items-center space-x-4 justify-end">
                             <HomeIcon onClick={() => router.push('/')} className="navBtn dark:text-gray-200" />
                             <div className="relative navBtn dark:text-gray-200">
