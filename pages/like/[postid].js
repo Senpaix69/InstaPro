@@ -10,12 +10,14 @@ import { ArrowLeftIcon } from "@heroicons/react/solid";
 import { SearchIcon } from "@heroicons/react/outline";
 import { collection, query, orderBy } from "firebase/firestore";
 import { useSession } from "next-auth/react";
+import { useState } from "react";
 
 const LikeList = () => {
     const router = useRouter();
     const { data: session } = useSession();
     const { postid } = router.query;
     const [likes, loading] = useCollectionData(query(collection(db, `posts/${postid}/likes`), orderBy("timeStamp", 'desc')));
+    const [search, setSearch] = useState('');
     const [darkTheme] = useRecoilState(themeState);
 
     return (
@@ -32,7 +34,7 @@ const LikeList = () => {
                     <div className="mx-3 mt-5 flex">
                         <div className="flex items-center space-x-3 m-auto h-9 bg-slate-100 dark:bg-gray-700 rounded-lg p-3 w-full text-sm md:w-[60%]">
                             <SearchIcon className="h-4 w-4" />
-                            <input className="bg-transparent outline-none focus:ring-0" placeholder="Search" />
+                            <input className="bg-transparent outline-none focus:ring-0" placeholder="Search" value={search} onChange={(e) => setSearch(e.target.value)} />
                         </div>
                     </div>
                     <div className="mx-3 mt-5 flex justify-between items-center mb-2">
@@ -45,7 +47,7 @@ const LikeList = () => {
                 <section className="flex-1 overflow-y-scroll scrollbar-hide">
                     {loading ? <Loading /> :
                         <div className="mx-3">
-                            {likes?.map((like, i) => (
+                            {likes?.filter((user) => user.username.includes(search.toLowerCase())).map((like, i) => (
                                 <div key={i} className="w-full flex justify-between items-center">
                                     <div className="relative h-16 flex items-center w-full">
                                         {like.userImg && <Image

@@ -2,7 +2,7 @@ import { db } from '../firebase';
 import { useEffect, useState } from 'react';
 import { useSession } from 'next-auth/react';
 import Header from '../components/Header';
-import { UserAddIcon, UserCircleIcon } from '@heroicons/react/solid';
+import { UserAddIcon, UserCircleIcon, SearchIcon } from '@heroicons/react/solid';
 import { addDoc, collection, Timestamp } from 'firebase/firestore';
 import { useCollection } from 'react-firebase-hooks/firestore';
 import { useRouter } from 'next/router';
@@ -19,6 +19,7 @@ const Chats = () => {
     const { data: session } = useSession();
     const router = useRouter();
     const [users, setUsers] = useState();
+    const [search, setSearch] = useState("");
     const [snapshot, loading] = useCollection(collection(db, "chats"));
     const chats = snapshot?.docs.map(doc => ({ id: doc.id, ...doc.data() }));
     const values = getUserActivity();
@@ -73,6 +74,7 @@ const Chats = () => {
             }
         }
     }
+    console.log(search);
 
     const redirect = (id) => {
         router.push(`/chat/${id}`);
@@ -87,8 +89,14 @@ const Chats = () => {
                     <div className='flex flex-col shadow-md md:w-[700px] w-full'>
                         <button className='w-full flex text-lg justify-center items-center p-3 mb-2 shadow-md'>
                             <UserCircleIcon className='h-6 w-6 mr-2' />
-                            <h1 onClick={() => router.push(`/profile/${session.user.username}`)} className='font-bold hover:underline'>{session.user.username}</h1>
+                            <h1 onClick={() => router.push(`/profile/${session.user.username}`)} className='font-semibold'>{session.user.username}</h1>
                         </button>
+                        <div className="mx-3 mb-5 flex">
+                            <div className="flex items-center space-x-3 m-auto h-9 bg-slate-100 dark:bg-gray-700 rounded-lg p-3 w-full text-sm md:w-[60%]">
+                                <SearchIcon className="h-4 w-4" />
+                                <input className="bg-transparent outline-none focus:ring-0" placeholder="Search" value={search} onChange={(e) => setSearch(e.target.value)} />
+                            </div>
+                        </div>
                         <div className='flex items-center'>
                             <p className='font-bold ml-5 mb-2 flex-1'>Messages</p>
                             <button onClick={addUser} className='font-bold mr-5 text-sm text-blue-500 hover:underline'>
@@ -100,7 +108,7 @@ const Chats = () => {
                         </div>
                         <div>
                             {loading && values === undefined ? <Loading /> :
-                                users?.map((user, i) => (
+                                users?.filter(curuser => getOtherEmail(curuser, session.user).includes(search.toLowerCase())).map((user, i) => (
                                     <ChatList
                                         key={i}
                                         id={user.id}

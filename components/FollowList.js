@@ -5,6 +5,7 @@ import Image from "next/image";
 
 const FollowList = ({ setShowFollowers, setShowFollowings, follow, followers, followings, router, currUsername }) => {
     const [show, setShow] = useState([]);
+    const [search, setSearch] = useState("");
     useEffect(() => {
         if (followers) {
             setShow([...followers])
@@ -25,14 +26,14 @@ const FollowList = ({ setShowFollowers, setShowFollowings, follow, followers, fo
                 <div className="mx-3 mt-5 flex border-b-2 pb-4 border-gray-700">
                     <div className="flex items-center space-x-3 m-auto h-9 bg-slate-100 dark:bg-gray-700 rounded-lg p-3 w-full text-sm md:w-[60%]">
                         <SearchIcon className="h-4 w-4" />
-                        <input className="bg-transparent outline-none focus:ring-0" placeholder="Search" />
+                        <input className="bg-transparent outline-none focus:ring-0" placeholder="Search" value={search} onChange={(e) => setSearch(e.target.value)} />
                     </div>
                 </div>
             </section>
 
             <section className="flex-1 overflow-y-scroll scrollbar-hide">
                 <div className="mx-3">
-                    {show?.map((user, i) => (
+                    {show?.filter((curruser) => curruser.username.includes(search.toLowerCase())).map((user, i) => (
                         <div key={i} className="w-full flex justify-between items-center">
                             <div className="relative h-16 flex items-center w-full">
                                 {user.profImg && <Image
