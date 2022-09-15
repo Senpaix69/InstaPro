@@ -20,7 +20,7 @@ const Feed = () => {
       setTimer(false);
       setTimeout(() => {
         setShowNotification(false);
-      }, 900)
+      }, 1000)
     } else {
       setTimeout(() => {
         setShowNotification(true);
@@ -36,7 +36,7 @@ const Feed = () => {
       {session ? (
         <>
           <section className="col-span-2">
-            <div hidden={!showNotification} className={`m-2 p-4 text-sm text-blue-700 bg-blue-100 rounded-lg dark:bg-gray-900 scroll-smooth dark:text-gray-300 transition-all duration-1000 ${timer ? "" : "-mt-[380px] -translate-y-full"}`}>
+            <div hidden={!showNotification} className={`m-2 p-4 text-sm text-blue-700 bg-blue-100 rounded-lg dark:bg-gray-900 dark:text-gray-300 transition-all duration-1000 ${timer ? "" : "-mt-[355px] -translate-y-full"}`}>
               <span className="font-bold">CAUTION!</span> <span className="font-bold  text-red-500">Isbah BirthDay: 30th September</span>
               <p className="font-medium">Feed Updates!</p>
               <p>1: You can now post comments and reply to a comment</p>
