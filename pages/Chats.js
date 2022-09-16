@@ -74,8 +74,7 @@ const Chats = () => {
             }
         }
     }
-    console.log(search);
-
+    
     const redirect = (id) => {
         router.push(`/chat/${id}`);
     }
