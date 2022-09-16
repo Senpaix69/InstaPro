@@ -13,6 +13,8 @@ import getChatMessages from '../../utils/getChatMessages';
 import getOtherEmail from '../../utils/getOtherEmail';
 import getOtherProfImage from '../../utils/getOtherProfImage';
 import getUserActivity from "../../utils/getUserActivity";
+import { useRecoilState } from "recoil";
+import { themeState } from "../../atoms/theme";
 
 const Chat = () => {
     const [text, setText] = useState("");
@@ -25,14 +27,9 @@ const Chat = () => {
     const [sending, setSending] = useState(false);
     const messages = getChatMessages(id);
     const users = getUserActivity();
-    const [darkMode, setDarkMode] = useState(false);
     const [selectFile, setSelectFile] = useState(null);
     const filePickerRef = useRef(null);
-
-    useEffect(() => {
-        const theme = JSON.parse(localStorage.getItem('theme'))
-        setDarkMode(theme);
-    }, []);
+    const [darkMode] = useRecoilState(themeState);
 
     const sendMessage = async (e) => {
         e.preventDefault();
