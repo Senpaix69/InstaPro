@@ -16,11 +16,11 @@ export default function Home() {
   const [initialized, setInitialized] = useState(false);
 
   useEffect(() => {
-    OneSignalReact.init({ appId: "9113e602-24c9-47e1-b77f-1582ae760a00" }).then(() => {
+    OneSignalReact.init({ appId: "70e7d3f0-737c-40ed-8025-a810a636bc14" }).then(() => {
       setInitialized(true);
     })
   }, [])
-  
+
   useEffect(() => {
     const theme = JSON.parse(localStorage.getItem('theme'))
     setDarkMode(theme);
