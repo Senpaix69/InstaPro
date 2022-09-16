@@ -3,22 +3,19 @@ import Header from "../components/Header";
 import Feed from "../components/Feed";
 import Model from "../components/Model";
 import { useSession } from "next-auth/react";
-import OneSignalReact from "react-onesignal";
+import runOneSignal from "../components/OneSignal";
 import { doc, setDoc, serverTimestamp, getDoc } from 'firebase/firestore';
 import { db } from "../firebase";
 import { useRecoilState } from 'recoil';
 import { themeState } from "../atoms/theme";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 
 export default function Home() {
   const { data: session } = useSession();
   const [darkMode, setDarkMode] = useRecoilState(themeState);
-  const [initialized, setInitialized] = useState(false);
 
   useEffect(() => {
-    OneSignalReact.init({ appId: "70e7d3f0-737c-40ed-8025-a810a636bc14" }).then(() => {
-      setInitialized(true);
-    })
+    runOneSignal();
   }, [])
 
   useEffect(() => {
