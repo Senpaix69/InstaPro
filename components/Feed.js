@@ -33,7 +33,7 @@ const Feed = () => {
   }, [update])
 
   useEffect(() => {
-    Notification.requestPermission().then((res) => {
+    window.Notification.requestPermission().then((res) => {
       if (res === "granted") {
         runOneSignal();
       }
