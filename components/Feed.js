@@ -5,7 +5,6 @@ import Suggestions from "./Suggestions";
 import { useSession } from 'next-auth/react';
 import Login from "../pages/login";
 import Notification from "./Notification";
-import runOneSignal from "./OneSignal";
 import { showUpdate } from '../atoms/showUpdate';
 import { useRecoilState } from "recoil";
 import { useEffect, useState } from "react";
@@ -31,14 +30,6 @@ const Feed = () => {
       }, 3000)
     }
   }, [update])
-
-  useEffect(() => {
-    window.Notification.requestPermission().then((res) => {
-      if (res === "granted") {
-        runOneSignal();
-      }
-    })
-  }, [])
 
   return (
     <main className="grid grid-cols-1 max-w-6xl xl:grid-cols-3 mx-auto dark:bg-black scroll-smooth">
