@@ -15,7 +15,9 @@ export default function Home() {
   const [darkMode, setDarkMode] = useRecoilState(themeState);
 
   useEffect(() => {
-    runOneSignal();
+    Notification.requestPermission().then((res) => {
+      console.log(res);
+    })
   }, [])
 
   useEffect(() => {
