@@ -1,15 +1,7 @@
 import { useInterval } from 'interval-hooks';
-import { useEffect, useRef, useState } from 'react';
-import runOneSignal from './OneSignal';
+import { useRef, useState } from 'react';
 
 const Notification = () => {
-
-    useEffect(() => {
-        window.Notification.requestPermission().then(() => {
-            runOneSignal();
-        })
-    }, [])
-
     let hasNewDeploy = useHasNewDeploy();
     return (
         <div className={`p-2 text-gray-900 text-sm absolute font-semibold bg-blue-300 bottom-2 left-1 rounded-lg shadow-xl flex items-center transition z-50 duration-200 ${hasNewDeploy ? "translate-x-0" : "-translate-x-56"}`}>
