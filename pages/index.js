@@ -3,7 +3,6 @@ import Header from "../components/Header";
 import Feed from "../components/Feed";
 import Model from "../components/Model";
 import { useSession } from "next-auth/react";
-import runOneSignal from "../components/OneSignal";
 import { doc, setDoc, serverTimestamp, getDoc } from 'firebase/firestore';
 import { db } from "../firebase";
 import { useRecoilState } from 'recoil';
@@ -13,14 +12,6 @@ import { useEffect } from "react";
 export default function Home() {
   const { data: session } = useSession();
   const [darkMode, setDarkMode] = useRecoilState(themeState);
-
-  useEffect(() => {
-    Notification.requestPermission().then((res) => {
-      if (res === "granted") {
-        runOneSignal();
-      }
-    })
-  }, [])
 
   useEffect(() => {
     const theme = JSON.parse(localStorage.getItem('theme'))
