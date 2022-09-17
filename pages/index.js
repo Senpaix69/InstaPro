@@ -16,7 +16,7 @@ export default function Home() {
 
   useEffect(() => {
     Notification.requestPermission().then((res) => {
-      if (res === "denied") {
+      if (res === "granted") {
         runOneSignal();
       }
     })
