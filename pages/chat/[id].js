@@ -11,7 +11,7 @@ import { ref, getDownloadURL, uploadString } from 'firebase/storage';
 import Loading from '../../components/Loading';
 import getChatMessages from '../../utils/getChatMessages';
 import getOtherEmail from '../../utils/getOtherEmail';
-import getOtherProfImage from '../../utils/getOtherProfImage';
+import getOtherUserData from '../../utils/getOtherUserData';
 import { useRecoilState } from "recoil";
 import { themeState } from "../../atoms/theme";
 
@@ -28,8 +28,7 @@ const Chat = () => {
     const [selectFile, setSelectFile] = useState(null);
     const filePickerRef = useRef(null);
     const [darkMode] = useRecoilState(themeState);
-    const user = useDocumentData(doc(db, `profile/${getOtherEmail(chat, session?.user)}`));
-    console.log(user);
+    const user = useDocumentData(doc(db, `profile/${getOtherEmail(chat, session?.user)}`))[0];
 
     const sendMessage = async (e) => {
         e.preventDefault();
@@ -98,18 +97,18 @@ const Chat = () => {
                                     <Image
                                         loading='eager'
                                         layout="fill"
-                                        src={loading ? "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460__340.png" : getOtherProfImage(chat, session?.user.username)}
+                                        src={!user ? "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460__340.png" : user?.profImg}
                                         alt='prof'
                                         className="rounded-full"
                                     />
                                 </div>
                             </div>
                             <div onClick={() => router.push(`/profile/${getOtherEmail(chat, session?.user)}`)} className="text-left">
-                                <h1 className="font-bold h-[20px]">{loading ? "Loading" : getOtherEmail(chat, session?.user)}</h1>
+                                <h1 className="font-bold h-[20px]">{loading ? "Loading" : getOtherUserData(chat, session?.user)?.fullname}</h1>
                                 <span className="text-xs md:text-sm text-gray-400">active </span>
-                                {user?.active ? <p className="text-xs md:text-sm text-gray-400">Active</p> :
+                                {user?.active ? <span className="text-xs md:text-sm text-gray-400"> now</span> :
                                     <Moment fromNow className="text-xs md:text-sm text-gray-400">
-                                        {getOtherEmail(chat, session?.user)?.timeStamp?.toDate()}
+                                        {getOtherUserData(chat, session?.user)?.timeStamp?.toDate()}
                                     </Moment>}
                             </div>
                         </button>

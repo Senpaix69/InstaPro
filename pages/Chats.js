@@ -9,6 +9,7 @@ import { useRouter } from 'next/router';
 import Loading from '../components/Loading';
 import getUserData from '../utils/getUserData';
 import getOtherEmail from '../utils/getOtherEmail';
+import getOtherUserData from '../utils/getOtherUserData';
 import getOtherProfImage from '../utils/getOtherProfImage';
 import ChatList from '../components/ChatList';
 import getUserActivity from '../utils/getUserActivity';
@@ -24,6 +25,7 @@ const Chats = () => {
     const chats = snapshot?.docs.map(doc => ({ id: doc.id, ...doc.data() }));
     const values = getUserActivity();
     const [darkMode, setDarkMode] = useRecoilState(themeState);
+    const [activeUser, setActiveUser] = useState({});
 
     const chatExits = (email) => {
         let valid = false;
@@ -36,6 +38,10 @@ const Chats = () => {
         })
         return valid;
     }
+
+    useEffect(() => {
+        setActiveUser(values?.filter((user) => user.username === session.user.username)[0]);
+    }, [values])
 
     useEffect(() => {
         setUsers(getUserData(chats, session?.user.username));
@@ -54,9 +60,10 @@ const Chats = () => {
                                 [
                                     values[ind],
                                     {
-                                        username: session.user.username,
-                                        uid: session.user.uid,
-                                        profImg: session.user.image,
+                                        fullname: activeUser.fullname,
+                                        bio: activeUser.bio,
+                                        username: activeUser.username,
+                                        profImg: activeUser.profImg,
                                         timeStamp: time
                                     },
                                 ]
@@ -88,7 +95,7 @@ const Chats = () => {
                     <div className='flex flex-col shadow-md md:w-[700px] w-full'>
                         <button className='w-full flex text-lg justify-center items-center p-3 mb-2 shadow-md'>
                             <UserCircleIcon className='h-6 w-6 mr-2' />
-                            <h1 onClick={() => router.push(`/profile/${session.user.username}`)} className='font-semibold'>{session.user.username}</h1>
+                            <h1 onClick={() => router.push(`/profile/${activeUser?.username}`)} className='font-semibold'>{activeUser?.username}</h1>
                         </button>
                         <div className="mx-3 mb-5 flex">
                             <div className="flex items-center space-x-3 m-auto h-9 bg-slate-100 dark:bg-gray-700 rounded-lg p-3 w-full text-sm md:w-[60%]">
@@ -107,14 +114,14 @@ const Chats = () => {
                         </div>
                         <div>
                             {loading && values === undefined ? <Loading /> :
-                                users?.filter(curuser => getOtherEmail(curuser, session.user).includes(search.toLowerCase())).map((user, i) => (
+                                users?.filter(curuser => getOtherEmail(curuser, activeUser).includes(search.toLowerCase())).map((user, i) => (
                                     <ChatList
                                         key={i}
                                         id={user.id}
                                         redirect={redirect}
-                                        username={getOtherEmail(user, session.user)}
-                                        profImg={getOtherProfImage(user, session.user.username)}
-                                        active={user?.active}
+                                        username={getOtherUserData(user, activeUser)?.fullname}
+                                        profImg={getOtherProfImage(user, activeUser?.username)}
+                                        active={getOtherUserData(user, activeUser)?.active}
                                     />
                                 ))
                             }

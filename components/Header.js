@@ -20,7 +20,7 @@ const Header = ({ darkMode, setDarkMode }) => {
     const router = useRouter();
 
     const [active, setActive] = useState(false);
-    const { getLastActiveTime } = useIdleTimer({ timeout: 60000, onActive: () => setActive(true), onIdle: () => setActive(false) });
+    const { getLastActiveTime } = useIdleTimer({ timeout: 30000, onActive: () => setActive(true), onIdle: () => setActive(false) });
 
     useEffect(() => {
         localStorage.setItem("theme", JSON.stringify(darkMode));

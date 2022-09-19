@@ -3,7 +3,7 @@ import Header from "../components/Header";
 import Feed from "../components/Feed";
 import Model from "../components/Model";
 import { useSession } from "next-auth/react";
-import { doc, setDoc, serverTimestamp, getDoc } from 'firebase/firestore';
+import { doc, setDoc, serverTimestamp, getDoc, updateDoc } from 'firebase/firestore';
 import { db } from "../firebase";
 import { useRecoilState } from 'recoil';
 import { themeState } from "../atoms/theme";
@@ -35,10 +35,16 @@ export default function Home() {
       const data = await getDoc(doc(db, "profile", session.user.username));
       if (!data.exists()) {
         await setDoc(doc(db, "profile", session.user.username), {
+          fullname: session.user.username,
+          bio: "",
           username: session.user.username,
           profImg: session.user?.image,
           timeStamp: serverTimestamp(),
         });
+      } else {
+        await updateDoc(doc(db, "profile", session.user.username), {
+          timeStamp: serverTimestamp(),
+        })
       }
     }
     if (session) addProfile();

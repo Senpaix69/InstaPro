@@ -13,6 +13,8 @@ const ChatList = ({ redirect, profImg, username, id, active }) => {
         }
     }
 
+    console.log(active)
+
     return (
         <div className='relative hover:bg-gray-200 dark:hover:bg-gray-800'>
             <button className='absolute right-4 cursor-pointer bg-gray-500 text-gray-200 text-sm font-semibold mt-2 px-2 py-[1.5px] rounded-lg shadow-sm' onClick={deleteChat}>
