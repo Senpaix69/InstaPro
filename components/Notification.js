@@ -1,14 +1,7 @@
 import { useInterval } from 'interval-hooks';
-import { useEffect, useRef, useState } from 'react';
-import runOneSignal from './OneSignal';
+import { useRef, useState } from 'react';
 
 const Notification = () => {
-
-    useEffect(() => {
-        window.Notification.requestPermission().then(() => {
-            runOneSignal();
-        })
-    }, [])
 
     let hasNewDeploy = useHasNewDeploy();
     return (

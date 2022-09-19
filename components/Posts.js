@@ -33,7 +33,7 @@ const Posts = ({ setTotalPosts, profile }) => {
     }, [profile, router.pathname])
 
     return (
-        <div className={`${router.asPath !== '/' && !view ? `grid ${posts?.length ? "grid-cols-3" : "grid-cols-1"} place-items-center md:flex md:flex-wrap p-3 justify-left` : ""}`}>
+        <div className={`${router.asPath !== '/' && !view ? `grid ${posts?.length ? "grid-cols-3" : "grid-cols-1"} place-items-center md:flex md:flex-wrap p-3 justify-left mb-14` : ""}`}>
             {posts === undefined ? <Loading /> :
                 posts?.map((post) => (
                     <Post

@@ -25,7 +25,6 @@
     "react-firebase-hooks": "^5.0.3",
     "react-loader-spinner": "^5.2.0",
     "react-moment": "^1.1.2",
-    "react-onesignal": "^2.0.4",
     "recoil": "^0.7.5",
     "services": "^0.0.3",
     "sharp": "^0.30.7",

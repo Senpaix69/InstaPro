@@ -34,7 +34,7 @@ const Profile = () => {
     return (
         <>
             {session ? <div className={`relative ${darkMode ? "bg-gray-50 " : "dark bg-gray-900"} h-screen overflow-y-scroll scrollbar-hide flex justify-center`}>
-                <div className="max-w-6xl min-w-[380px] dark:text-gray-200 flex-1 overflow-x-scroll scrollbar-hide">
+                <div className="max-w-6xl min-w-[380px] dark:text-gray-200 flex-1 overflow-y-scroll scrollbar-hide">
                     {showFollowers && <FollowList setShowFollowers={setShowFollowers} follow={true} followers={followers} router={router} currUsername={session?.user.username} />}
                     {showFollowings && <FollowList setShowFollowings={setShowFollowings} followings={followings} router={router} currUsername={session?.user.username} />}
                     {!showFollowers && !showFollowings && !loading &&
@@ -45,7 +45,7 @@ const Profile = () => {
                                     <ProfileSec posts={totalPosts} session={session} profile={profile} setShowFollowers={setShowFollowers} setShowFollowings={setShowFollowings} followers={followers} followings={followings} />
                                 </>}
                             <Posts setTotalPosts={setTotalPosts} profile={profile} />
-                            <button disabled={!view} onClick={() => setView(false)} className={`w-full md:max-w-6xl text-white py-2 font-bold uppercase absolute bottom-0 z-30 transition duration-200 ${view ? "translate-y-0 dark:bg-blue-700" : "translate-y-10 dark:text-gray-900 dark:bg-gray-900"}`}>close view</button>
+                            <button disabled={!view} onClick={() => setView(false)} className={`w-full md:max-w-6xl text-white py-2 font-bold uppercase absolute bottom-0 z-30 transition duration-500 overflow-hidden ${view ? "max-h-full bg-blue-500 dark:bg-gray-700" : "max-h-0"}`}>close view</button>
                         </>}
                 </div>
             </div > : <Login />
