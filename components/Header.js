@@ -6,20 +6,37 @@ import {
 import { HomeIcon } from '@heroicons/react/solid';
 import { useSession, signOut } from "next-auth/react";
 import { useRouter } from "next/router";
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useRecoilState } from 'recoil';
 import { modelState } from "../atoms/modelAtom";
+import { useIdleTimer } from 'react-idle-timer';
 import Menu from './Menu';
-
+import { db } from '../firebase';
+import { doc, updateDoc } from 'firebase/firestore';
 
 const Header = ({ darkMode, setDarkMode }) => {
     const { data: session } = useSession();
     const [open, setOpen] = useRecoilState(modelState);
     const router = useRouter();
 
+    const [active, setActive] = useState(false);
+    const { getLastActiveTime } = useIdleTimer({ timeout: 60000, onActive: () => setActive(true), onIdle: () => setActive(false) });
+
     useEffect(() => {
         localStorage.setItem("theme", JSON.stringify(darkMode));
     }, [darkMode])
+
+    useEffect(() => {
+        const setStatus = async () => {
+            await updateDoc(doc(db, `profile/${session.user.username}`), {
+                active: active,
+                timeStamp: getLastActiveTime()
+            })
+        }
+        if (session) {
+            setStatus();
+        }
+    }, [active])
 
     return (
         <div className={`shadow-sm sticky top-0 z-50 text-white`}>

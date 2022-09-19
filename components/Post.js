@@ -101,7 +101,6 @@ const Post = ({ id, username, userImg, img, caption, timeStamp, router }) => {
                                     layout='fill'
                                     className='rounded-full'
                                     src={userImg} alt='img' />
-                                <span className="top-0 -right-1 absolute  w-3 h-3 bg-green-400 border-2 border-white dark:border-gray-800 rounded-full"></span>
                             </div>
                             <button onClick={() => router.push(`/profile/${username}`)} className='font-bold dark:text-gray-200 cursor-pointer w-auto'> {username} </button>
                         </div>

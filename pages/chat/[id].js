@@ -12,7 +12,6 @@ import Loading from '../../components/Loading';
 import getChatMessages from '../../utils/getChatMessages';
 import getOtherEmail from '../../utils/getOtherEmail';
 import getOtherProfImage from '../../utils/getOtherProfImage';
-import getUserActivity from "../../utils/getUserActivity";
 import { useRecoilState } from "recoil";
 import { themeState } from "../../atoms/theme";
 
@@ -26,10 +25,11 @@ const Chat = () => {
     const [chat, loading] = useDocumentData(doc(db, `chats/${id}`));
     const [sending, setSending] = useState(false);
     const messages = getChatMessages(id);
-    const users = getUserActivity();
     const [selectFile, setSelectFile] = useState(null);
     const filePickerRef = useRef(null);
     const [darkMode] = useRecoilState(themeState);
+    const user = useDocumentData(doc(db, `profile/${getOtherEmail(chat, session?.user)}`));
+    console.log(user);
 
     const sendMessage = async (e) => {
         e.preventDefault();
@@ -107,9 +107,10 @@ const Chat = () => {
                             <div onClick={() => router.push(`/profile/${getOtherEmail(chat, session?.user)}`)} className="text-left">
                                 <h1 className="font-bold h-[20px]">{loading ? "Loading" : getOtherEmail(chat, session?.user)}</h1>
                                 <span className="text-xs md:text-sm text-gray-400">active </span>
-                                <Moment fromNow className="text-xs md:text-sm text-gray-400">
-                                    {users && users[users.findIndex((user) => user.username === getOtherEmail(chat, session?.user))]?.timeStamp?.toDate()}
-                                </Moment>
+                                {user?.active ? <p className="text-xs md:text-sm text-gray-400">Active</p> :
+                                    <Moment fromNow className="text-xs md:text-sm text-gray-400">
+                                        {getOtherEmail(chat, session?.user)?.timeStamp?.toDate()}
+                                    </Moment>}
                             </div>
                         </button>
                     </section>

@@ -74,7 +74,7 @@ const Chats = () => {
             }
         }
     }
-    
+
     const redirect = (id) => {
         router.push(`/chat/${id}`);
     }
@@ -114,6 +114,7 @@ const Chats = () => {
                                         redirect={redirect}
                                         username={getOtherEmail(user, session.user)}
                                         profImg={getOtherProfImage(user, session.user.username)}
+                                        active={user?.active}
                                     />
                                 ))
                             }

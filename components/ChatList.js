@@ -4,7 +4,7 @@ import getChatMessages from '../utils/getChatMessages';
 import { deleteDoc, doc } from 'firebase/firestore';
 import { db } from '../firebase';
 
-const ChatList = ({ redirect, profImg, username, id }) => {
+const ChatList = ({ redirect, profImg, username, id, active }) => {
     const message = getChatMessages(id, "temp");
 
     const deleteChat = async () => {
@@ -28,7 +28,7 @@ const ChatList = ({ redirect, profImg, username, id }) => {
                             alt='story'
                             className="rounded-full"
                         />
-                        <span className="top-0 right-0 absolute  w-3.5 h-3.5 bg-green-400 border-2 border-white dark:border-gray-800 rounded-full"></span>
+                        <span className={`top-0 right-0 absolute  w-3.5 h-3.5 ${active ? "bg-green-400" : "bg-red-500"} border-2 border-white dark:border-gray-800 rounded-full`}></span>
                     </div>
                 </div>
                 <div className='ml-3 w-full truncate'>

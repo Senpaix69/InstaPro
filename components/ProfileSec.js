@@ -43,7 +43,7 @@ const ProfileSec = ({ posts, session, profile, setShowFollowers, setShowFollowin
 
     const saveEditing = async () => {
         if (textBio.trim().length > 0 && textName.trim().length > 0) {
-            updateDoc(doc(db, "profile", profile), {
+            await updateDoc(doc(db, "profile", profile), {
                 bio: textBio,
                 fullname: textName,
             })
