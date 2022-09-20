@@ -10,26 +10,22 @@ import { useEffect } from 'react';
 import { useRecoilState } from 'recoil';
 import { modelState } from "../atoms/modelAtom";
 import { userActivity } from "../atoms/userActivity";
-import { useIdleTimer } from 'react-idle-timer';
 import Menu from './Menu';
 import { db } from '../firebase';
-import { doc, updateDoc } from 'firebase/firestore';
+import { doc, updateDoc, serverTimestamp } from 'firebase/firestore';
 
 const Header = ({ darkMode, setDarkMode }) => {
     const { data: session } = useSession();
     const [open, setOpen] = useRecoilState(modelState);
     const router = useRouter();
-
     const [active, setActive] = useRecoilState(userActivity);
-    const { getLastActiveTime, reset, isIdle } = useIdleTimer({
-        timeout: 1000 * 30, onActive: () => setActive(true), onIdle: () => setActive(false),
-    });
 
     useEffect(() => {
-        if (isIdle()) {
-            reset();
-        }
-    }, [isIdle])
+        window.addEventListener("focus", () => setActive(true));
+        window.addEventListener("blur", () => setActive(false));
+        window.removeEventListener("focus", () => console.log("remove"));
+        window.removeEventListener("blur", () => console.log("remove"));
+    }, [])
 
     console.log(active);
 
@@ -41,7 +37,7 @@ const Header = ({ darkMode, setDarkMode }) => {
         const setStatus = async () => {
             await updateDoc(doc(db, `profile/${session.user.username}`), {
                 active: active,
-                timeStamp: getLastActiveTime()
+                timeStamp: serverTimestamp()
             })
         }
         if (session) {
