@@ -104,7 +104,7 @@ const Chat = () => {
                                     />
                                 </div>
                             </div>
-                            <div onClick={() => router.push(`/profile/${user?.username})}`)} className="text-left">
+                            <div onClick={() => router.push(`/profile/${user?.username}`)} className="text-left">
                                 <h1 className="font-bold h-[20px]">{loading ? "Loading" : getOtherUserData(chat, session?.user)?.fullname}</h1>
                                 <span className="text-xs md:text-sm text-gray-400">active </span>
                                 {user?.active ? <span className="text-xs md:text-sm text-gray-400"> now</span> :

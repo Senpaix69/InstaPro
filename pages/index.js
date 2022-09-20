@@ -19,18 +19,6 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    const addUser = async () => {
-      await setDoc(doc(db, "users", session.user.username), {
-        username: session.user.username,
-        uid: session.user.uid,
-        profImg: session.user.image,
-        timeStamp: serverTimestamp()
-      });
-    };
-    if (session) addUser();
-  }, [session])
-
-  useEffect(() => {
     const addProfile = async () => {
       const data = await getDoc(doc(db, "profile", session.user.username));
       if (!data.exists()) {
