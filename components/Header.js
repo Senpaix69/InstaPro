@@ -6,9 +6,10 @@ import {
 import { HomeIcon } from '@heroicons/react/solid';
 import { useSession, signOut } from "next-auth/react";
 import { useRouter } from "next/router";
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useRecoilState } from 'recoil';
 import { modelState } from "../atoms/modelAtom";
+import { userActivity } from "../atoms/userActivity";
 import { useIdleTimer } from 'react-idle-timer';
 import Menu from './Menu';
 import { db } from '../firebase';
@@ -19,8 +20,18 @@ const Header = ({ darkMode, setDarkMode }) => {
     const [open, setOpen] = useRecoilState(modelState);
     const router = useRouter();
 
-    const [active, setActive] = useState(false);
-    const { getLastActiveTime } = useIdleTimer({ timeout: 30000, onActive: () => setActive(true), onIdle: () => setActive(false) });
+    const [active, setActive] = useRecoilState(userActivity);
+    const { getLastActiveTime, reset, isIdle } = useIdleTimer({
+        timeout: 1000 * 30, onActive: () => setActive(true), onIdle: () => setActive(false),
+    });
+
+    useEffect(() => {
+        if (isIdle()) {
+            reset();
+        }
+    }, [isIdle])
+
+    console.log(active);
 
     useEffect(() => {
         localStorage.setItem("theme", JSON.stringify(darkMode));

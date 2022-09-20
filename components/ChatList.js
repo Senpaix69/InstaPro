@@ -3,17 +3,17 @@ import Moment from 'react-moment';
 import getChatMessages from '../utils/getChatMessages';
 import { deleteDoc, doc } from 'firebase/firestore';
 import { db } from '../firebase';
+import { useDocumentData } from 'react-firebase-hooks/firestore';
 
-const ChatList = ({ redirect, profImg, username, id, active }) => {
+const ChatList = ({ redirect, profImg, username, id, user }) => {
     const message = getChatMessages(id, "temp");
+    const [curr, loading] = useDocumentData(doc(db, `profile/${user}`));
 
     const deleteChat = async () => {
         if (confirm("Do You really want to delete this chat?")) {
             await deleteDoc(doc(db, "chats", id));
         }
     }
-
-    console.log(active)
 
     return (
         <div className='relative hover:bg-gray-200 dark:hover:bg-gray-800'>
@@ -30,7 +30,7 @@ const ChatList = ({ redirect, profImg, username, id, active }) => {
                             alt='story'
                             className="rounded-full"
                         />
-                        <span className={`top-0 right-0 absolute  w-3.5 h-3.5 ${active ? "bg-green-400" : "bg-red-500"} border-2 border-white dark:border-gray-800 rounded-full`}></span>
+                        <span className={`top-0 right-0 absolute  w-3.5 h-3.5 ${!loading && curr?.active ? "bg-green-400" : "bg-red-500"} border-2 border-white dark:border-gray-800 rounded-full`}></span>
                     </div>
                 </div>
                 <div className='ml-3 w-full truncate'>

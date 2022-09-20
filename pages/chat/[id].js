@@ -14,6 +14,7 @@ import getOtherEmail from '../../utils/getOtherEmail';
 import getOtherUserData from '../../utils/getOtherUserData';
 import { useRecoilState } from "recoil";
 import { themeState } from "../../atoms/theme";
+import getOtherProfImage from "../../utils/getOtherProfImage";
 
 const Chat = () => {
     const [text, setText] = useState("");
@@ -28,7 +29,7 @@ const Chat = () => {
     const [selectFile, setSelectFile] = useState(null);
     const filePickerRef = useRef(null);
     const [darkMode] = useRecoilState(themeState);
-    const user = useDocumentData(doc(db, `profile/${getOtherEmail(chat, session?.user)}`))[0];
+    const [user] = useDocumentData(doc(db, `profile/${getOtherEmail(chat, session?.user)}`));
 
     const sendMessage = async (e) => {
         e.preventDefault();
@@ -97,18 +98,18 @@ const Chat = () => {
                                     <Image
                                         loading='eager'
                                         layout="fill"
-                                        src={!user ? "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460__340.png" : user?.profImg}
+                                        src={loading ? "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460__340.png" : getOtherProfImage(chat, session?.user.username)}
                                         alt='prof'
                                         className="rounded-full"
                                     />
                                 </div>
                             </div>
-                            <div onClick={() => router.push(`/profile/${getOtherEmail(chat, session?.user)}`)} className="text-left">
+                            <div onClick={() => router.push(`/profile/${user?.username})}`)} className="text-left">
                                 <h1 className="font-bold h-[20px]">{loading ? "Loading" : getOtherUserData(chat, session?.user)?.fullname}</h1>
                                 <span className="text-xs md:text-sm text-gray-400">active </span>
                                 {user?.active ? <span className="text-xs md:text-sm text-gray-400"> now</span> :
                                     <Moment fromNow className="text-xs md:text-sm text-gray-400">
-                                        {getOtherUserData(chat, session?.user)?.timeStamp?.toDate()}
+                                        {user?.timeStamp?.toDate()}
                                     </Moment>}
                             </div>
                         </button>
