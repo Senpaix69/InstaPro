@@ -8,8 +8,6 @@ import {
   DownloadIcon,
 } from "@heroicons/react/outline";
 import { XCircleIcon } from "@heroicons/react/solid";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 import Image from "next/image";
 import { HeartIcon as HeartIconFilled } from "@heroicons/react/solid";
 import {
@@ -23,21 +21,29 @@ import {
   deleteDoc,
   setDoc,
 } from "firebase/firestore";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { db } from "../firebase";
 import Moment from "react-moment";
 import { useSession } from "next-auth/react";
 import { postView } from "../atoms/postView";
 import { useRecoilState } from "recoil";
 
-const Post = ({ id, username, userImg, img, caption, timeStamp, router }) => {
+const Post = ({
+  id,
+  username,
+  userImg,
+  img,
+  caption,
+  timeStamp,
+  router,
+  deletePost,
+}) => {
   const { data: session } = useSession();
   const [comment, setComment] = useState("");
   const [comments, setComments] = useState([]);
   const [likes, setLikes] = useState([]);
   const [hasLike, setHasLike] = useState(false);
   const [view, setView] = useRecoilState(postView);
-  const toastId = useRef(null);
 
   useEffect(() => {
     setView(false);
@@ -79,19 +85,6 @@ const Post = ({ id, username, userImg, img, caption, timeStamp, router }) => {
         username: session.user.username,
         userImg: session.user.image,
         timeStamp: serverTimestamp(),
-      });
-    }
-  };
-
-  const deletePost = async () => {
-    if (confirm("Do you really want to delete this post?")) {
-      toastId.current = toast.loading("deleting...", {
-        position: "top-center",
-      });
-      await deleteDoc(doc(db, "posts", id)).then(() => {
-        toast.dismiss(toastId.current);
-        toastId.current = null;
-        toast.success("Post Deleted Successfully 👍", { position: "top-center" });
       });
     }
   };
@@ -138,7 +131,7 @@ const Post = ({ id, username, userImg, img, caption, timeStamp, router }) => {
             {session?.user?.username === username ? (
               <XCircleIcon
                 className="w-8 h-8 mr-3 cursor-pointer dark:text-gray-200"
-                onClick={deletePost}
+                onClick={() => deletePost(id)}
               />
             ) : (
               <DotsHorizontalIcon className="btn pr-3 dark:text-gray-200" />
@@ -243,7 +236,6 @@ const Post = ({ id, username, userImg, img, caption, timeStamp, router }) => {
           </button>
         </div>
       )}
-      <ToastContainer autoClose={2500} theme="dark" pauseOnFocusLoss={false} />
     </div>
   );
 };
