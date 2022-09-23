@@ -36,12 +36,19 @@ const ProfileSec = ({
   useEffect(() => {
     getDoc(doc(db, `profile/${profile}`)).then((userData) => {
       setBio(userData.data()?.bio ? userData.data()?.bio : "Bio");
+      setTextBio(userData.data()?.bio ? userData.data()?.bio : "Bio");
       setName(userData.data()?.fullname ? userData.data()?.fullname : "Name");
+      setTextName(
+        userData.data()?.fullname ? userData.data()?.fullname : "Name"
+      );
       setUser(userData.data());
     });
   }, [profile]);
 
   const followUser = async () => {
+    if (toast.isActive(toastId)) {
+      toast.dismiss(toastId);
+    }
     toastId.current = toast.loading("Following...", { position: "top-center" });
     await setDoc(
       doc(db, `profile/${profile}/followers/${session.user.username}`),
@@ -67,6 +74,9 @@ const ProfileSec = ({
 
   const unFollowUser = async () => {
     if (confirm(`Do you really want to unfollow: ${profile}`)) {
+      if (toast.isActive(toastId)) {
+        toast.dismiss(toastId);
+      }
       toastId.current = toast.loading("unfollowing...", {
         position: "top-center",
       });
@@ -80,19 +90,28 @@ const ProfileSec = ({
       toastId.current = null;
       toast.success("Followed Successfully 😇", { position: "top-center" });
     }
-    toastId.current = null;
   };
 
   const saveEditing = async () => {
-    if (textBio.trim().length > 0 && textName.trim().length > 0) {
-      await updateDoc(doc(db, "profile", profile), {
-        bio: textBio,
-        fullname: textName,
+    if (toast.isActive(toastId)) {
+      toast.dismiss(toastId);
+    }
+    toastId.current = toast.loading("Saving...", {
+      position: "top-center",
+    });
+    await updateDoc(doc(db, "profile", profile), {
+      bio: textBio,
+      fullname: textName,
+    }).then(() => {
+      toast.dismiss(toastId.current);
+      toastId.current = null;
+      toast.success("Profile Edited Successfully 😀", {
+        position: "top-center",
       });
       setBio(textBio);
       setName(textName);
-    }
-    setEditProf(false);
+      setEditProf(false);
+    });
   };
 
   useEffect(() => {
@@ -109,8 +128,8 @@ const ProfileSec = ({
   }, [followers, session]);
 
   const cancelEditing = () => {
-    setTextBio = "";
-    setTextName = "";
+    setTextBio = bio;
+    setTextName = name;
     setEditProf(false);
   };
 
