@@ -1,13 +1,28 @@
 import Image from "next/image";
 import Moment from "react-moment";
-import getChatMessages from "../utils/getChatMessages";
-import { deleteDoc, doc } from "firebase/firestore";
+import {
+  collection,
+  deleteDoc,
+  doc,
+  limit,
+  orderBy,
+  query,
+} from "firebase/firestore";
 import { db } from "../firebase";
-import { useDocumentData } from "react-firebase-hooks/firestore";
+import {
+  useCollectionData,
+  useDocumentData,
+} from "react-firebase-hooks/firestore";
 import { useRef } from "react";
 
 const ChatList = ({ redirect, profImg, username, id, user, toast }) => {
-  const message = getChatMessages(id, "temp");
+  const [message, loadingMessage] = useCollectionData(
+    query(
+      collection(db, `chats/${id}/messages`),
+      orderBy("timeStamp", "desc"),
+      limit(1)
+    )
+  );
   const [curr, loading] = useDocumentData(doc(db, `profile/${user}`));
   const toastId = useRef(null);
 
@@ -17,14 +32,9 @@ const ChatList = ({ redirect, profImg, username, id, user, toast }) => {
         position: "top-center",
       });
       await deleteDoc(doc(db, "chats", id)).then(() => {
-        toast.update(toastId.current, {
-          render: "Deleted Successfully 🙂",
-          position: "top-center",
-          type: "success",
-          isLoading: false,
-          autoClose: true,
-        });
+        toast.dismiss(toastId.current);
         toastId.current = null;
+        toast.success("Deleted Successfully 😄", { position: "top-center" });
       });
     }
   };
@@ -61,13 +71,19 @@ const ChatList = ({ redirect, profImg, username, id, user, toast }) => {
           <h1 className="font-semibold -mt-1 h-[22px]">{username}</h1>
           <div className="flex text-sm w-full justify-between items-center pr-2">
             <span className="text-gray-400 w-[70%] overflow-hidden truncate">
-              {message?.data().text.length > 0
-                ? message.data().text
+              {!loadingMessage
+                ? message[0]?.text?.length > 0
+                  ? message[0].text
+                  : message[0]?.image
+                  ? "image/"
+                  : "tap to send text"
                 : "loading.."}
             </span>
-            <Moment fromNow className="text-[9px] text-gray-400 mt-2">
-              {message?.data().timeStamp?.toDate()}
-            </Moment>
+            {!loadingMessage && (
+              <Moment fromNow className="text-[9px] text-gray-400 mt-2">
+                {message[0]?.timeStamp?.toDate()}
+              </Moment>
+            )}
           </div>
         </div>
       </div>

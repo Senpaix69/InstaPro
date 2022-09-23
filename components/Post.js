@@ -89,14 +89,9 @@ const Post = ({ id, username, userImg, img, caption, timeStamp, router }) => {
         position: "top-center",
       });
       await deleteDoc(doc(db, "posts", id)).then(() => {
-        toast.update(toastId.current, {
-          render: "Deleted Successfully 🙂",
-          position: "top-center",
-          type: "success",
-          isLoading: false,
-          autoClose: true,
-        });
+        toast.dismiss(toastId.current);
         toastId.current = null;
+        toast.success("Post Deleted Successfully 👍", { position: "top-center" });
       });
     }
   };

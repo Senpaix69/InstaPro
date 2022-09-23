@@ -59,14 +59,9 @@ const ProfileSec = ({
         timeStamp: serverTimestamp(),
       }
     ).then(() => {
-      toast.update(toastId.current, {
-        render: "Followed Successfully 😇",
-        position: "top-center",
-        type: "success",
-        isLoading: false,
-        autoClose: true,
-      });
+      toast.dismiss(toastId.current);
       toastId.current = null;
+      toast.success("Followed Successfully 😇", { position: "top-center" });
     });
   };
 
@@ -78,16 +73,12 @@ const ProfileSec = ({
       await deleteDoc(
         doc(db, `profile/${profile}/followers/${session.user.username}`)
       );
-      toast.update(toastId.current, {
-        render: "Unfollowed Successfully 😇",
-        position: "top-center",
-        type: "success",
-        isLoading: false,
-        autoClose: true,
-      });
       await deleteDoc(
         doc(db, `profile/${session.user.username}/followings/${profile}`)
       );
+      toast.dismiss(toastId.current);
+      toastId.current = null;
+      toast.success("Followed Successfully 😇", { position: "top-center" });
     }
     toastId.current = null;
   };

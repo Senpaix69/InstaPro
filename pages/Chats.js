@@ -68,7 +68,7 @@ const Chats = () => {
           const ind = values.findIndex((user) => user.username === uName);
           if (ind !== -1 && !loading) {
             const time = Timestamp.now();
-            toastId.current = toast.loading("deleting...", {
+            toastId.current = toast.loading("Finding...", {
               position: "top-center",
             });
             await addDoc(collection(db, "chats"), {
@@ -83,14 +83,11 @@ const Chats = () => {
                 },
               ],
             }).then(() => {
-              toast.update(toastId.current, {
-                render: "User Added Successfully 🤗",
-                position: "top-center",
-                type: "success",
-                isLoading: false,
-                autoClose: true,
-              });
+              toast.dismiss(toastId.current);
               toastId.current = null;
+              toast.success("User Added Successfully 🤞", {
+                position: "top-center"
+              });
             });
           } else {
             toast.warn("User Not Found 😐", {
