@@ -119,7 +119,7 @@ const ProfileSec = ({
 
   return (
     <div
-      className={`relative w-full p-1 px-3 ${
+      className={`relative w-full p-1 px-3 text-black dark:text-white ${
         showFollowers || showFollowings ? "hidden" : "flex"
       } flex-col`}
     >
@@ -150,21 +150,21 @@ const ProfileSec = ({
         <div className="absolute top-0 right-0 flex w-64 xl:w-80 ml-10 justify-between md:max-w-2xl mt-5 px-4 text-lg">
           <button className="flex flex-col items-center">
             <p className="font-bold">{posts}</p>
-            <p className="text-sm mt-1 text-gray-200">Posts</p>
+            <p className="text-sm mt-1 dark:text-gray-200">Posts</p>
           </button>
           <button
             onClick={() => setShowFollowers(true)}
             className="flex flex-col items-center"
           >
             <p className="font-bold">{followers ? followers.length : 0}</p>
-            <p className="text-sm mt-1 text-gray-200">Followers</p>
+            <p className="text-sm mt-1 dark:text-gray-200">Followers</p>
           </button>
           <button
             onClick={() => setShowFollowings(true)}
             className="flex flex-col items-center"
           >
             <p className="font-bold">{followings ? followings.length : 0}</p>
-            <p className="text-sm mt-1 text-gray-200">Followings</p>
+            <p className="text-sm mt-1 dark:text-gray-200">Followings</p>
           </button>
           {profile !== session.user.username && followings && (
             <div className="bg-gray-100 border border-gray-700 dark:bg-black text-sm text-center w-[226px] xl:w-[290px] py-1 rounded-md absolute -bottom-10 font-semibold">
@@ -186,9 +186,9 @@ const ProfileSec = ({
               : user?.username}
           </h1>
           <h1 className="font-semibold text-lg">
-            <span className="text-gray-400">~</span> {name}
+            <span className="dark:text-gray-400">~</span> {name}
           </h1>
-          <p className="text-sm text-gray-200">{bio}</p>
+          <p className="text-sm dark:text-gray-200">{bio}</p>
         </div>
       )}
 

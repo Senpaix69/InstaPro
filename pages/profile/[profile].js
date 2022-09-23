@@ -45,7 +45,7 @@ const Profile = () => {
       {session ? (
         <div
           className={`relative ${
-            darkMode ? "bg-gray-50 " : "dark bg-gray-900"
+            darkMode ? "bg-gray-50" : "dark bg-gray-900"
           } h-screen overflow-y-scroll scrollbar-hide flex justify-center relative`}
         >
           <div className="max-w-6xl min-w-[380px] dark:text-gray-200 flex-1 overflow-y-scroll scrollbar-hide">
@@ -83,7 +83,7 @@ const Profile = () => {
             />
             <button
               hidden={showFollowers || showFollowings ? true : false}
-              className="absolute z-50 bottom-20 ml-3 font-semibold bg-red-800 rounded-[10px] py-1 px-4"
+              className="absolute z-50 bottom-20 text-white dark:text-gray-300 bg-blue-400 font-semibold dark:bg-slate-700 rounded-r-2xl py-1 px-4"
               onClick={() => setView(!view)}
             >
               {view ? "G-View" : "P-View"}
