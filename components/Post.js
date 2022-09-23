@@ -88,16 +88,17 @@ const Post = ({ id, username, userImg, img, caption, timeStamp, router }) => {
       toastId.current = toast.loading("deleting...", {
         position: "top-center",
       });
-      await deleteDoc(doc(db, "posts", id));
-      toast.update(toastId.current, {
-        render: "Deleted Successfully 🙂",
-        position: "top-center",
-        type: "success",
-        isLoading: false,
-        autoClose: true,
+      await deleteDoc(doc(db, "posts", id)).then(() => {
+        toast.update(toastId.current, {
+          render: "Deleted Successfully 🙂",
+          position: "top-center",
+          type: "success",
+          isLoading: false,
+          autoClose: true,
+        });
+        toastId.current = null;
       });
     }
-    toastId.current = null;
   };
 
   const postComment = async (e) => {

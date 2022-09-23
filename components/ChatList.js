@@ -16,16 +16,17 @@ const ChatList = ({ redirect, profImg, username, id, user, toast }) => {
       toastId.current = toast.loading("deleting...", {
         position: "top-center",
       });
-      await deleteDoc(doc(db, "chats", id));
-      toast.update(toastId.current, {
-        render: "Deleted Successfully 🙂",
-        position: "top-center",
-        type: "success",
-        isLoading: false,
-        autoClose: true,
+      await deleteDoc(doc(db, "chats", id)).then(() => {
+        toast.update(toastId.current, {
+          render: "Deleted Successfully 🙂",
+          position: "top-center",
+          type: "success",
+          isLoading: false,
+          autoClose: true,
+        });
+        toastId.current = null;
       });
     }
-    toastId.current = null;
   };
 
   return (

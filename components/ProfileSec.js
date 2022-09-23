@@ -58,15 +58,16 @@ const ProfileSec = ({
         profImg: user.profImg,
         timeStamp: serverTimestamp(),
       }
-    );
-    toast.update(toastId.current, {
-      render: "Followed Successfully 😇",
-      position: "top-center",
-      type: "success",
-      isLoading: false,
-      autoClose: true,
+    ).then(() => {
+      toast.update(toastId.current, {
+        render: "Followed Successfully 😇",
+        position: "top-center",
+        type: "success",
+        isLoading: false,
+        autoClose: true,
+      });
+      toastId.current = null;
     });
-    toastId.current = null;
   };
 
   const unFollowUser = async () => {

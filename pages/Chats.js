@@ -90,6 +90,7 @@ const Chats = () => {
                 isLoading: false,
                 autoClose: true,
               });
+              toastId.current = null;
             });
           } else {
             toast.warn("User Not Found 😐", {
