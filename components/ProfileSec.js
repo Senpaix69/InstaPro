@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { db } from "../firebase";
@@ -31,6 +31,7 @@ const ProfileSec = ({
   const [user, setUser] = useState({});
   const [bio, setBio] = useState("");
   const [name, setName] = useState("");
+  const toastId = useRef(null);
 
   useEffect(() => {
     getDoc(doc(db, `profile/${profile}`)).then((userData) => {
@@ -41,7 +42,7 @@ const ProfileSec = ({
   }, [profile]);
 
   const followUser = async () => {
-    const load = toast.loading("Following...", { position: "top-center" });
+    toastId.current = toast.loading("Following...", { position: "top-center" });
     await setDoc(
       doc(db, `profile/${profile}/followers/${session.user.username}`),
       {
@@ -58,32 +59,36 @@ const ProfileSec = ({
         timeStamp: serverTimestamp(),
       }
     );
-    toast.update(load, {
+    toast.update(toastId.current, {
       render: "Followed Successfully 😇",
       position: "top-center",
       type: "success",
       isLoading: false,
       autoClose: true,
     });
+    toastId.current = null;
   };
 
   const unFollowUser = async () => {
     if (confirm(`Do you really want to unfollow: ${profile}`)) {
-      const load = toast.loading("unfollowing...", { position: "top-center" });
+      toastId.current = toast.loading("unfollowing...", {
+        position: "top-center",
+      });
       await deleteDoc(
         doc(db, `profile/${profile}/followers/${session.user.username}`)
       );
-      await deleteDoc(
-        doc(db, `profile/${session.user.username}/followings/${profile}`)
-      );
-      toast.update(load, {
+      toast.update(toastId.current, {
         render: "Unfollowed Successfully 😇",
         position: "top-center",
         type: "success",
         isLoading: false,
         autoClose: true,
       });
+      await deleteDoc(
+        doc(db, `profile/${session.user.username}/followings/${profile}`)
+      );
     }
+    toastId.current = null;
   };
 
   const saveEditing = async () => {
@@ -247,7 +252,7 @@ const ProfileSec = ({
           </div>
         </div>
       )}
-      <ToastContainer autoClose={2500} theme="dark" />
+      <ToastContainer autoClose={2500} theme="dark" pauseOnFocusLoss={false} />
     </div>
   );
 };

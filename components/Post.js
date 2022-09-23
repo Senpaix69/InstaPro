@@ -23,7 +23,7 @@ import {
   deleteDoc,
   setDoc,
 } from "firebase/firestore";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { db } from "../firebase";
 import Moment from "react-moment";
 import { useSession } from "next-auth/react";
@@ -37,6 +37,7 @@ const Post = ({ id, username, userImg, img, caption, timeStamp, router }) => {
   const [likes, setLikes] = useState([]);
   const [hasLike, setHasLike] = useState(false);
   const [view, setView] = useRecoilState(postView);
+  const toastId = useRef(null);
 
   useEffect(() => {
     setView(false);
@@ -84,9 +85,11 @@ const Post = ({ id, username, userImg, img, caption, timeStamp, router }) => {
 
   const deletePost = async () => {
     if (confirm("Do you really want to delete this post?")) {
-      const load = toast.loading("deleting...", { position: "top-center" });
+      toastId.current = toast.loading("deleting...", {
+        position: "top-center",
+      });
       await deleteDoc(doc(db, "posts", id));
-      toast.update(load, {
+      toast.update(toastId.current, {
         render: "Deleted Successfully 🙂",
         position: "top-center",
         type: "success",
@@ -94,6 +97,7 @@ const Post = ({ id, username, userImg, img, caption, timeStamp, router }) => {
         autoClose: true,
       });
     }
+    toastId.current = null;
   };
 
   const postComment = async (e) => {
@@ -243,7 +247,7 @@ const Post = ({ id, username, userImg, img, caption, timeStamp, router }) => {
           </button>
         </div>
       )}
-      <ToastContainer autoClose={2500} theme="dark" />
+      <ToastContainer autoClose={2500} theme="dark" pauseOnFocusLoss={false} />
     </div>
   );
 };

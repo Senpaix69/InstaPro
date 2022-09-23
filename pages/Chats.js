@@ -1,5 +1,5 @@
 import { db } from "../firebase";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useSession } from "next-auth/react";
 import Header from "../components/Header";
 import {
@@ -32,6 +32,7 @@ const Chats = () => {
   const values = getUserActivity();
   const [darkMode, setDarkMode] = useRecoilState(themeState);
   const [activeUser, setActiveUser] = useState({});
+  const toastId = useRef(null);
 
   const chatExits = (email) => {
     let valid = false;
@@ -67,6 +68,9 @@ const Chats = () => {
           const ind = values.findIndex((user) => user.username === uName);
           if (ind !== -1 && !loading) {
             const time = Timestamp.now();
+            toastId.current = toast.loading("deleting...", {
+              position: "top-center",
+            });
             await addDoc(collection(db, "chats"), {
               users: [
                 values[ind],
@@ -79,8 +83,12 @@ const Chats = () => {
                 },
               ],
             }).then(() => {
-              toast.success("User Added Successfully 🤗", {
+              toast.update(toastId.current, {
+                render: "User Added Successfully 🤗",
                 position: "top-center",
+                type: "success",
+                isLoading: false,
+                autoClose: true,
               });
             });
           } else {
@@ -176,7 +184,7 @@ const Chats = () => {
           </div>
         </div>
       </div>
-      <ToastContainer autoClose={2500} theme="dark" />
+      <ToastContainer autoClose={2500} theme="dark" pauseOnFocusLoss={false} />
     </div>
   );
 };

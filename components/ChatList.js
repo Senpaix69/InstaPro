@@ -4,16 +4,20 @@ import getChatMessages from "../utils/getChatMessages";
 import { deleteDoc, doc } from "firebase/firestore";
 import { db } from "../firebase";
 import { useDocumentData } from "react-firebase-hooks/firestore";
+import { useRef } from "react";
 
 const ChatList = ({ redirect, profImg, username, id, user, toast }) => {
   const message = getChatMessages(id, "temp");
   const [curr, loading] = useDocumentData(doc(db, `profile/${user}`));
+  const toastId = useRef(null);
 
   const deleteChat = async () => {
     if (confirm("Do You really want to delete this chat?")) {
-      const load = toast.loading("deleting...", { position: "top-center" });
+      toastId.current = toast.loading("deleting...", {
+        position: "top-center",
+      });
       await deleteDoc(doc(db, "chats", id));
-      toast.update(load, {
+      toast.update(toastId.current, {
         render: "Deleted Successfully 🙂",
         position: "top-center",
         type: "success",
@@ -21,6 +25,7 @@ const ChatList = ({ redirect, profImg, username, id, user, toast }) => {
         autoClose: true,
       });
     }
+    toastId.current = null;
   };
 
   return (
