@@ -35,13 +35,13 @@ import {
     const router = useRouter();
     const { id } = router.query;
     const messagesEndRef = useRef(null);
-    const [chat, chatLoading] = useDocumentData(doc(db, `chats/${id}`));
     const [sending, setSending] = useState(false);
     const messages = getChatMessages(id);
     const [selectFile, setSelectFile] = useState(null);
     const filePickerRef = useRef(null);
     const [darkMode] = useRecoilState(themeState);
-    const [user, loading] = useDocumentData(
+    const [chat] = useDocumentData(doc(db, `chats/${id}`));
+    const [user] = useDocumentData(
       doc(db, `profile/${getOtherEmail(chat, session?.user)}`)
     );
   
@@ -132,7 +132,7 @@ import {
                   className="text-left"
                 >
                   <h1 className="font-bold h-[20px]">
-                    {loading ? "Loading..." : user?.fullname}
+                    {user ? user?.fullname : "Loading..."}
                   </h1>
                   <span className="text-xs md:text-sm text-gray-400">
                     active{" "}
@@ -157,9 +157,7 @@ import {
                 <span className="font-medium">Chat Alert!</span> You can
                 send/unsend text and images, have fun 😊.
               </div>
-              {loading && chatLoading ? (
-                <Loading />
-              ) : (
+              {user?.username ? (
                 messages?.map((msg, i) => (
                   <div
                     ref={messagesEndRef}
@@ -237,6 +235,8 @@ import {
                     </div>
                   </div>
                 ))
+              ) : (
+                <Loading />
               )}
             </section>
   
