@@ -10,6 +10,7 @@ const nextConfig = {
       "links.papareact.com",
       "lh3.googleusercontent.com",
       "firebasestorage.googleapis.com",
+      "cloudflare-ipfs.com",
     ],
   },
 };
