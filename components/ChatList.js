@@ -15,7 +15,7 @@ import {
 } from "react-firebase-hooks/firestore";
 import { useRef } from "react";
 
-const ChatList = ({ redirect, profImg, username, id, user, toast }) => {
+const ChatList = ({ redirect, id, user, toast }) => {
   const [message, loadingMessage] = useCollectionData(
     query(
       collection(db, `chats/${id}/messages`),
@@ -23,7 +23,7 @@ const ChatList = ({ redirect, profImg, username, id, user, toast }) => {
       limit(1)
     )
   );
-  const [curr, loading] = useDocumentData(doc(db, `profile/${user}`));
+  const [currUser, loading] = useDocumentData(doc(db, `profile/${user}`));
   const toastId = useRef(null);
 
   const deleteChat = async () => {
@@ -56,19 +56,25 @@ const ChatList = ({ redirect, profImg, username, id, user, toast }) => {
             <Image
               loading="eager"
               layout="fill"
-              src={profImg}
+              src={
+                currUser
+                  ? currUser.profImg
+                    ? currUser.profImg
+                    : currUser.image
+                  : require("../public/userimg.jpg")
+              }
               alt="story"
               className="rounded-full"
             />
             <span
               className={`top-0 right-0 absolute  w-3.5 h-3.5 ${
-                !loading && curr?.active ? "bg-green-400" : "bg-red-500"
+                !loading && currUser?.active ? "bg-green-400" : "bg-red-500"
               } border-2 border-white dark:border-gray-800 rounded-full`}
             ></span>
           </div>
         </div>
         <div className="ml-3 w-full truncate">
-          <h1 className="font-semibold -mt-1 h-[22px]">{username}</h1>
+          <h1 className="font-semibold -mt-1 h-[22px]">{currUser?.fullname}</h1>
           <div className="flex text-sm w-full justify-between items-center pr-2">
             <span className="text-gray-400 w-[70%] overflow-hidden truncate">
               {!loadingMessage

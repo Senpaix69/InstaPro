@@ -28,7 +28,7 @@ const ProfileSec = ({
   const [hasFollowed, setHasFollowed] = useState(false);
   const [followYou, setFollowYou] = useState(false);
   const [editProf, setEditProf] = useState(false);
-  const [user, setUser] = useState({});
+  const [user, setUser] = useState(undefined);
   const [bio, setBio] = useState("");
   const [name, setName] = useState("");
   const toastId = useRef(null);
@@ -152,9 +152,11 @@ const ProfileSec = ({
           ) : (
             <Image
               src={
-                user?.profImg
+                user
                   ? user.profImg
-                  : "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTagSIpNvrU1N3lvzrWDoSf5oJzABckJ3HbMw&usqp=CAU"
+                    ? user.profImg
+                    : user.image
+                  : require("../public/userimg.jpg")
               }
               layout="fill"
               loading="eager"

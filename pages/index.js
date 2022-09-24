@@ -29,7 +29,8 @@ export default function Home() {
           totalFollowings: 0,
           username: session.user.username,
           uid: session.user.uid,
-          profImg: session.user?.image,
+          image: session.user?.image,
+          profImg: "",
           email: session.user.email,
           timeStamp: serverTimestamp(),
         });

@@ -7,16 +7,14 @@ import {
   UserCircleIcon,
   SearchIcon,
 } from "@heroicons/react/solid";
-import { addDoc, collection, Timestamp } from "firebase/firestore";
+import { addDoc, collection } from "firebase/firestore";
 import { useCollection } from "react-firebase-hooks/firestore";
 import { useRouter } from "next/router";
 import Loading from "../components/Loading";
 import getUserData from "../utils/getUserData";
 import getOtherEmail from "../utils/getOtherEmail";
-import getOtherUserData from "../utils/getOtherUserData";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import getOtherProfImage from "../utils/getOtherProfImage";
 import ChatList from "../components/ChatList";
 import getUserActivity from "../utils/getUserActivity";
 import { useRecoilState } from "recoil";
@@ -31,7 +29,6 @@ const Chats = () => {
   const chats = snapshot?.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
   const values = getUserActivity();
   const [darkMode, setDarkMode] = useRecoilState(themeState);
-  const [activeUser, setActiveUser] = useState({});
   const toastId = useRef(null);
 
   const chatExits = (email) => {
@@ -51,12 +48,6 @@ const Chats = () => {
   };
 
   useEffect(() => {
-    setActiveUser(
-      values?.filter((user) => user.username === session.user.username)[0]
-    );
-  }, [values]);
-
-  useEffect(() => {
     setUsers(getUserData(chats, session?.user.username));
   }, [snapshot]);
 
@@ -67,26 +58,19 @@ const Chats = () => {
         if (!chatExits(uName)) {
           const ind = values.findIndex((user) => user.username === uName);
           if (ind !== -1 && !loading) {
-            const time = Timestamp.now();
             toastId.current = toast.loading("Finding...", {
               position: "top-center",
             });
             await addDoc(collection(db, "chats"), {
               users: [
-                values[ind],
-                {
-                  fullname: activeUser.fullname,
-                  bio: activeUser.bio,
-                  username: activeUser.username,
-                  profImg: activeUser.profImg,
-                  timeStamp: time,
-                },
+                { username: values[ind].username },
+                { username: session?.user.username },
               ],
             }).then(() => {
               toast.dismiss(toastId.current);
               toastId.current = null;
               toast.success("User Added Successfully 🤞", {
-                position: "top-center"
+                position: "top-center",
               });
             });
           } else {
@@ -172,8 +156,6 @@ const Chats = () => {
                       key={i}
                       id={user.id}
                       redirect={redirect}
-                      username={getOtherUserData(user, session.user)?.fullname}
-                      profImg={getOtherProfImage(user, session.user?.username)}
                       user={getOtherEmail(user, session.user)}
                     />
                   ))
