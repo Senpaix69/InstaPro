@@ -2,71 +2,102 @@ import { useRecoilState } from "recoil";
 import { modelState } from "../atoms/modelAtom";
 import { Dialog, Transition } from "@headlessui/react";
 import { CameraIcon } from "@heroicons/react/outline";
+import { VideoCameraIcon, PhotographIcon } from "@heroicons/react/solid";
 import { Fragment, useRef, useState } from "react";
 import { db, storage } from "../firebase";
-import {
-  addDoc,
-  doc,
-  collection,
-  serverTimestamp,
-  updateDoc,
-} from "firebase/firestore";
+import { addDoc, collection, serverTimestamp } from "firebase/firestore";
 import { useSession } from "next-auth/react";
-import { ref, getDownloadURL, uploadString } from "firebase/storage";
+import { ref, getDownloadURL, uploadBytesResumable } from "firebase/storage";
+import { uuidv4 } from "@firebase/util";
 import { toast } from "react-toastify";
 
 const Model = () => {
   const { data: session } = useSession();
   const [open, setOpen] = useRecoilState(modelState);
   const filePickerRef = useRef(null);
-  const captionRef = useRef(null);
-  const toastId = useRef(null);
-  const [selectFile, setSelectFile] = useState(null);
+  const [caption, setCaption] = useState("");
+  const [selectFile, setSelectFile] = useState("");
+  const [fileType, setFileType] = useState("");
   const [loading, setLoading] = useState(false);
+  const [status, setStatus] = useState(0);
+  const toastId = useRef(null);
 
-  const postImage = async () => {
+  const postMedia = async () => {
     if (loading) return;
     setLoading(true);
-
-    const docRef = await addDoc(collection(db, "posts"), {
-      username: session.user.username,
-      caption: captionRef.current.value,
-      profImg: session.user.image,
-      timeStamp: serverTimestamp(),
-    });
-    setOpen(false);
-    setLoading(false);
-    setSelectFile(null);
-
     toastId.current = toast.loading("Uploading...", {
       position: "top-center",
     });
-    const imageRef = ref(storage, `posts/${docRef.id}/image`);
-    await uploadString(imageRef, selectFile, "data_url")
-      .then(async () => {
-        const downloadURL = await getDownloadURL(imageRef);
 
-        await updateDoc(doc(db, "posts", docRef.id), {
-          image: downloadURL,
-        });
-      })
-      .then(() => {
-        toast.dismiss(toastId.current);
-        toastId.current = null;
-        toast.success("Post Uploaded Successfully ❤", {
+    const storageRef = ref(
+      storage,
+      `posts/${fileType}/[${uuidv4()}]${selectFile.name}`
+    );
+    const uploadTask = uploadBytesResumable(storageRef, selectFile);
+
+    uploadTask.on(
+      "state_changed",
+      (snapshot) => {
+        const percent = Math.round(
+          (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+        );
+        setStatus(percent);
+      },
+      (err) => {
+        toast.error(err, {
           position: "top-center",
         });
-      });
+        setOpen(false);
+        setLoading(false);
+        setStatus(0);
+        setFileType("");
+        setSelectFile(null);
+      },
+      () => {
+        // download url
+        getDownloadURL(uploadTask.snapshot.ref).then(async (url) => {
+          await addDoc(collection(db, "posts"), {
+            username: session.user.username,
+            caption: caption,
+            profImg: session.user.image,
+            timeStamp: serverTimestamp(),
+            [fileType]: url,
+          });
+        });
+
+        toast.dismiss(toastId.current);
+        toastId.current = null;
+        toast.success("Post Uploaded Successfully 👍", {
+          position: "top-center",
+        });
+        setOpen(false);
+        setLoading(false);
+        setStatus(0);
+        setFileType("");
+        setSelectFile(null);
+      }
+    );
   };
 
-  const addImageToPost = (e) => {
-    const read = new FileReader();
-    if (e.target.files[0]) {
-      read.readAsDataURL(e.target.files[0]);
+  const addPost = (file) => {
+    if (file) {
+      setFileType(file.type.includes("image") ? "image" : "video");
+      if (fileType === "image") {
+        if (file.size / (1024 * 1024) > 5) {
+          toast.error("Image size is larger than 3mb", {
+            position: "top-center",
+          });
+        } else {
+          setSelectFile(file);
+        }
+      } else if (file.size / (1024 * 1024) > 50) {
+        toast.error("Video size is larger than 50mb", {
+          position: "top-center",
+        });
+      } else {
+        setSelectFile(file);
+      }
     }
-    read.onload = (readEvent) => {
-      setSelectFile(readEvent.target.result);
-    };
   };
 
   return (
@@ -105,12 +136,17 @@ const Model = () => {
             <div className="inline-block align-bottom bg-white rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-sm sm:w-full sm:p-6">
               <div>
                 {selectFile ? (
-                  <img
-                    className="object-contain w-full cursor-pointer"
-                    src={selectFile}
-                    alt="file"
+                  <button
                     onClick={() => setSelectFile(null)}
-                  />
+                    className="font-bold flex items-center justify-center w-full space-x-2"
+                  >
+                    {fileType === "video" ? (
+                      <VideoCameraIcon className="h-6 w-6" />
+                    ) : (
+                      <PhotographIcon className="h-6 w-6" />
+                    )}
+                    <p> ~{selectFile.name}</p>
+                  </button>
                 ) : (
                   <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-100 cursor-pointer">
                     <CameraIcon
@@ -125,19 +161,19 @@ const Model = () => {
                     as="h3"
                     className="text-lg leading-6 font-medium text-gray-900"
                   >
-                    Upload a photo
+                    Upload Media
                   </Dialog.Title>
                   <div>
                     <input
                       ref={filePickerRef}
                       type="file"
                       hidden
-                      onChange={addImageToPost}
+                      onChange={(e) => addPost(e.target.files[0])}
                     />
                   </div>
                   <div className="mt-2">
                     <input
-                      ref={captionRef}
+                      onChange={(e) => setCaption(e.target.value)}
                       className="border-none focus:ring-0 w-full text-center"
                       type="text"
                       placeholder="Please enter a caption"
@@ -151,9 +187,9 @@ const Model = () => {
                   type="button"
                   disabled={!selectFile}
                   className="inline-flex justify-center w-full rouned-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:text-sm disabled:bg-gray-300 disabled:cursor-not-allowed hover:disabled:bg-gray-300"
-                  onClick={postImage}
+                  onClick={postMedia}
                 >
-                  {loading ? "Uploading..." : "Upload Post"}
+                  {loading ? `Uploading ${status}%` : "Upload Post"}
                 </button>
               </div>
             </div>
