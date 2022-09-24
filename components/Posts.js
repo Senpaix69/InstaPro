@@ -75,7 +75,7 @@ const Posts = ({ setTotalPosts, profile }) => {
       }
     });
   };
-  let observer = new IntersectionObserver(callback, { threshold: 0.8 });
+  let observer = new IntersectionObserver(callback, { threshold: 0.6 });
 
   useEffect(() => {
     if (posts) {

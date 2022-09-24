@@ -6,10 +6,12 @@ import {
   HeartIcon,
   PaperAirplaneIcon,
   DownloadIcon,
+  VideoCameraIcon,
 } from "@heroicons/react/outline";
 import { XCircleIcon } from "@heroicons/react/solid";
 import Image from "next/image";
 import { HeartIcon as HeartIconFilled } from "@heroicons/react/solid";
+import { useDocumentData } from "react-firebase-hooks/firestore";
 import {
   addDoc,
   doc,
@@ -45,6 +47,8 @@ const Post = ({
   const [likes, setLikes] = useState([]);
   const [hasLike, setHasLike] = useState(false);
   const [view, setView] = useRecoilState(postView);
+  const [user] = useDocumentData(doc(db, `profile/${username}`));
+  console.log(user);
 
   useEffect(() => {
     setView(false);
@@ -106,7 +110,7 @@ const Post = ({
   return (
     <div>
       {router.asPath === "/" || view ? (
-        <div className="bg-white border rounded-sm my-2 shadow-md dark:bg-gray-900 dark:border-gray-800">
+        <div className="bg-white border rounded-lg my-2 shadow-md dark:bg-gray-900 dark:border-gray-800">
           <div className="flex items-center py-2 px-[5px] shadow-md bg-blue-500 dark:bg-gray-900 text-white">
             <div className="flex flex-1">
               <div className="relative rounded-full h-9 w-9 mr-3 ml-2">
@@ -114,7 +118,7 @@ const Post = ({
                   loading="eager"
                   layout="fill"
                   className="rounded-full"
-                  src={userImg}
+                  src={user ? (user.profImg ? user.profImg : userImg) : userImg}
                   alt="img"
                 />
               </div>
@@ -122,8 +126,7 @@ const Post = ({
                 onClick={() => router.push(`/profile/${username}`)}
                 className="font-bold dark:text-gray-200 cursor-pointer w-auto"
               >
-                {" "}
-                {username}{" "}
+                {user ? user.fullname : username}
               </button>
             </div>
             <Moment fromNow className="mr-2 text-[10px]">
@@ -156,12 +159,11 @@ const Post = ({
               <video
                 autoPlay
                 loop
-                preload=""
                 src={video}
                 muted
                 onClick={(e) => (e.target.muted = !e.target.muted)}
                 controls
-                className="w-full h-auto"
+                className="w-full h-auto max-h-[500px] overflow-hidden"
               ></video>
             )}
           </div>
@@ -189,7 +191,7 @@ const Post = ({
               <BookmarkIcon className="btn" />
             </div>
           </div>
-          <p className="px-4 dark:text-gray-200">
+          <p className="px-4 dark:text-gray-200 mb-2">
             {likes.length > 0 && (
               <button
                 onClick={() => router.push(`/like/${id}`)}
@@ -242,14 +244,27 @@ const Post = ({
             onClick={() => setView(true)}
             className="relative h-[120px] w-[120px] sm:w-36 sm:h-36 md:h-[155px] md:w-[155px] rounded-md"
           >
-            <Image
-              src={img}
-              layout="fill"
-              objectFit="cover"
-              loading="eager"
-              alt="image"
-              className="rounded-md"
-            />
+            {img && (
+              <Image
+                src={img}
+                layout="fill"
+                objectFit="cover"
+                loading="eager"
+                alt="image"
+                className="rounded-md"
+              />
+            )}
+            {video && (
+              <>
+                <VideoCameraIcon className="h-5 w-5 absolute text-slate-200 m-1" />
+                <video
+                  autoPlay={false}
+                  preload="metadata"
+                  src={video}
+                  className="h-full w-full overflow-hidden"
+                ></video>
+              </>
+            )}
           </button>
         </div>
       )}
