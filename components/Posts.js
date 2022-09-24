@@ -66,6 +66,26 @@ const Posts = ({ setTotalPosts, profile }) => {
     }
   };
 
+  const callback = (entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        entry.target.play();
+      } else {
+        entry.target.pause();
+      }
+    });
+  };
+  let observer = new IntersectionObserver(callback, { threshold: 0.8 });
+
+  useEffect(() => {
+    if (posts) {
+      const elements = document.querySelectorAll("video");
+      elements.forEach((element) => {
+        observer.observe(element);
+      });
+    }
+  }, [posts]);
+
   return (
     <div
       className={`relative mb-14 ${
@@ -86,6 +106,7 @@ const Posts = ({ setTotalPosts, profile }) => {
             username={post.data().username}
             userImg={post.data().profImg}
             img={post.data().image}
+            video={post.data().video}
             caption={post.data().caption}
             timeStamp={post.data().timeStamp}
             router={router}

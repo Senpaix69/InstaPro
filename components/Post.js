@@ -33,6 +33,7 @@ const Post = ({
   username,
   userImg,
   img,
+  video,
   caption,
   timeStamp,
   router,
@@ -137,7 +138,11 @@ const Post = ({
               <DotsHorizontalIcon className="btn pr-3 dark:text-gray-200" />
             )}
           </div>
-          <div className="relative w-full h-[400px] md:h-[500px] dark:bg-black bg-blue-200">
+          <div
+            className={`${
+              img ? "relative w-full h-[400px] md:h-[500px]" : ""
+            } dark:bg-black bg-blue-200`}
+          >
             {img && (
               <Image
                 loading="eager"
@@ -146,6 +151,18 @@ const Post = ({
                 src={img}
                 alt="cover"
               />
+            )}
+            {video && (
+              <video
+                autoPlay
+                loop
+                preload=""
+                src={video}
+                muted
+                onClick={(e) => (e.target.muted = !e.target.muted)}
+                controls
+                className="w-full h-auto"
+              ></video>
             )}
           </div>
 
