@@ -55,7 +55,6 @@ export default function Home() {
     }
     if (load) {
       const elements = document.querySelectorAll("video");
-      console.log(elements);
       elements.forEach((element) => {
         observer.observe(element);
       });

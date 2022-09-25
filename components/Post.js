@@ -22,6 +22,7 @@ import {
   orderBy,
   deleteDoc,
   setDoc,
+  updateDoc,
 } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import { db } from "../firebase";
@@ -36,6 +37,7 @@ const Post = ({
   userImg,
   img,
   video,
+  videoViews,
   caption,
   timeStamp,
   router,
@@ -106,6 +108,13 @@ const Post = ({
     });
   };
 
+  const handlePlay = async () => {
+    await updateDoc(doc(db, "posts", id), {
+      views: videoViews ? videoViews + 1 : 1,
+    });
+    console.log(videoViews);
+  };
+
   return (
     <div>
       {router.asPath === "/" || view ? (
@@ -163,6 +172,7 @@ const Post = ({
               <video
                 autoPlay
                 loop
+                onPlay={handlePlay}
                 muted={
                   router.pathname?.includes("profile") && !view ? "muted" : ""
                 }
@@ -196,15 +206,24 @@ const Post = ({
               <BookmarkIcon className="btn" />
             </div>
           </div>
-          <p className="px-4 dark:text-gray-200 mb-2">
-            {likes.length > 0 && (
-              <button
-                onClick={() => router.push(`/like/${id}`)}
-                className="font-bold mb-1 flex"
-              >
-                {likes.length} {likes.length === 1 ? "like" : "likes"}
-              </button>
-            )}
+          <div className="px-4 dark:text-gray-200 mb-2">
+            <p className="flex space-x-2 font-semibold">
+              {likes.length > 0 && (
+                <button
+                  onClick={() => router.push(`/like/${id}`)}
+                  className="mb-1 flex"
+                >
+                  {likes.length} {likes.length === 1 ? "like" : "likes"}
+                </button>
+              )}
+              <span>
+                {videoViews
+                  ? videoViews > 1
+                    ? `${videoViews} Views`
+                    : "1 View"
+                  : 0}
+              </span>
+            </p>
             <button
               onClick={() => router.push(`/profile/${username}`)}
               className="font-bold mr-1"
@@ -212,7 +231,7 @@ const Post = ({
               {username}{" "}
             </button>
             <span className="text-sm">{caption}</span>
-          </p>
+          </div>
 
           {comments.length > 0 && (
             <button

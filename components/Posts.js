@@ -93,6 +93,7 @@ const Posts = ({ setTotalPosts, profile, setLoad }) => {
             userImg={post.data().profImg}
             img={post.data().image}
             video={post.data().video}
+            videoViews={post.data().views}
             caption={post.data().caption}
             timeStamp={post.data().timeStamp}
             router={router}

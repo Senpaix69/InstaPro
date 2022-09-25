@@ -58,7 +58,6 @@ const Profile = () => {
     }
     if (load && view) {
       const elements = document.querySelectorAll("video");
-      console.log(elements);
       elements.forEach((element) => {
         observer.observe(element);
       });
