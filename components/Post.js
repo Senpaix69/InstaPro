@@ -158,8 +158,8 @@ const Post = ({
               <video
                 autoPlay
                 loop
+                muted={router.pathname?.includes("profile") ? "muted" : ""}
                 src={video}
-                muted
                 onClick={(e) => (e.target.muted = !e.target.muted)}
                 controls
                 className="w-full h-auto max-h-[500px] overflow-hidden"
@@ -257,8 +257,8 @@ const Post = ({
               <>
                 <VideoCameraIcon className="h-5 w-5 absolute text-slate-200 m-1" />
                 <video
-                  autoPlay={false}
                   preload="metadata"
+                  muted
                   src={video}
                   className="h-full w-full overflow-hidden"
                 ></video>
