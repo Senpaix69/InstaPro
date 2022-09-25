@@ -8,11 +8,18 @@ import { db } from "../firebase";
 import { useRecoilState } from "recoil";
 import { themeState } from "../atoms/theme";
 import { useEffect, useState } from "react";
+import initBeams from "../components/initBeams";
 
 export default function Home() {
   const { data: session } = useSession();
   const [darkMode, setDarkMode] = useRecoilState(themeState);
   const [load, setLoad] = useState(false);
+
+  useEffect(() => {
+    if (session) {
+      initBeams(session.user.uid);
+    }
+  }, [session]);
 
   useEffect(() => {
     const theme = JSON.parse(localStorage.getItem("theme"));

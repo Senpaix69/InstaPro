@@ -31,7 +31,7 @@ const Model = () => {
 
     const storageRef = ref(
       storage,
-      `posts/${fileType}/[${uuidv4()}]${selectFile.name}`
+      `posts/${fileType}/${session.user.username}_${uuidv4()}`
     );
     const uploadTask = uploadBytesResumable(storageRef, selectFile);
 

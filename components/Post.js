@@ -112,7 +112,6 @@ const Post = ({
     await updateDoc(doc(db, "posts", id), {
       views: videoViews ? videoViews + 1 : 1,
     });
-    console.log(videoViews);
   };
 
   return (
@@ -173,13 +172,15 @@ const Post = ({
                 autoPlay
                 loop
                 onPlay={handlePlay}
+                playsInline
                 muted={
                   router.pathname?.includes("profile") && !view ? "muted" : ""
                 }
-                src={video}
                 onClick={(e) => (e.target.muted = !e.target.muted)}
                 className="w-full h-auto max-h-[500px] overflow-hidden"
-              ></video>
+              >
+                <source src={video} />
+              </video>
             )}
           </div>
 
@@ -275,7 +276,6 @@ const Post = ({
                 objectFit="cover"
                 loading="eager"
                 alt="image"
-                np
                 className="rounded-md"
               />
             )}

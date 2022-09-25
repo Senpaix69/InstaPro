@@ -22,4 +22,8 @@ const withPWA = require("next-pwa")({
   disable: process.env.NODE_ENV === "development",
 });
 
-module.exports = withPWA(nextConfig);
+const withTM = require("next-transpile-modules")([
+  "@pusher/push-notifications-web",
+]);
+
+module.exports = withPWA(withTM(nextConfig));
