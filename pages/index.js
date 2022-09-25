@@ -25,8 +25,6 @@ export default function Home() {
         await setDoc(doc(db, "profile", session.user.username), {
           fullname: session.user.name,
           bio: "",
-          totalFollowers: 0,
-          totalFollowings: 0,
           username: session.user.username,
           uid: session.user.uid,
           image: session.user?.image,

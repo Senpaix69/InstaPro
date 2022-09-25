@@ -48,7 +48,6 @@ const Post = ({
   const [hasLike, setHasLike] = useState(false);
   const [view, setView] = useRecoilState(postView);
   const [user] = useDocumentData(doc(db, `profile/${username}`));
-  console.log(user);
 
   useEffect(() => {
     setView(false);
