@@ -9,7 +9,7 @@ import { showUpdate } from "../atoms/showUpdate";
 import { useRecoilState } from "recoil";
 import { useEffect, useState } from "react";
 
-const Feed = () => {
+const Feed = ({ setLoad }) => {
   const { data: session } = useSession();
   const [update, setUpdate] = useRecoilState(showUpdate);
   const [timer, setTimer] = useState(false);
@@ -61,7 +61,7 @@ const Feed = () => {
             </div>
 
             <Stories />
-            <Posts />
+            <Posts setLoad={setLoad} />
             <Notification />
           </section>
 

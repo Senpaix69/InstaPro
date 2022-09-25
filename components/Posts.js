@@ -18,11 +18,17 @@ import { useRouter } from "next/router";
 import { postView } from "../atoms/postView";
 import { useRecoilState } from "recoil";
 
-const Posts = ({ setTotalPosts, profile }) => {
+const Posts = ({ setTotalPosts, profile, setLoad }) => {
   const [posts, setPosts] = useState(undefined);
   const router = useRouter();
   const [view] = useRecoilState(postView);
   const toastId = useRef(null);
+
+  useEffect(() => {
+    if (posts) {
+      setLoad(true);
+    }
+  }, [posts]);
 
   useEffect(() => {
     if (router.pathname === "/") {
@@ -65,26 +71,6 @@ const Posts = ({ setTotalPosts, profile }) => {
       });
     }
   };
-
-  const callback = (entries) => {
-    entries.forEach((entry) => {
-      if (entry.isIntersecting) {
-        entry.target.play();
-      } else {
-        entry.target.pause();
-      }
-    });
-  };
-  let observer = new IntersectionObserver(callback, { threshold: 0.6 });
-
-  useEffect(() => {
-    if (posts) {
-      const elements = document.querySelectorAll("video");
-      elements.forEach((element) => {
-        observer.observe(element);
-      });
-    }
-  }, [posts]);
 
   return (
     <div

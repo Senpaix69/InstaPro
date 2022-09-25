@@ -7,11 +7,12 @@ import { doc, setDoc, serverTimestamp, getDoc } from "firebase/firestore";
 import { db } from "../firebase";
 import { useRecoilState } from "recoil";
 import { themeState } from "../atoms/theme";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 export default function Home() {
   const { data: session } = useSession();
   const [darkMode, setDarkMode] = useRecoilState(themeState);
+  const [load, setLoad] = useState(false);
 
   useEffect(() => {
     const theme = JSON.parse(localStorage.getItem("theme"));
@@ -37,6 +38,30 @@ export default function Home() {
     if (session) addProfile();
   }, [session]);
 
+  const callback = (entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        entry.target.play();
+      } else {
+        entry.target.pause();
+      }
+    });
+  };
+
+  useEffect(() => {
+    let observer;
+    if (session) {
+      observer = new IntersectionObserver(callback, { threshold: 0.6 });
+    }
+    if (load) {
+      const elements = document.querySelectorAll("video");
+      console.log(elements);
+      elements.forEach((element) => {
+        observer.observe(element);
+      });
+    }
+  }, [load]);
+
   return (
     <div
       className={`h-screen overflow-y-scroll scrollbar-hide ${
@@ -48,7 +73,7 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Header darkMode={darkMode} setDarkMode={setDarkMode} />
-      <Feed />
+      <Feed setLoad={setLoad} />
       <Model />
     </div>
   );

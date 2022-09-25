@@ -120,6 +120,11 @@ const Post = ({
                   src={user ? (user.profImg ? user.profImg : userImg) : userImg}
                   alt="img"
                 />
+                <span
+                  className={`-top-1 right-0 absolute  w-3.5 h-3.5 ${
+                    user && user?.active ? "bg-green-400" : "bg-slate-500"
+                  } border-2 border-white dark:border-gray-800 rounded-full`}
+                ></span>
               </div>
               <button
                 onClick={() => router.push(`/profile/${username}`)}
@@ -158,10 +163,11 @@ const Post = ({
               <video
                 autoPlay
                 loop
-                muted={router.pathname?.includes("profile") ? "muted" : ""}
+                muted={
+                  router.pathname?.includes("profile") && !view ? "muted" : ""
+                }
                 src={video}
                 onClick={(e) => (e.target.muted = !e.target.muted)}
-                controls
                 className="w-full h-auto max-h-[500px] overflow-hidden"
               ></video>
             )}
@@ -184,7 +190,7 @@ const Post = ({
               <PaperAirplaneIcon className="btn pt-1 rotate-90" />
             </div>
             <div className="flex space-x-3 items-center">
-              <a href={img} alt="" download={img}>
+              <a href={img ? img : video} alt="" download={img ? img : video}>
                 <DownloadIcon className="btn" />
               </a>
               <BookmarkIcon className="btn" />
@@ -250,6 +256,7 @@ const Post = ({
                 objectFit="cover"
                 loading="eager"
                 alt="image"
+                np
                 className="rounded-md"
               />
             )}

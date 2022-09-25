@@ -22,6 +22,7 @@ const Profile = () => {
   const [showFollowers, setShowFollowers] = useState(false);
   const [showFollowings, setShowFollowings] = useState(false);
   const { profile } = router?.query;
+  const [load, setLoad] = useState(false);
 
   const [followers] = useCollectionData(
     query(
@@ -39,6 +40,30 @@ const Profile = () => {
   useEffect(() => {
     followings ? setShowFollowings(false) : setShowFollowers(false);
   }, [followings]);
+
+  const callback = (entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        entry.target.play();
+      } else {
+        entry.target.pause();
+      }
+    });
+  };
+
+  useEffect(() => {
+    let observer;
+    if (session) {
+      observer = new IntersectionObserver(callback, { threshold: 0.6 });
+    }
+    if (load && view) {
+      const elements = document.querySelectorAll("video");
+      console.log(elements);
+      elements.forEach((element) => {
+        observer.observe(element);
+      });
+    }
+  }, [load, view]);
 
   return (
     <>
@@ -89,7 +114,11 @@ const Profile = () => {
               {view ? "G-View" : "P-View"}
             </button>
             {!showFollowers && !showFollowings && !loading && (
-              <Posts setTotalPosts={setTotalPosts} profile={profile} />
+              <Posts
+                setLoad={setLoad}
+                setTotalPosts={setTotalPosts}
+                profile={profile}
+              />
             )}
           </div>
         </div>

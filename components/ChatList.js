@@ -68,7 +68,7 @@ const ChatList = ({ redirect, id, user, toast }) => {
             />
             <span
               className={`top-0 right-0 absolute  w-3.5 h-3.5 ${
-                !loading && currUser?.active ? "bg-green-400" : "bg-red-500"
+                !loading && currUser?.active ? "bg-green-400" : "bg-slate-500"
               } border-2 border-white dark:border-gray-800 rounded-full`}
             ></span>
           </div>
