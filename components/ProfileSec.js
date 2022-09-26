@@ -2,7 +2,7 @@ import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { db } from "../firebase";
+import { db, storage } from "../firebase";
 import {
   doc,
   getDoc,
@@ -11,13 +11,16 @@ import {
   setDoc,
   deleteDoc,
 } from "firebase/firestore";
+import { CameraIcon } from "@heroicons/react/outline";
+import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
+import { uuidv4 } from "@firebase/util";
 
 const ProfileSec = ({
   posts,
   showFollowers,
   showFollowings,
   session,
-  profile,
+  user,
   setShowFollowers,
   setShowFollowings,
   followers,
@@ -28,22 +31,16 @@ const ProfileSec = ({
   const [hasFollowed, setHasFollowed] = useState(false);
   const [followYou, setFollowYou] = useState(false);
   const [editProf, setEditProf] = useState(false);
-  const [user, setUser] = useState(undefined);
-  const [bio, setBio] = useState("");
-  const [name, setName] = useState("");
+  const [profilePic, setProfilePic] = useState("");
   const toastId = useRef(null);
+  const profileImageRef = useRef(null);
 
   useEffect(() => {
-    getDoc(doc(db, `profile/${profile}`)).then((userData) => {
-      setBio(userData.data()?.bio ? userData.data()?.bio : "Bio");
-      setTextBio(userData.data()?.bio ? userData.data()?.bio : "Bio");
-      setName(userData.data()?.fullname ? userData.data()?.fullname : "Name");
-      setTextName(
-        userData.data()?.fullname ? userData.data()?.fullname : "Name"
-      );
-      setUser(userData.data());
-    });
-  }, [profile]);
+    if (user) {
+      setTextBio(user.bio);
+      setTextName(user.fullname);
+    }
+  }, []);
 
   const followUser = async () => {
     if (toast.isActive(toastId)) {
@@ -51,18 +48,16 @@ const ProfileSec = ({
     }
     toastId.current = toast.loading("Following...", { position: "top-center" });
     await setDoc(
-      doc(db, `profile/${profile}/followers/${session.user.username}`),
+      doc(db, `profile/${user?.username}/followers/${session.user.username}`),
       {
         username: session.user.username,
-        profImg: session.user.image,
         timeStamp: serverTimestamp(),
       }
     );
     await setDoc(
-      doc(db, `profile/${session.user.username}/followings/${profile}`),
+      doc(db, `profile/${session.user.username}/followings/${user.username}`),
       {
         username: user.username,
-        profImg: user.profImg,
         timeStamp: serverTimestamp(),
       }
     ).then(() => {
@@ -73,7 +68,7 @@ const ProfileSec = ({
   };
 
   const unFollowUser = async () => {
-    if (confirm(`Do you really want to unfollow: ${profile}`)) {
+    if (confirm(`Do you really want to unfollow: ${user.username}`)) {
       if (toast.isActive(toastId)) {
         toast.dismiss(toastId);
       }
@@ -81,14 +76,26 @@ const ProfileSec = ({
         position: "top-center",
       });
       await deleteDoc(
-        doc(db, `profile/${profile}/followers/${session.user.username}`)
+        doc(db, `profile/${user.username}/followers/${session.user.username}`)
       );
       await deleteDoc(
-        doc(db, `profile/${session.user.username}/followings/${profile}`)
+        doc(db, `profile/${session.user.username}/followings/${user.username}`)
       );
       toast.dismiss(toastId.current);
       toastId.current = null;
       toast.success("Followed Successfully 😇", { position: "top-center" });
+    }
+  };
+
+  const addProfile = async (file) => {
+    if (file && file?.type?.includes("image")) {
+      if (file.size / (1024 * 1024) > 5) {
+        toast.error("Image size is larger than 3mb", {
+          position: "top-center",
+        });
+      } else {
+        setProfilePic(file);
+      }
     }
   };
 
@@ -99,37 +106,80 @@ const ProfileSec = ({
     toastId.current = toast.loading("Saving...", {
       position: "top-center",
     });
-    await updateDoc(doc(db, "profile", profile), {
-      bio: textBio,
-      fullname: textName,
-    }).then(() => {
-      toast.dismiss(toastId.current);
-      toastId.current = null;
-      toast.success("Profile Edited Successfully 😀", {
-        position: "top-center",
+
+    if (profilePic) {
+      const storageRef = ref(
+        storage,
+        `posts/image/${session.user.username}_${uuidv4()}`
+      );
+      const uploadTask = uploadBytesResumable(storageRef, profilePic);
+      uploadTask.on(
+        "state_changed",
+        (snapshot) => {
+          const percent = Math.round(
+            (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+          );
+          console.log(percent);
+        },
+        (err) => {
+          toast.error(err, {
+            position: "top-center",
+          });
+          setEditProf(false);
+          setProfilePic("");
+        },
+        () => {
+          // download url
+          getDownloadURL(uploadTask.snapshot.ref).then(async (url) => {
+            await updateDoc(doc(db, "profile", user.username), {
+              bio: textBio,
+              fullname: textName,
+              profImg: url,
+            }).then(() => {
+              toast.dismiss(toastId.current);
+              toastId.current = null;
+              toast.success("Profile Edited Successfully 😀", {
+                position: "top-center",
+              });
+              setEditProf(false);
+              setProfilePic("");
+            });
+          });
+        }
+      );
+    } else {
+      await updateDoc(doc(db, "profile", user.username), {
+        bio: textBio,
+        fullname: textName,
+      }).then(() => {
+        toast.dismiss(toastId.current);
+        toastId.current = null;
+        toast.success("Profile Edited Successfully 😀", {
+          position: "top-center",
+        });
+        setEditProf(false);
+        setProfilePic("");
       });
-      setBio(textBio);
-      setName(textName);
-      setEditProf(false);
-    });
+    }
   };
 
   useEffect(() => {
     setHasFollowed(
       followers?.findIndex(
-        (user) => user.username === session?.user.username
+        (usern) => usern.username === session?.user.username
       ) !== -1
     );
     setFollowYou(
       followings?.findIndex(
-        (user) => user.username === session?.user.username
+        (usern) => usern.username === session?.user.username
       ) !== -1
     );
   }, [followers, session]);
 
   const cancelEditing = () => {
-    setTextBio = bio;
-    setTextName = name;
+    setTextBio(user.bio);
+    setTextName(user.fullname);
+    setProfilePic("");
     setEditProf(false);
   };
 
@@ -141,9 +191,30 @@ const ProfileSec = ({
     >
       <div className="flex px-2 relative md:justify-center">
         <div className="relative h-20 w-20 md:h-24 md:w-24">
-          {profile === session?.user.username ? (
+          {editProf && (
+            <div
+              className={`w-full h-full absolute rounded-full truncate ${
+                profilePic ? "bg-blue-700" : "bg-slate-700"
+              } z-10`}
+            >
+              {!profilePic ? (
+                <CameraIcon
+                  onClick={() => profileImageRef.current.click()}
+                  className="h-10 w-10 md:h-14 md:w-14 btn absolute z-20 left-[24%] top-[24%] md:left-[20%] md:top-[20%]"
+                />
+              ) : (
+                <button
+                  onClick={() => setProfilePic("")}
+                  className="absolute top-[40%] left-[12%] text-xs md:text-sm"
+                >
+                  {profilePic.name}
+                </button>
+              )}
+            </div>
+          )}
+          {user.username === session?.user.username ? (
             <Image
-              src={session.user.image}
+              src={user?.profImg ? user.profImg : session.user.image}
               layout="fill"
               loading="eager"
               alt="profile"
@@ -184,7 +255,7 @@ const ProfileSec = ({
             <p className="font-bold">{followings ? followings.length : 0}</p>
             <p className="text-sm mt-1 dark:text-gray-200">Followings</p>
           </button>
-          {profile !== session.user.username && followings && (
+          {user.username !== session.user.username && followings && (
             <div className="bg-gray-100 border border-gray-700 dark:bg-black text-sm text-center w-[226px] xl:w-[290px] py-1 rounded-md absolute -bottom-10 font-semibold">
               <span
                 className={`${followYou ? "text-green-500" : "text-red-500"}`}
@@ -198,19 +269,32 @@ const ProfileSec = ({
 
       {!editProf && (
         <div className="mt-1 flex flex-col md:items-center">
-          <h1 className="font-semibold text-sm">
-            {profile === session?.user.username
-              ? session?.user?.username
-              : user?.username}
-          </h1>
+          <div className="flex space-x-1 items-center">
+            <h1 className="font-semibold text-sm">
+              {user.username === session?.user.username
+                ? session?.user?.username
+                : user?.username}
+            </h1>
+            {user.username === "hurairayounas" && (
+              <div className="relative h-4 w-4">
+                <Image
+                  src={require("../public/verified.png")}
+                  layout="fill"
+                  loading="eager"
+                  alt="profile"
+                  className="rounded-full"
+                />
+              </div>
+            )}
+          </div>
           <h1 className="font-semibold text-lg">
-            <span className="dark:text-gray-400">~</span> {name}
+            <span className="dark:text-gray-400">~</span> {user.fullname}
           </h1>
-          <p className="text-sm dark:text-gray-200">{bio}</p>
+          <p className="text-sm dark:text-gray-200">{user.bio}</p>
         </div>
       )}
 
-      {profile === session.user.username ? (
+      {user.username === session.user.username ? (
         <button
           onClick={() => setEditProf(true)}
           hidden={editProf}
@@ -229,11 +313,21 @@ const ProfileSec = ({
 
       {editProf && (
         <div className="mt-5 w-full md:max-w-6xl relative">
+          <input
+            hidden
+            type="file"
+            typeof="image"
+            alt="profile"
+            ref={profileImageRef}
+            onChange={(e) => addProfile(e.target.files[0])}
+            required
+          />
           <p className="text-xs ml-3">Name</p>
           <input
             className="bg-transparent border-none focus:ring-0 w-full"
             type="text"
             placeholder="Enter name"
+            size="50"
             value={textName}
             onChange={(e) => setTextName(e.target.value)}
           />
@@ -243,6 +337,7 @@ const ProfileSec = ({
             className="bg-transparent border-none focus:ring-0 w-full"
             type="text"
             placeholder="Enter bio"
+            size="50"
             value={textBio}
             onChange={(e) => setTextBio(e.target.value)}
           />

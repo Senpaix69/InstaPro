@@ -9,14 +9,17 @@ import { useRecoilState } from "recoil";
 import { themeState } from "../atoms/theme";
 import { useEffect, useState } from "react";
 import initBeams from "../components/initBeams";
+import { userActivity } from "../atoms/userActivity";
 
 export default function Home() {
   const { data: session } = useSession();
   const [darkMode, setDarkMode] = useRecoilState(themeState);
   const [load, setLoad] = useState(false);
+  const [active, setActive] = useRecoilState(userActivity);
 
   useEffect(() => {
     if (session) {
+      setActive(true);
       initBeams(session.user.uid);
     }
   }, [session]);

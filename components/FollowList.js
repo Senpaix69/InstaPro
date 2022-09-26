@@ -2,6 +2,7 @@ import { ArrowLeftIcon, SearchIcon } from "@heroicons/react/outline";
 import { useEffect, useState } from "react";
 import Moment from "react-moment";
 import Image from "next/image";
+const randomImg = require("../public/userimg.jpg");
 
 const FollowList = ({
   setShowFollowers,
@@ -12,10 +13,21 @@ const FollowList = ({
   followers,
   followings,
   router,
+  users,
   currUsername,
 }) => {
   const [show, setShow] = useState([]);
   const [search, setSearch] = useState("");
+
+  const getUserImage = (username) => {
+    let profImg;
+    users.forEach((user) => {
+      if (user.username === username)
+        profImg = user.profImg ? user.profImg : randomImg;
+    });
+    return profImg;
+  };
+
   useEffect(() => {
     if (followers) {
       setShow([...followers]);
@@ -64,22 +76,31 @@ const FollowList = ({
             .map((user, i) => (
               <div key={i} className="w-full flex justify-between items-center">
                 <div className="relative h-16 flex items-center w-full">
-                  {user.profImg && (
-                    <Image
-                      loading="eager"
-                      alt="image"
-                      src={user.profImg}
-                      height="40px"
-                      width="40px"
-                      className="rounded-full"
-                    />
-                  )}
+                  <Image
+                    loading="eager"
+                    alt="image"
+                    src={users ? getUserImage(user.username) : randomImg}
+                    height="40px"
+                    width="40px"
+                    className="rounded-full"
+                  />
                   <div className="ml-3">
                     <button
                       onClick={() => router.push(`/profile/${user.username}`)}
-                      className="font-bold mt-1 cursor-pointer"
+                      className="font-bold mt-1 cursor-pointer flex items-center"
                     >
                       {user.username}
+                      {user.username === "hurairayounas" && (
+                        <div className="relative h-4 w-4 ml-1">
+                          <Image
+                            src={require("../public/verified.png")}
+                            layout="fill"
+                            loading="eager"
+                            alt="profile"
+                            className="rounded-full"
+                          />
+                        </div>
+                      )}
                     </button>
                     {user.timeStamp && (
                       <div className="flex items-center space-x-1">

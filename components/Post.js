@@ -119,7 +119,7 @@ const Post = ({
       {router.asPath === "/" || view ? (
         <div className="bg-white border rounded-lg my-2 shadow-md dark:bg-gray-900 dark:border-gray-800">
           <div className="flex items-center py-2 px-[5px] shadow-md bg-blue-500 dark:bg-gray-900 text-white">
-            <div className="flex flex-1">
+            <div className="flex flex-1 items-center">
               <div className="relative rounded-full h-9 w-9 mr-3 ml-2">
                 <Image
                   loading="eager"
@@ -140,6 +140,17 @@ const Post = ({
               >
                 {user ? user.fullname : username}
               </button>
+              {user?.username === "hurairayounas" && (
+                <div className="ml-1 relative h-4 w-4">
+                  <Image
+                    src={require("../public/verified.png")}
+                    layout="fill"
+                    loading="eager"
+                    alt="profile"
+                    className="rounded-full"
+                  />
+                </div>
+              )}
             </div>
             <Moment fromNow className="mr-2 text-[10px]">
               {timeStamp?.toDate()}

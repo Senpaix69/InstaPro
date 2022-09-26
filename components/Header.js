@@ -43,7 +43,7 @@ const Header = ({ darkMode, setDarkMode, showFollowers, showFollowings }) => {
     if (session) {
       setStatus();
     }
-  }, [active]);
+  }, [session, active]);
 
   return (
     <div

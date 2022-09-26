@@ -18,7 +18,13 @@ import { useRouter } from "next/router";
 import { postView } from "../atoms/postView";
 import { useRecoilState } from "recoil";
 
-const Posts = ({ setTotalPosts, profile, setLoad }) => {
+const Posts = ({
+  setTotalPosts,
+  profile,
+  setLoad,
+  showFollowers,
+  showFollowings,
+}) => {
   const [posts, setPosts] = useState(undefined);
   const router = useRouter();
   const [view] = useRecoilState(postView);
@@ -75,6 +81,8 @@ const Posts = ({ setTotalPosts, profile, setLoad }) => {
   return (
     <div
       className={`relative mb-14 ${
+        showFollowers || showFollowings ? "hidden" : ""
+      } ${
         router.asPath !== "/" && !view
           ? `grid ${
               posts?.length ? "grid-cols-3" : "grid-cols-1"

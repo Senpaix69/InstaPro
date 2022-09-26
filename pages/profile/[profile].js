@@ -6,6 +6,7 @@ import Header from "../../components/Header";
 import Posts from "../../components/Posts";
 import ProfileSec from "../../components/ProfileSec";
 import FollowList from "../../components/FollowList";
+import Loading from "../../components/Loading";
 import { postView } from "../../atoms/postView";
 import { useEffect, useState } from "react";
 import { db } from "../../firebase";
@@ -23,6 +24,7 @@ const Profile = () => {
   const [showFollowings, setShowFollowings] = useState(false);
   const { profile } = router?.query;
   const [load, setLoad] = useState(false);
+  const [users, loading] = useCollectionData(collection(db, "profile"));
 
   const [followers] = useCollectionData(
     query(
@@ -30,7 +32,7 @@ const Profile = () => {
       orderBy("timeStamp", "desc")
     )
   );
-  const [followings, loading] = useCollectionData(
+  const [followings] = useCollectionData(
     query(
       collection(db, `profile/${profile}/followings`),
       orderBy("timeStamp", "desc")
@@ -72,54 +74,60 @@ const Profile = () => {
             darkMode ? "bg-gray-50" : "dark bg-gray-900"
           } h-screen overflow-y-scroll scrollbar-hide flex justify-center relative`}
         >
-          <div className="max-w-6xl min-w-[380px] dark:text-gray-200 flex-1 overflow-y-scroll scrollbar-hide">
-            <FollowList
-              setShowFollowers={setShowFollowers}
-              showFollowers={showFollowers}
-              follow={true}
-              followers={followers}
-              router={router}
-              currUsername={session?.user.username}
-            />
-            <FollowList
-              setShowFollowings={setShowFollowings}
-              showFollowings={showFollowings}
-              followings={followings}
-              router={router}
-              currUsername={session?.user.username}
-            />
-            <Header
-              showFollowers={showFollowers}
-              showFollowings={showFollowings}
-              darkMode={darkMode}
-              setDarkMode={setDarkMode}
-            />
-            <ProfileSec
-              posts={totalPosts}
-              session={session}
-              profile={profile}
-              setShowFollowers={setShowFollowers}
-              showFollowers={showFollowers}
-              showFollowings={showFollowings}
-              setShowFollowings={setShowFollowings}
-              followers={followers}
-              followings={followings}
-            />
-            <button
-              hidden={showFollowers || showFollowings ? true : false}
-              className="absolute z-50 bottom-20 text-white dark:text-gray-300 bg-blue-400 font-semibold dark:bg-slate-700 rounded-r-2xl py-1 px-4"
-              onClick={() => setView(!view)}
-            >
-              {view ? "G-View" : "P-View"}
-            </button>
-            {!showFollowers && !showFollowings && !loading && (
+          {loading ? (
+            <Loading />
+          ) : (
+            <div className="max-w-6xl min-w-[380px] dark:text-gray-200 flex-1 overflow-y-scroll scrollbar-hide">
+              <FollowList
+                setShowFollowers={setShowFollowers}
+                showFollowers={showFollowers}
+                users={users}
+                follow={true}
+                followers={followers}
+                router={router}
+                currUsername={session?.user.username}
+              />
+              <FollowList
+                setShowFollowings={setShowFollowings}
+                users={users}
+                showFollowings={showFollowings}
+                followings={followings}
+                router={router}
+                currUsername={session?.user.username}
+              />
+              <Header
+                showFollowers={showFollowers}
+                showFollowings={showFollowings}
+                darkMode={darkMode}
+                setDarkMode={setDarkMode}
+              />
+              <ProfileSec
+                posts={totalPosts}
+                session={session}
+                user={users.filter((ituser) => ituser.username === profile)[0]}
+                setShowFollowers={setShowFollowers}
+                showFollowers={showFollowers}
+                showFollowings={showFollowings}
+                setShowFollowings={setShowFollowings}
+                followers={followers}
+                followings={followings}
+              />
+              <button
+                hidden={showFollowers || showFollowings ? true : false}
+                className="absolute z-50 bottom-20 text-white dark:text-gray-300 bg-blue-400 font-semibold dark:bg-slate-700 rounded-r-2xl py-1 px-4"
+                onClick={() => setView(!view)}
+              >
+                {view ? "G-View" : "P-View"}
+              </button>
               <Posts
+                showFollowers={showFollowers}
+                showFollowings={showFollowings}
                 setLoad={setLoad}
                 setTotalPosts={setTotalPosts}
                 profile={profile}
               />
-            )}
-          </div>
+            </div>
+          )}
         </div>
       ) : (
         <Login />
