@@ -21,8 +21,8 @@ import {
   updateDoc,
 } from "firebase/firestore";
 import { db, storage } from "../../firebase";
-import { ref, getDownloadURL, uploadString } from "firebase/storage";
 import Loading from "../../components/Loading";
+import { ref, getDownloadURL, uploadString } from "firebase/storage";
 import getChatMessages from "../../utils/getChatMessages";
 import getOtherEmail from "../../utils/getOtherEmail";
 import { useRecoilState } from "recoil";
@@ -44,6 +44,9 @@ const Chat = () => {
   const [user] = useDocumentData(
     doc(db, `profile/${getOtherEmail(chat, session?.user)}`)
   );
+  const [secUser, loading] = useDocumentData(
+    doc(db, `profile/${session?.user.username}`)
+  );
 
   const sendMessage = async (e) => {
     e.preventDefault();
@@ -56,7 +59,6 @@ const Chat = () => {
     const docRef = await addDoc(collection(db, "chats", id, "messages"), {
       text: msgToSend,
       username: session.user.username,
-      userImg: session.user.image,
       timeStamp: serverTimestamp(),
     });
 
@@ -96,21 +98,29 @@ const Chat = () => {
     };
   };
 
+  const getProfileImage = (username) => {
+    if (user?.username === username) {
+      return user.profImg ? user.profImg : user.image;
+    } else {
+      return secUser.profImg ? secUser.profImg : user.image;
+    }
+  };
+
   return (
     <div className={` ${darkMode ? "bg-gray-100" : "dark bg-gray-900"}`}>
       <div className="max-w-6xl lg:mx-auto flex justify-center">
         <div
           className="bg-[url('https://i.pinimg.com/originals/b7/fc/af/b7fcaf2631fc54f28ef3f123855d03dc.jpg')] dark:bg-[url('https://www.teahub.io/photos/full/8-87389_witcher-dark-background-minimal-4k-ultra-hd-mobile.jpg')]
-              bg-no-repeat bg-cover bg-center w-full flex flex-col md:w-[700px] h-screen overflow-y-scroll scrollbar-hide"
+            bg-no-repeat bg-cover bg-center w-full flex flex-col md:w-[700px] h-screen overflow-y-scroll scrollbar-hide"
         >
           {/* Chat Header */}
           <section className="shadow-md bg-white sticky top-0 z-50 dark:bg-gray-900 dark:text-gray-200">
-            <button className="flex items-center px-2 py-1">
+            <div className="flex items-center px-2 py-1">
               <ArrowLeftIcon
                 onClick={() => router?.back()}
                 className="btn m-1"
               />
-              <div className="flex items-center justify-center p-[1px] rounded-full border-red-500 border-2 object-contain mx-2">
+              <div className="flex items-center justify-center p-[1px] rounded-full border-2 object-contain mx-2">
                 <div className="relative w-8 h-8">
                   <Image
                     loading="eager"
@@ -127,7 +137,8 @@ const Chat = () => {
                   />
                 </div>
               </div>
-              <div
+              <button
+                disabled={user ? false : true}
                 onClick={() => router.push(`/profile/${user?.username}`)}
                 className="text-left"
               >
@@ -144,21 +155,25 @@ const Chat = () => {
                     {user?.timeStamp?.toDate()}
                   </Moment>
                 )}
-              </div>
-            </button>
+              </button>
+            </div>
           </section>
 
           {/* Chat Body */}
           <section className="flex-1">
-            {user?.bio && (
-              <div
-                className="flex items-center justify-around m-2 p-2 mb-4 text-sm text-center text-gray-700 bg-gray-800 rounded-lg dark:bg-gray-900 dark:text-slate-400"
-                role="alert"
-              >
-                <ArrowLeftIcon className="h-3 w-3" />
-                {user?.bio}
-                <ArrowRightIcon className="h-3 w-3" />
-              </div>
+            {loading ? (
+              <Loading />
+            ) : (
+              user?.bio && (
+                <div
+                  className="flex items-center justify-around m-2 p-2 mb-4 text-sm text-center text-gray-700 bg-gray-800 rounded-lg dark:bg-gray-900 dark:text-slate-400"
+                  role="alert"
+                >
+                  <ArrowLeftIcon className="h-3 w-3" />
+                  {user?.bio}
+                  <ArrowRightIcon className="h-3 w-3" />
+                </div>
+              )
             )}
             {user?.username ? (
               messages?.map((msg, i) => (
@@ -179,17 +194,22 @@ const Chat = () => {
                           : ""
                       }`}
                     >
-                      <div className="flex items-center justify-center object-contain">
+                      <button
+                        onClick={() =>
+                          router.push(`/profile/${msg?.data().username}`)
+                        }
+                        className="flex items-center justify-center object-contain"
+                      >
                         <div className="relative w-7 h-7">
                           <Image
                             loading="eager"
                             layout="fill"
-                            src={msg?.data().userImg}
+                            src={getProfileImage(msg.data().username)}
                             alt="prof"
                             className="rounded-full"
                           />
                         </div>
-                      </div>
+                      </button>
                     </div>
                     <div
                       className={`${

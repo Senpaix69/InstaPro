@@ -16,6 +16,9 @@ import {
 import Image from "next/image";
 import { useState } from "react";
 import initBeams from "./initBeams";
+import { useDocumentData } from "react-firebase-hooks/firestore";
+import { doc } from "firebase/firestore";
+import { db } from "../firebase";
 
 const Menu = ({
   session,
@@ -28,6 +31,7 @@ const Menu = ({
   setUserStatus,
 }) => {
   const [active, setActive] = useState("");
+  const [user] = useDocumentData(doc(db, `profile/${session.user.username}`));
 
   useState(() => {
     setActive(router.pathname);
@@ -93,7 +97,13 @@ const Menu = ({
           <li onClick={() => router.push(`/profile/${session?.user.username}`)}>
             <div className="relative h-7 w-7 rounded-full cursor-pointer btn">
               <Image
-                src={session?.user?.image}
+                src={
+                  user
+                    ? user.profImg
+                      ? user.profImg
+                      : user.image
+                    : session?.user?.image
+                }
                 alt="Profile Pic"
                 loading="eager"
                 layout="fill"

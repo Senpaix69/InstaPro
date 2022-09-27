@@ -1,6 +1,10 @@
 import Loading from "../../components/Loading";
 import { db } from "../../firebase";
-import { useCollection, useDocumentData } from "react-firebase-hooks/firestore";
+import {
+  useCollection,
+  useCollectionData,
+  useDocumentData,
+} from "react-firebase-hooks/firestore";
 import { useRouter } from "next/router";
 import { useRecoilState } from "recoil";
 import { themeState } from "../../atoms/theme";
@@ -26,7 +30,7 @@ const CommentList = () => {
   const { data: session } = useSession();
   const router = useRouter();
   const { postid } = router.query;
-  const [comments, loading] = useCollection(
+  const [comments] = useCollection(
     query(
       collection(db, `posts/${postid}/comments`),
       orderBy("timeStamp", "desc")
@@ -37,6 +41,7 @@ const CommentList = () => {
   const [subCommentRef, setSubCommentRef] = useState({});
   const [comment, setComment] = useState("");
   const focusElement = useRef(null);
+  const [users, loading] = useCollectionData(collection(db, "profile"));
 
   const postComment = async (e) => {
     e.preventDefault();
@@ -48,7 +53,6 @@ const CommentList = () => {
       await addDoc(collection(db, `posts/${postid}/comments`), {
         comment: commentToSend,
         username: session.user.username,
-        userImg: session.user.image,
         timeStamp: serverTimestamp(),
         subcomments: [],
       });
@@ -65,7 +69,6 @@ const CommentList = () => {
         ...prevCom,
         {
           username: session.user.username,
-          userImg: session.user.image,
           timeStamp: time,
           comment: commentToSend,
         },
@@ -109,6 +112,16 @@ const CommentList = () => {
     }
   }, [focusElement, subCommentRef]);
 
+  const getUserProfilePic = (username) => {
+    let profileImg;
+    users?.forEach((user) => {
+      if (user.username === username) {
+        profileImg = user.profImg ? user.profImg : user.image;
+      }
+    });
+    return profileImg;
+  };
+
   return (
     <div
       className={`${
@@ -136,7 +149,7 @@ const CommentList = () => {
                   <Image
                     loading="eager"
                     alt="image"
-                    src={post.profImg}
+                    src={getUserProfilePic(post.username)}
                     layout="fill"
                     className="rounded-full"
                   />
@@ -162,20 +175,18 @@ const CommentList = () => {
             <Loading />
           ) : (
             <div className="m-3">
-              {comments.docs?.map((comment, i) => (
+              {comments?.docs?.map((comment, i) => (
                 <div key={i} className="mb-5">
                   <div key={i} className="relative w-full flex">
                     <div className="absolute">
                       <div className="relative h-10 w-10">
-                        {comment.data().userImg && (
-                          <Image
-                            loading="eager"
-                            alt="image"
-                            src={comment.data().userImg}
-                            layout="fill"
-                            className="rounded-full"
-                          />
-                        )}
+                        <Image
+                          loading="eager"
+                          alt="image"
+                          src={getUserProfilePic(comment.data().username)}
+                          layout="fill"
+                          className="rounded-full"
+                        />
                       </div>
                     </div>
                     <div className="ml-12 flex-1 mr-3">
@@ -211,15 +222,13 @@ const CommentList = () => {
                       <div className="w-full flex relative">
                         <div className="absolute">
                           <div className="relative h-7 w-7">
-                            {comment.data().userImg && (
-                              <Image
-                                loading="eager"
-                                alt="image"
-                                src={subCom.userImg}
-                                layout="fill"
-                                className="rounded-full"
-                              />
-                            )}
+                            <Image
+                              loading="eager"
+                              alt="image"
+                              src={getUserProfilePic(subCom.username)}
+                              layout="fill"
+                              className="rounded-full"
+                            />
                           </div>
                         </div>
                         <div className="flex-1 ml-11 mr-3">

@@ -51,7 +51,7 @@ const ChatList = ({ redirect, id, user, toast }) => {
         onClick={() => redirect(id)}
         className="flex items-center w-full py-2 px-3 cursor-pointer truncate"
       >
-        <div className="flex items-center justify-center p-[1px] rounded-full border-red-500 border-2 object-contain cursor-pointer hover:scale-110 transition transform duration-200 ease-out">
+        <div className="flex items-center justify-center p-[1px] rounded-full border-2 object-contain cursor-pointer hover:scale-110 transition transform duration-200 ease-out">
           <div className="relative w-11 h-11">
             <Image
               loading="eager"

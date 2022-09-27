@@ -89,7 +89,6 @@ const Post = ({
     } else {
       await setDoc(doc(db, "posts", id, "likes", session.user.uid), {
         username: session.user.username,
-        userImg: session.user.image,
         timeStamp: serverTimestamp(),
       });
     }
