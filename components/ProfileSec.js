@@ -5,7 +5,6 @@ import "react-toastify/dist/ReactToastify.css";
 import { db, storage } from "../firebase";
 import {
   doc,
-  getDoc,
   updateDoc,
   serverTimestamp,
   setDoc,
@@ -40,7 +39,7 @@ const ProfileSec = ({
       setTextBio(user.bio);
       setTextName(user.fullname);
     }
-  }, []);
+  }, [user]);
 
   const followUser = async () => {
     if (toast.isActive(toastId)) {
@@ -189,7 +188,7 @@ const ProfileSec = ({
         showFollowers || showFollowings ? "hidden" : "flex"
       } flex-col`}
     >
-      <div className="flex px-2 relative md:justify-center">
+      <div className="flex px-2 relative">
         <div className="relative h-20 w-20 md:h-24 md:w-24">
           {editProf && (
             <div
@@ -236,7 +235,7 @@ const ProfileSec = ({
             />
           )}
         </div>
-        <div className="absolute top-0 right-0 flex w-64 xl:w-80 ml-10 justify-between md:max-w-2xl mt-5 px-4 text-lg">
+        <div className="absolute -top-5 right-0 flex w-64 xl:w-80 ml-10 justify-between md:max-w-2xl mt-5 px-4 text-lg">
           <button className="flex flex-col items-center">
             <p className="font-bold">{posts}</p>
             <p className="text-sm mt-1 dark:text-gray-200">Posts</p>
@@ -268,7 +267,7 @@ const ProfileSec = ({
       </div>
 
       {!editProf && (
-        <div className="mt-1 flex flex-col md:items-center">
+        <div className="mt-2 flex flex-col">
           <div className="flex space-x-1 items-center">
             <h1 className="font-semibold text-sm">
               {user.username === session?.user.username

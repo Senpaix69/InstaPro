@@ -228,13 +228,9 @@ const Post = ({
                   {likes.length} {likes.length === 1 ? "like" : "likes"}
                 </button>
               )}
-              <span>
-                {videoViews
-                  ? videoViews > 1
-                    ? `${videoViews} Views`
-                    : "1 View"
-                  : 0}
-              </span>
+              {videoViews && (
+                <span>{videoViews > 1 ? `${videoViews} views` : "1 view"}</span>
+              )}
             </p>
             <button
               onClick={() => router.push(`/profile/${username}`)}
@@ -278,7 +274,7 @@ const Post = ({
         <div className="bg-blue-200 dark:bg-black rounded-md m-[1.5px]">
           <button
             onClick={() => setView(true)}
-            className="relative h-[120px] w-[120px] sm:w-36 sm:h-36 md:h-[155px] md:w-[155px] rounded-md"
+            className="relative h-[120px] w-[120px] sm:w-36 sm:h-36 rounded-md"
           >
             {img && (
               <Image

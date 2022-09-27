@@ -1,9 +1,9 @@
 import * as PusherPushNotifications from "@pusher/push-notifications-web";
 import { toast } from "react-toastify";
 
-const initBeams = (uid) => {
+const initBeams = (uid, signOut) => {
   const beamsClient = new PusherPushNotifications.Client({
-    instanceId: "a297b2ef-0169-403d-87ba-6e23421e36d4",
+    instanceId: "e7843789-8f6e-4c23-86d2-14faddde20fe",
   });
 
   beamsClient
@@ -19,10 +19,36 @@ const initBeams = (uid) => {
           break;
         }
         case states.PERMISSION_GRANTED_REGISTERED_WITH_BEAMS: {
-          toast.success("You have Subscribed To InstaApp", {
-            position: "top-center",
-            toastId: uid,
-          });
+          if (uid === "") {
+            const toastId = toast.loading("Logging Out, Please Wait", {
+              position: "top-center",
+            });
+            console.log("Clearing Beams");
+            beamsClient
+              .clearAllState()
+              .then(() => {
+                beamsClient
+                  .stop()
+                  .then(() => {
+                    toast.dismiss(toastId);
+                    toast("Logged Out Successfully", {
+                      position: "top-center",
+                    });
+                    console.log("Beams SDK has been stopped");
+                    signOut();
+                  })
+                  .catch((e) => {
+                    toast.dismiss(toastId);
+                    toast.error(`Error: ${e}`, { position: "top-center" });
+                    console.error("Could not stop Beams SDK", e);
+                  });
+              })
+              .catch((e) => {
+                toast.dismiss(toastId);
+                toast.error(`Error: ${e}`, { position: "top-center" });
+                console.error("Could not clear Beams state", e);
+              });
+          }
           break;
         }
         case states.PERMISSION_GRANTED_NOT_REGISTERED_WITH_BEAMS:
@@ -30,10 +56,13 @@ const initBeams = (uid) => {
           beamsClient
             .start()
             .then(() => beamsClient.addDeviceInterest(`debug-${uid}`))
-            .then(() =>
-              console.log(`Successfully registered and subscribed! with ${uid}`)
-            )
-            .catch(console.error);
+            .then(() => beamsClient.addDeviceInterest("debug-public"))
+            .then(() => {
+              toast.success("Push Notifications Enabled", {
+                position: "top-center",
+                toastId: uid,
+              });
+            });
           break;
         }
       }

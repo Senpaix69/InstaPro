@@ -51,7 +51,7 @@ const Header = ({ darkMode, setDarkMode, showFollowers, showFollowings }) => {
       className={`shadow-sm sticky top-0 z-50 text-white`}
     >
       {session && (
-        <div className="flex bg-blue-500 justify-between max-w-6xl px-5 lg:mx-auto dark:shadow-gray-600 dark:border-gray-500 dark:bg-gray-900 py-1">
+        <div className="flex bg-blue-500 justify-between max-w-3xl px-5 lg:mx-auto dark:shadow-gray-600 dark:border-gray-500 dark:bg-gray-900 py-1">
           {/* Header */}
           <h1 className="dark:text-white flex items-center font-semibold italic font-sans text-[20px]">
             InstaPro

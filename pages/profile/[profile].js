@@ -77,7 +77,7 @@ const Profile = () => {
           {loading ? (
             <Loading />
           ) : (
-            <div className="max-w-6xl min-w-[380px] dark:text-gray-200 flex-1 overflow-y-scroll scrollbar-hide">
+            <div className="max-w-3xl min-w-[380px] dark:text-gray-200 flex-1 overflow-y-scroll scrollbar-hide">
               <FollowList
                 setShowFollowers={setShowFollowers}
                 showFollowers={showFollowers}

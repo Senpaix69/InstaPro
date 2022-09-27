@@ -18,7 +18,7 @@ export default function Home() {
   const [active, setActive] = useRecoilState(userActivity);
 
   useEffect(() => {
-    if (session) {
+    if (session?.user) {
       setActive(true);
       initBeams(session.user.uid);
     }

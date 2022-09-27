@@ -15,6 +15,7 @@ import {
 } from "@heroicons/react/outline";
 import Image from "next/image";
 import { useState } from "react";
+import initBeams from "./initBeams";
 
 const Menu = ({
   session,
@@ -39,7 +40,7 @@ const Menu = ({
 
   const signout = () => {
     setUserStatus(false);
-    signOut();
+    initBeams("", signOut);
   };
 
   return (
