@@ -142,132 +142,137 @@ const CommentList = () => {
 
         {/* comments Body */}
         <section className="flex-1 overflow-y-scroll scrollbar-hide">
-          {post?.caption && (
-            <div className="m-3 flex border-b-2 border-gray-600 pb-4 mb-5">
-              <div className="relative h-10 w-10">
-                {post.profImg && (
-                  <Image
-                    loading="eager"
-                    alt="image"
-                    src={getUserProfilePic(post.username)}
-                    layout="fill"
-                    className="rounded-full"
-                  />
-                )}
-              </div>
-              <div className="ml-3 flex-1 mr-3">
-                <p className="text-md">
-                  <span
-                    onClick={() => router.push(`/profile/${post.username}`)}
-                    className="font-bold cursor-pointer"
-                  >
-                    {post.username}{" "}
-                  </span>
-                  {post.caption}
-                </p>
-                <Moment fromNow className="text-xs font-semibold text-gray-400">
-                  {post.timeStamp?.toDate()}
-                </Moment>
-              </div>
-            </div>
-          )}
           {loading ? (
             <Loading />
           ) : (
-            <div className="m-3">
-              {comments?.docs?.map((comment, i) => (
-                <div key={i} className="mb-5">
-                  <div key={i} className="relative w-full flex">
-                    <div className="absolute">
-                      <div className="relative h-10 w-10">
-                        <Image
-                          loading="eager"
-                          alt="image"
-                          src={getUserProfilePic(comment.data().username)}
-                          layout="fill"
-                          className="rounded-full"
-                        />
-                      </div>
-                    </div>
-                    <div className="ml-12 flex-1 mr-3">
-                      <p className="text-sm">
-                        <span
-                          onClick={() =>
-                            router.push(`/profile/${comment.data().username}`)
-                          }
-                          className="font-bold cursor-pointer"
-                        >
-                          {comment.data().username}{" "}
-                        </span>
-                        {comment.data().comment}
-                      </p>
-                    </div>
-                    <HeartIcon className="h-5 w-5 btn" />
-                  </div>
-                  <div className="mt-1 text-xs text-gray-400 px-12 flex space-x-3 font-semibold">
-                    <Moment fromNow>
-                      {comment.data().timeStamp?.toDate()}
-                    </Moment>
-                    <button onClick={() => triggerUsername(comment)}>
-                      Reply
-                    </button>
-                    {comment.data().username === session?.user.username && (
-                      <button onClick={() => deleteComment(comment.id)}>
-                        Delete
-                      </button>
+            <>
+              {post?.caption && (
+                <div className="m-3 flex border-b-2 border-gray-600 pb-4 mb-5">
+                  <div className="relative h-10 w-10">
+                    {post.profImg && (
+                      <Image
+                        loading="eager"
+                        alt="image"
+                        src={getUserProfilePic(post.username)}
+                        layout="fill"
+                        className="rounded-full"
+                      />
                     )}
                   </div>
-                  {comment.data().subcomments?.map((subCom, index) => (
-                    <div key={index} className="ml-14 mt-5">
-                      <div className="w-full flex relative">
-                        <div className="absolute">
-                          <div className="relative h-7 w-7">
-                            <Image
-                              loading="eager"
-                              alt="image"
-                              src={getUserProfilePic(subCom.username)}
-                              layout="fill"
-                              className="rounded-full"
-                            />
-                          </div>
-                        </div>
-                        <div className="flex-1 ml-11 mr-3">
-                          <p className="text-sm">
-                            <span
-                              onClick={() =>
-                                router.push(`/profile/${subCom.username}`)
-                              }
-                              className="font-bold cursor-pointer"
-                            >
-                              {subCom.username}{" "}
-                            </span>
-                            {subCom.comment}
-                          </p>
-                        </div>
-                        <HeartIcon className="h-5 w-5 btn" />
-                      </div>
-                      <div className="mt-1 text-xs text-gray-400 px-11 flex space-x-3 font-semibold">
-                        <Moment fromNow>{subCom.timeStamp?.toDate()}</Moment>
-                        <button
-                          onClick={() =>
-                            triggerUsername(comment, subCom.username)
-                          }
-                        >
-                          Reply
-                        </button>
-                        {subCom.username === session?.user.username && (
-                          <button
-                            onClick={() => deleteSubComment(comment, index)}
-                          >
-                            Delete
-                          </button>
-                        )}
-                      </div>
-                    </div>
-                  ))}
+                  <div className="ml-3 flex-1 mr-3">
+                    <p className="text-md">
+                      <span
+                        onClick={() => router.push(`/profile/${post.username}`)}
+                        className="font-bold cursor-pointer"
+                      >
+                        {post.username}{" "}
+                      </span>
+                      {post.caption}
+                    </p>
+                    <Moment
+                      fromNow
+                      className="text-xs font-semibold text-gray-400"
+                    >
+                      {post.timeStamp?.toDate()}
+                    </Moment>
+                  </div>
                 </div>
-              ))}
-            </div>
+              )}
+              <div className="m-3">
+                {comments?.docs?.map((comment, i) => (
+                  <div key={i} className="mb-5">
+                    <div key={i} className="relative w-full flex">
+                      <div className="absolute">
+                        <div className="relative h-10 w-10">
+                          <Image
+                            loading="eager"
+                            alt="image"
+                            src={getUserProfilePic(comment.data().username)}
+                            layout="fill"
+                            className="rounded-full"
+                          />
+                        </div>
+                      </div>
+                      <div className="ml-12 flex-1 mr-3">
+                        <p className="text-sm">
+                          <span
+                            onClick={() =>
+                              router.push(`/profile/${comment.data().username}`)
+                            }
+                            className="font-bold cursor-pointer"
+                          >
+                            {comment.data().username}{" "}
+                          </span>
+                          {comment.data().comment}
+                        </p>
+                      </div>
+                      <HeartIcon className="h-5 w-5 btn" />
+                    </div>
+                    <div className="mt-1 text-xs text-gray-400 px-12 flex space-x-3 font-semibold">
+                      <Moment fromNow>
+                        {comment.data().timeStamp?.toDate()}
+                      </Moment>
+                      <button onClick={() => triggerUsername(comment)}>
+                        Reply
+                      </button>
+                      {comment.data().username === session?.user.username && (
+                        <button onClick={() => deleteComment(comment.id)}>
+                          Delete
+                        </button>
+                      )}
+                    </div>
+                    {comment.data().subcomments?.map((subCom, index) => (
+                      <div key={index} className="ml-14 mt-5">
+                        <div className="w-full flex relative">
+                          <div className="absolute">
+                            <div className="relative h-7 w-7">
+                              <Image
+                                loading="eager"
+                                alt="image"
+                                src={getUserProfilePic(subCom.username)}
+                                layout="fill"
+                                className="rounded-full"
+                              />
+                            </div>
+                          </div>
+                          <div className="flex-1 ml-11 mr-3">
+                            <p className="text-sm">
+                              <span
+                                onClick={() =>
+                                  router.push(`/profile/${subCom.username}`)
+                                }
+                                className="font-bold cursor-pointer"
+                              >
+                                {subCom.username}{" "}
+                              </span>
+                              {subCom.comment}
+                            </p>
+                          </div>
+                          <HeartIcon className="h-5 w-5 btn" />
+                        </div>
+                        <div className="mt-1 text-xs text-gray-400 px-11 flex space-x-3 font-semibold">
+                          <Moment fromNow>{subCom.timeStamp?.toDate()}</Moment>
+                          <button
+                            onClick={() =>
+                              triggerUsername(comment, subCom.username)
+                            }
+                          >
+                            Reply
+                          </button>
+                          {subCom.username === session?.user.username && (
+                            <button
+                              onClick={() => deleteSubComment(comment, index)}
+                            >
+                              Delete
+                            </button>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ))}
+              </div>
+            </>
           )}
         </section>
 

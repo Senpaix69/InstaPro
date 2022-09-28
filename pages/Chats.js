@@ -7,8 +7,8 @@ import {
   UserCircleIcon,
   SearchIcon,
 } from "@heroicons/react/solid";
-import { addDoc, collection } from "firebase/firestore";
-import { useCollection } from "react-firebase-hooks/firestore";
+import { addDoc, collection, doc } from "firebase/firestore";
+import { useCollection, useDocumentData } from "react-firebase-hooks/firestore";
 import { useRouter } from "next/router";
 import Loading from "../components/Loading";
 import getUserData from "../utils/getUserData";
@@ -29,6 +29,9 @@ const Chats = () => {
   const chats = snapshot?.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
   const values = getUserActivity();
   const [darkMode, setDarkMode] = useRecoilState(themeState);
+  const [user, loadingUser] = useDocumentData(
+    doc(db, `profile/${session?.user.username}`)
+  );
   const toastId = useRef(null);
 
   const chatExits = (email) => {
@@ -95,7 +98,7 @@ const Chats = () => {
     router.push(`/chat/${id}`);
   };
 
-  if (!session) return <Loading />;
+  if (!session && loading) return <Loading />;
   return (
     <div
       className={`h-screen overflow-y-scroll scrollbar-hide ${
@@ -103,7 +106,7 @@ const Chats = () => {
       }`}
     >
       <div className="flex flex-col justify-between max-w-6xl md:mx-5 lg:mx-auto">
-        <Header setDarkMode={setDarkMode} darkMode={darkMode} />
+        <Header setDarkMode={setDarkMode} darkMode={darkMode} user={user} />
         <div className="bg-gray-100 flex justify-center dark:text-gray-200 dark:bg-gray-900 h-screen">
           <div className="flex flex-col shadow-md md:w-[700px] w-full">
             <button className="w-full flex text-lg justify-center items-center p-3 mb-2 shadow-md">
