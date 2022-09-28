@@ -211,7 +211,7 @@ const ProfileSec = ({
               )}
             </div>
           )}
-          {user.username === session?.user.username ? (
+          {user?.username === session?.user.username ? (
             <Image
               src={user?.profImg ? user.profImg : session.user.image}
               layout="fill"
@@ -254,7 +254,7 @@ const ProfileSec = ({
             <p className="font-bold">{followings ? followings.length : 0}</p>
             <p className="text-sm mt-1 dark:text-gray-200">Followings</p>
           </button>
-          {user.username !== session.user.username && followings && (
+          {user?.username !== session.user.username && followings && (
             <div className="bg-gray-100 border border-gray-700 dark:bg-black text-sm text-center w-[226px] xl:w-[290px] py-1 rounded-md absolute -bottom-10 font-semibold">
               <span
                 className={`${followYou ? "text-green-500" : "text-red-500"}`}
@@ -270,11 +270,11 @@ const ProfileSec = ({
         <div className="mt-2 flex flex-col">
           <div className="flex space-x-1 items-center">
             <h1 className="font-semibold text-sm">
-              {user.username === session?.user.username
+              {user?.username === session?.user.username
                 ? session?.user?.username
                 : user?.username}
             </h1>
-            {user.username === "hurairayounas" && (
+            {user?.username === "hurairayounas" && (
               <div className="relative h-4 w-4">
                 <Image
                   src={require("../public/verified.png")}
@@ -287,13 +287,13 @@ const ProfileSec = ({
             )}
           </div>
           <h1 className="font-semibold text-lg">
-            <span className="dark:text-gray-400">~</span> {user.fullname}
+            <span className="dark:text-gray-400">~</span> {user?.fullname}
           </h1>
-          <p className="text-sm dark:text-gray-200">{user.bio}</p>
+          <p className="text-sm dark:text-gray-200">{user?.bio}</p>
         </div>
       )}
 
-      {user.username === session.user.username ? (
+      {user?.username === session.user.username ? (
         <button
           onClick={() => setEditProf(true)}
           hidden={editProf}

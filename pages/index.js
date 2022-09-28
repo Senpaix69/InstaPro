@@ -10,19 +10,16 @@ import { themeState } from "../atoms/theme";
 import { useEffect, useState } from "react";
 import initBeams from "../components/initBeams";
 import { userActivity } from "../atoms/userActivity";
+import { useDocumentData } from "react-firebase-hooks/firestore";
 
 export default function Home() {
   const { data: session } = useSession();
   const [darkMode, setDarkMode] = useRecoilState(themeState);
   const [load, setLoad] = useState(false);
   const [active, setActive] = useRecoilState(userActivity);
-
-  useEffect(() => {
-    if (session?.user) {
-      setActive(true);
-      initBeams(session.user.uid);
-    }
-  }, [session]);
+  const [user, loading] = useDocumentData(
+    doc(db, `profile/${session?.user.username}`)
+  );
 
   useEffect(() => {
     const theme = JSON.parse(localStorage.getItem("theme"));
@@ -31,21 +28,23 @@ export default function Home() {
 
   useEffect(() => {
     const addProfile = async () => {
-      const data = await getDoc(doc(db, "profile", session.user.username));
-      if (!data.exists()) {
-        await setDoc(doc(db, "profile", session.user.username), {
-          fullname: session.user.name,
-          bio: "",
-          username: session.user.username,
-          uid: session.user.uid,
-          image: session.user?.image,
-          profImg: "",
-          email: session.user.email,
-          timeStamp: serverTimestamp(),
-        });
-      }
+      getDoc(doc(db, "profile", session.user.username)).then(async (data) => {
+        if (!data.exists()) {
+          await setDoc(doc(db, "profile", session.user.username), {
+            username: session.user.username,
+            uid: session.user.uid,
+            image: session.user?.image,
+            email: session.user.email,
+            timeStamp: serverTimestamp(),
+          });
+        }
+      });
     };
-    if (session) addProfile();
+    if (session) {
+      addProfile();
+      setActive(true);
+      initBeams(session.user.uid);
+    }
   }, [session]);
 
   const callback = (entries) => {
@@ -81,8 +80,10 @@ export default function Home() {
         <title>InstaPro</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <Header darkMode={darkMode} setDarkMode={setDarkMode} />
-      <Feed setLoad={setLoad} />
+      {!loading && (
+        <Header darkMode={darkMode} setDarkMode={setDarkMode} user={user} />
+      )}
+      <Feed setLoad={setLoad} user={user} />
       <Model />
     </div>
   );

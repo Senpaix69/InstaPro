@@ -4,7 +4,7 @@ import { useSession } from "next-auth/react";
 import Login from "../pages/login";
 import Notification from "./Notification";
 
-const Feed = ({ setLoad }) => {
+const Feed = ({ setLoad, user }) => {
   const { data: session } = useSession();
 
   return (
@@ -12,7 +12,7 @@ const Feed = ({ setLoad }) => {
       {session ? (
         <>
           <section>
-            <Stories />
+            <Stories user={user} />
             <Posts setLoad={setLoad} />
             <Notification />
           </section>

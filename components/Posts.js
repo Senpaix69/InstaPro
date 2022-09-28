@@ -17,6 +17,7 @@ import Loading from "./Loading";
 import { useRouter } from "next/router";
 import { postView } from "../atoms/postView";
 import { useRecoilState } from "recoil";
+import { useCollectionData } from "react-firebase-hooks/firestore";
 
 const Posts = ({
   setTotalPosts,
@@ -29,6 +30,7 @@ const Posts = ({
   const router = useRouter();
   const [view] = useRecoilState(postView);
   const toastId = useRef(null);
+  const [users, loading] = useCollectionData(collection(db, "profile"));
 
   useEffect(() => {
     if (posts) {
@@ -90,7 +92,7 @@ const Posts = ({
           : ""
       }`}
     >
-      {posts === undefined ? (
+      {loading && posts === undefined ? (
         <Loading />
       ) : (
         posts?.map((post) => (
@@ -106,6 +108,9 @@ const Posts = ({
             timeStamp={post.data().timeStamp}
             router={router}
             deletePost={deletePost}
+            user={
+              users?.filter((user) => user.username === post.data().username)[0]
+            }
           />
         ))
       )}

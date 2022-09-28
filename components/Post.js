@@ -11,7 +11,6 @@ import {
 import { XCircleIcon } from "@heroicons/react/solid";
 import Image from "next/image";
 import { HeartIcon as HeartIconFilled } from "@heroicons/react/solid";
-import { useDocumentData } from "react-firebase-hooks/firestore";
 import {
   addDoc,
   doc,
@@ -42,6 +41,7 @@ const Post = ({
   timeStamp,
   router,
   deletePost,
+  user
 }) => {
   const { data: session } = useSession();
   const [comment, setComment] = useState("");
@@ -49,7 +49,6 @@ const Post = ({
   const [likes, setLikes] = useState([]);
   const [hasLike, setHasLike] = useState(false);
   const [view, setView] = useRecoilState(postView);
-  const [user] = useDocumentData(doc(db, `profile/${username}`));
 
   useEffect(() => {
     setView(false);

@@ -14,9 +14,15 @@ import { modelState } from "../atoms/modelAtom";
 import { userActivity } from "../atoms/userActivity";
 import Menu from "./Menu";
 import { db } from "../firebase";
-import { doc, updateDoc, serverTimestamp } from "firebase/firestore";
+import { doc, updateDoc, serverTimestamp, getDoc } from "firebase/firestore";
 
-const Header = ({ darkMode, setDarkMode, showFollowers, showFollowings }) => {
+const Header = ({
+  darkMode,
+  setDarkMode,
+  showFollowers,
+  showFollowings,
+  user,
+}) => {
   const { data: session } = useSession();
   const [open, setOpen] = useRecoilState(modelState);
   const router = useRouter();
@@ -25,8 +31,8 @@ const Header = ({ darkMode, setDarkMode, showFollowers, showFollowings }) => {
   useEffect(() => {
     window.addEventListener("focus", () => setActive(true));
     window.addEventListener("blur", () => setActive(false));
-    window.removeEventListener("focus", () => console.log("remove"));
-    window.removeEventListener("blur", () => console.log("remove"));
+    window.addEventListener("online", () => setActive(true));
+    window.addEventListener("offline", () => setActive(false));
   }, []);
 
   useEffect(() => {
@@ -35,9 +41,13 @@ const Header = ({ darkMode, setDarkMode, showFollowers, showFollowings }) => {
 
   useEffect(() => {
     const setStatus = async () => {
-      await updateDoc(doc(db, `profile/${session.user.username}`), {
-        active: active,
-        timeStamp: serverTimestamp(),
+      getDoc(doc(db, "profile", session.user.username)).then(async (data) => {
+        if (data.exists()) {
+          await updateDoc(doc(db, `profile/${session.user.username}`), {
+            active: active,
+            timeStamp: serverTimestamp(),
+          });
+        }
       });
     };
     if (session) {
@@ -76,6 +86,7 @@ const Header = ({ darkMode, setDarkMode, showFollowers, showFollowings }) => {
             <Menu
               darkMode={darkMode}
               setDarkMode={setDarkMode}
+              user={user}
               setOpen={setOpen}
               signOut={signOut}
               session={session}
@@ -104,7 +115,13 @@ const Header = ({ darkMode, setDarkMode, showFollowers, showFollowings }) => {
               <UserGroupIcon className="navBtn dark:text-gray-200" />
               <HeartIcon className="navBtn dark:text-gray-200" />
               <img
-                src={session.user?.image}
+                src={
+                  user
+                    ? user.profImg
+                      ? user.profImg
+                      : user.image
+                    : session?.user?.image
+                }
                 alt="Profile Pic"
                 className="h-8 w-8 rounded-full cursor-pointer"
               />

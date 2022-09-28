@@ -99,6 +99,7 @@ const Profile = () => {
                 showFollowers={showFollowers}
                 showFollowings={showFollowings}
                 darkMode={darkMode}
+                user={users?.filter((user) => user.username === profile)[0]}
                 setDarkMode={setDarkMode}
               />
               <ProfileSec
