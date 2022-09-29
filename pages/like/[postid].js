@@ -98,9 +98,20 @@ const LikeList = () => {
                           onClick={() =>
                             router.push(`/profile/${like.username}`)
                           }
-                          className="font-bold mt-1 cursor-pointer"
+                          className="font-semibold mt-1 cursor-pointer flex space-x-1 items-center"
                         >
                           {like.username}
+                          {like.username === "hurairayounas" && (
+                            <div className="relative h-4 w-4">
+                              <Image
+                                src={require("../../public/verified.png")}
+                                layout="fill"
+                                loading="eager"
+                                alt="profile"
+                                className="rounded-full"
+                              />
+                            </div>
+                          )}
                         </h1>
                         {like.timeStamp && (
                           <Moment

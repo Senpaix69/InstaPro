@@ -160,15 +160,32 @@ const CommentList = () => {
                     )}
                   </div>
                   <div className="ml-3 flex-1 mr-3">
-                    <p className="text-md">
+                    <div className="text-md">
                       <span
-                        onClick={() => router.push(`/profile/${post.username}`)}
-                        className="font-bold cursor-pointer"
+                        onClick={() =>
+                          router.push(`/profile/${post?.username}`)
+                        }
+                        className={`font-bold cursor-pointer relative ${
+                          post?.username === "hurairayounas" ? "mr-4" : ""
+                        }`}
                       >
-                        {post.username}{" "}
+                        {post?.username}
+                        {post?.username === "hurairayounas" && (
+                          <div className="absolute top-[2.5px] left-[107px]">
+                            <div className="relative h-4 w-4">
+                              <Image
+                                src={require("../../public/verified.png")}
+                                layout="fill"
+                                loading="eager"
+                                alt="profile"
+                                className="rounded-full"
+                              />
+                            </div>
+                          </div>
+                        )}{" "}
                       </span>
                       {post.caption}
-                    </p>
+                    </div>
                     <Moment
                       fromNow
                       className="text-xs font-semibold text-gray-400"
@@ -194,17 +211,36 @@ const CommentList = () => {
                         </div>
                       </div>
                       <div className="ml-12 flex-1 mr-3">
-                        <p className="text-sm">
+                        <div className="text-sm">
                           <span
                             onClick={() =>
-                              router.push(`/profile/${comment.data().username}`)
+                              router.push(
+                                `/profile/${comment?.data().username}`
+                              )
                             }
-                            className="font-bold cursor-pointer"
+                            className={`font-bold cursor-pointer relative ${
+                              comment?.data().username === "hurairayounas"
+                                ? "mr-4"
+                                : ""
+                            }`}
                           >
-                            {comment.data().username}{" "}
+                            {comment?.data().username}
+                            {comment?.data().username === "hurairayounas" && (
+                              <div className="absolute top-[1.5px] left-[94px]">
+                                <div className="relative h-4 w-4">
+                                  <Image
+                                    src={require("../../public/verified.png")}
+                                    layout="fill"
+                                    loading="eager"
+                                    alt="profile"
+                                    className="rounded-full"
+                                  />
+                                </div>
+                              </div>
+                            )}{" "}
                           </span>
                           {comment.data().comment}
-                        </p>
+                        </div>
                       </div>
                       <HeartIcon className="h-5 w-5 btn" />
                     </div>
@@ -236,17 +272,34 @@ const CommentList = () => {
                             </div>
                           </div>
                           <div className="flex-1 ml-11 mr-3">
-                            <p className="text-sm">
+                            <div className="text-sm">
                               <span
                                 onClick={() =>
                                   router.push(`/profile/${subCom.username}`)
                                 }
-                                className="font-bold cursor-pointer"
+                                className={`font-bold cursor-pointer relative ${
+                                  subCom.username === "hurairayounas"
+                                    ? "mr-4"
+                                    : ""
+                                }`}
                               >
-                                {subCom.username}{" "}
+                                {subCom.username}
+                                {subCom.username === "hurairayounas" && (
+                                  <div className="absolute top-[1.5px] left-[94px]">
+                                    <div className="relative h-4 w-4">
+                                      <Image
+                                        src={require("../../public/verified.png")}
+                                        layout="fill"
+                                        loading="eager"
+                                        alt="profile"
+                                        className="rounded-full"
+                                      />
+                                    </div>
+                                  </div>
+                                )}{" "}
                               </span>
                               {subCom.comment}
-                            </p>
+                            </div>
                           </div>
                           <HeartIcon className="h-5 w-5 btn" />
                         </div>
