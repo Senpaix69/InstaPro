@@ -74,7 +74,7 @@ const LikeList = () => {
 
         <section className="flex-1 overflow-y-scroll scrollbar-hide">
           {loading ? (
-            <Loading />
+            <Loading page={"List"} />
           ) : (
             <div className="mx-3">
               {likes
