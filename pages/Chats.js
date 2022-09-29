@@ -145,7 +145,7 @@ const Chats = () => {
             </div>
             <div>
               {loading && values === undefined ? (
-                <Loading />
+                <Loading page={router?.pathname} />
               ) : (
                 users
                   ?.filter((curuser) =>

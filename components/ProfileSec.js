@@ -297,14 +297,14 @@ const ProfileSec = ({
         <button
           onClick={() => setEditProf(true)}
           hidden={editProf}
-          className="w-full max-w-xl mx-auto mt-8 py-1 dark:bg-gray-700 border border-gray-700 rounded-2xl dark:hover:bg-gray-600 bg-blue-500 text-white font-semibold shadow-sm"
+          className="w-full max-w-xl mx-auto mt-8 py-1 dark:bg-gray-700 border border-gray-700 rounded-md dark:hover:bg-gray-600 bg-blue-500 text-white font-semibold shadow-sm"
         >
           Edit Profile
         </button>
       ) : (
         <button
           onClick={!hasFollowed ? followUser : unFollowUser}
-          className="w-full max-w-xl mx-auto mt-8 py-1 dark:bg-gray-700 border border-gray-700 rounded-2xl dark:hover:bg-gray-600 bg-blue-500 text-white font-semibold shadow-sm"
+          className="w-full max-w-xl mx-auto mt-8 py-1 dark:bg-gray-700 border border-gray-700 rounded-md dark:hover:bg-gray-600 bg-blue-500 text-white font-semibold shadow-sm"
         >
           {hasFollowed ? "Unfollow" : "Follow"}
         </button>
