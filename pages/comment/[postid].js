@@ -171,7 +171,7 @@ const CommentList = () => {
                       >
                         {post?.username}
                         {post?.username === "hurairayounas" && (
-                          <div className="absolute top-[2.5px] left-[100px] sm:left-[107px]">
+                          <div className="absolute top-[2.5px] left-[102px] sm:left-[107px]">
                             <div className="relative h-4 w-4">
                               <Image
                                 src={require("../../public/verified.png")}
@@ -226,7 +226,7 @@ const CommentList = () => {
                           >
                             {comment?.data().username}
                             {comment?.data().username === "hurairayounas" && (
-                              <div className="absolute top-[1.5px] left-[87px] sm:left-[94px]">
+                              <div className="absolute top-[1.5px] left-[89px] sm:left-[94px]">
                                 <div className="relative h-4 w-4">
                                   <Image
                                     src={require("../../public/verified.png")}
@@ -285,7 +285,7 @@ const CommentList = () => {
                               >
                                 {subCom.username}
                                 {subCom.username === "hurairayounas" && (
-                                  <div className="absolute top-[1.5px] left-[87px] sm:left-[94px]">
+                                  <div className="absolute top-[1.5px] left-[89px] sm:left-[94px]">
                                     <div className="relative h-4 w-4">
                                       <Image
                                         src={require("../../public/verified.png")}
