@@ -180,7 +180,7 @@ const CommentList = () => {
                                 alt="profile"
                                 className="rounded-full"
                               />
-                            </div>
+                            </div>{" "}
                           </div>
                         )}{" "}
                       </span>
