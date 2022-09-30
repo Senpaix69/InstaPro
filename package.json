@@ -14,7 +14,6 @@
     "@pusher/push-notifications-web": "^1.1.0",
     "@tailwindcss/forms": "^0.5.2",
     "faker": "^6.6.6",
-    "file-saver": "^2.0.5",
     "firebase": "^9.9.3",
     "firebase-admin": "^11.0.1",
     "interval-hooks": "^0.2.0",
@@ -30,7 +29,6 @@
     "react-toastify": "^9.0.8",
     "recoil": "^0.7.5",
     "services": "^0.0.3",
-    "sharp": "^0.30.7",
     "tailwind-scrollbar-hide": "^1.1.7"
   },
   "devDependencies": {
