@@ -10,9 +10,11 @@ import { useSession } from "next-auth/react";
 import { ref, getDownloadURL, uploadBytesResumable } from "firebase/storage";
 import { uuidv4 } from "@firebase/util";
 import { toast } from "react-toastify";
+import { storyState } from "../atoms/storyModel";
 
 const Model = () => {
   const { data: session } = useSession();
+  const [storyModel, setStoryModel] = useRecoilState(storyState);
   const [open, setOpen] = useRecoilState(modelState);
   const filePickerRef = useRef(null);
   const [caption, setCaption] = useState("");
@@ -31,7 +33,9 @@ const Model = () => {
 
     const storageRef = ref(
       storage,
-      `posts/${fileType}/${session.user.username}_${uuidv4()}`
+      `${storyModel ? "stories" : "posts"}/${fileType}/${
+        session.user.username
+      }_${uuidv4()}`
     );
     const uploadTask = uploadBytesResumable(storageRef, selectFile);
 
@@ -56,13 +60,24 @@ const Model = () => {
       () => {
         // download url
         getDownloadURL(uploadTask.snapshot.ref).then(async (url) => {
-          await addDoc(collection(db, "posts"), {
-            username: session.user.username,
-            caption: caption,
-            profImg: session.user.image,
-            timeStamp: serverTimestamp(),
-            [fileType]: url,
-          });
+          if (storyModel) {
+            await addDoc(
+              collection(db, `profile/${session.user.username}/stories`),
+              {
+                username: session.user.username,
+                caption: caption,
+                timeStamp: serverTimestamp(),
+                [fileType]: url,
+              }
+            );
+          } else {
+            await addDoc(collection(db, "posts"), {
+              username: session.user.username,
+              caption: caption,
+              timeStamp: serverTimestamp(),
+              [fileType]: url,
+            });
+          }
         });
 
         toast.dismiss(toastId.current);
@@ -100,12 +115,17 @@ const Model = () => {
     }
   };
 
+  const closeModels = () => {
+    setOpen(false);
+    setStoryModel(false);
+  };
+
   return (
     <Transition.Root show={open} as={Fragment}>
       <Dialog
         as="div"
         className="fixed z-10 inset-0 overflow-y-auto"
-        onClose={setOpen}
+        onClose={closeModels}
       >
         <div className="flex items-end justify-center min-h-[600px] md:min-h-[600px] pt-4 px-4 pb-20 text-center sm:block sm:p-0">
           <Transition.Child
@@ -161,7 +181,7 @@ const Model = () => {
                     as="h3"
                     className="text-lg leading-6 font-medium text-gray-900"
                   >
-                    Upload Media
+                    {storyModel ? "Upload Story" : "Upload Media"}
                   </Dialog.Title>
                   <div>
                     <input
@@ -189,7 +209,9 @@ const Model = () => {
                   className="inline-flex justify-center w-full rouned-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:text-sm disabled:bg-gray-300 disabled:cursor-not-allowed hover:disabled:bg-gray-300"
                   onClick={postMedia}
                 >
-                  {loading ? `Uploading ${status}%` : "Upload Post"}
+                  {loading
+                    ? `Uploading ${status}%`
+                    : `Post ${storyModel ? "Story" : "Media"}`}
                 </button>
               </div>
             </div>

@@ -41,7 +41,9 @@ const Menu = ({
 
   const signout = () => {
     setUserStatus(false);
-    initBeams("", signOut);
+    if (typeof Notification !== "undefined") {
+      initBeams("", signOut);
+    }
   };
 
   return (

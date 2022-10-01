@@ -121,7 +121,7 @@ const Chat = () => {
                 className="btn m-1"
               />
               <div className="flex items-center justify-center p-[1px] rounded-full border-2 object-contain mx-2">
-                <div className="relative w-8 h-8">
+                <div className="relative w-10 h-10">
                   <Image
                     loading="eager"
                     layout="fill"
@@ -142,9 +142,22 @@ const Chat = () => {
                 onClick={() => router.push(`/profile/${user?.username}`)}
                 className="text-left"
               >
-                <h1 className="font-bold h-[20px]">
-                  {user ? user?.fullname : "Loading..."}
-                </h1>
+                <div className="flex items-center">
+                  <h1 className="font-bold">
+                    {user ? user?.fullname : "Loading..."}
+                  </h1>
+                  {user?.username === "hurairayounas" && (
+                    <div className="relative h-4 w-4">
+                      <Image
+                        src={require("../../public/verified.png")}
+                        layout="fill"
+                        loading="eager"
+                        alt="profile"
+                        className="rounded-full"
+                      />
+                    </div>
+                  )}
+                </div>
                 <span className="text-xs md:text-sm text-gray-400">
                   active{" "}
                 </span>

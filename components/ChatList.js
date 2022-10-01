@@ -74,7 +74,22 @@ const ChatList = ({ redirect, id, user, toast }) => {
           </div>
         </div>
         <div className="ml-3 w-full truncate">
-          <h1 className="font-semibold -mt-1 h-[22px]">{currUser?.fullname}</h1>
+          <div className="flex items-center">
+            <h1 className="font-semibold -mt-1 h-[22px]">
+              {currUser?.fullname}
+            </h1>
+            {currUser?.username === "hurairayounas" && (
+              <div className="relative h-4 w-4">
+                <Image
+                  src={require("../public/verified.png")}
+                  layout="fill"
+                  loading="eager"
+                  alt="profile"
+                  className="rounded-full"
+                />
+              </div>
+            )}
+          </div>
           <div className="flex text-sm w-full justify-between items-center pr-2">
             <span className="text-gray-400 w-[70%] overflow-hidden truncate">
               {!loadingMessage

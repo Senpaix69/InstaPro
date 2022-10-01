@@ -118,7 +118,7 @@ const Post = ({
         <div className="bg-white border rounded-lg my-2 shadow-md dark:bg-gray-900 dark:border-gray-800">
           <div className="flex items-center py-2 px-[5px] shadow-md bg-blue-500 dark:bg-gray-900 text-white">
             <div className="flex flex-1 items-center">
-              <div className="relative rounded-full h-9 w-9 mr-3 ml-2">
+              <div className="relative rounded-full h-9 w-9 mx-2">
                 <Image
                   loading="eager"
                   layout="fill"

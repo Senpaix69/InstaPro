@@ -1,5 +1,5 @@
 import Posts from "./Posts";
-import Stories from "./Stories";
+import InstaStories from "./InstaStories";
 import { useSession } from "next-auth/react";
 import Login from "../pages/login";
 import Notification from "./Notification";
@@ -12,7 +12,7 @@ const Feed = ({ setLoad, user }) => {
       {session ? (
         <>
           <section>
-            {user && <Stories user={user} />}
+            {user && <InstaStories user={user} />}
             <Posts setLoad={setLoad} />
             <Notification />
           </section>
