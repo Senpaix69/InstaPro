@@ -91,7 +91,7 @@ const FollowList = ({
                     >
                       {user.username}
                       {user.username === "hurairayounas" && (
-                        <div className="relative h-4 w-4 ml-1">
+                        <div className="relative h-4 w-4">
                           <Image
                             src={require("../public/verified.png")}
                             layout="fill"

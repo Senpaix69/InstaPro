@@ -41,7 +41,7 @@ const Post = ({
   timeStamp,
   router,
   deletePost,
-  user
+  user,
 }) => {
   const { data: session } = useSession();
   const [comment, setComment] = useState("");
@@ -139,7 +139,7 @@ const Post = ({
                 {user ? user.fullname : username}
               </button>
               {user?.username === "hurairayounas" && (
-                <div className="ml-1 relative h-4 w-4">
+                <div className="relative h-4 w-4">
                   <Image
                     src={require("../public/verified.png")}
                     layout="fill"
@@ -232,9 +232,24 @@ const Post = ({
             </p>
             <button
               onClick={() => router.push(`/profile/${username}`)}
-              className="font-bold mr-1"
+              className={`font-bold relative ${
+                username === "hurairayounas" ? "mr-5" : "mr-1"
+              }`}
             >
-              {username}{" "}
+              {username}
+              {username === "hurairayounas" && (
+                <div className="absolute top-[5px] left-[103px] sm:left-[107px]">
+                  <div className="relative h-4 w-4">
+                    <Image
+                      src={require("../public/verified.png")}
+                      layout="fill"
+                      loading="eager"
+                      alt="profile"
+                      className="rounded-full"
+                    />
+                  </div>
+                </div>
+              )}
             </button>
             <span className="text-sm">{caption}</span>
           </div>
@@ -244,7 +259,7 @@ const Post = ({
               onClick={() => router.push(`/comment/${id}`)}
               className="px-4 text-sm text-gray-400"
             >
-              View {comments.length}{" "}
+              view {comments.length}
               {comments.length === 1 ? "comment" : "comments"}
             </button>
           )}

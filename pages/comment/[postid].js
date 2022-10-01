@@ -279,7 +279,7 @@ const CommentList = () => {
                                 }
                                 className={`font-bold cursor-pointer relative ${
                                   subCom.username === "hurairayounas"
-                                    ? "mr-4"
+                                    ? "mr-5"
                                     : ""
                                 }`}
                               >
@@ -296,7 +296,7 @@ const CommentList = () => {
                                       />
                                     </div>
                                   </div>
-                                )}{" "}
+                                )}
                               </span>
                               {subCom.comment}
                             </div>

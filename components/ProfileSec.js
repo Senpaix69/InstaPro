@@ -268,7 +268,7 @@ const ProfileSec = ({
 
       {!editProf && (
         <div className="mt-2 flex flex-col">
-          <div className="flex space-x-1 items-center">
+          <div className="flex items-center">
             <h1 className="font-semibold text-sm">
               {user?.username === session?.user.username
                 ? session?.user?.username
