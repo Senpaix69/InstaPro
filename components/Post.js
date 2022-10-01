@@ -128,8 +128,8 @@ const Post = ({
                 />
                 <span
                   className={`-top-1 right-0 absolute  w-3.5 h-3.5 ${
-                    user && user?.active ? "bg-green-400" : "bg-slate-500"
-                  } border-2 border-white dark:border-gray-800 rounded-full`}
+                    user && user?.active ? "bg-green-400" : "bg-slate-400"
+                  } border-[3px] border-blue-500 dark:border-gray-900 rounded-full`}
                 ></span>
               </div>
               <button
