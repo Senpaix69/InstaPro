@@ -5,7 +5,6 @@ const initBeams = (uid, signOut) => {
   const beamsClient = new PusherPushNotifications.Client({
     instanceId: "e7843789-8f6e-4c23-86d2-14faddde20fe",
   });
-
   beamsClient
     .getRegistrationState()
     .then((state) => {
@@ -55,6 +54,8 @@ const initBeams = (uid, signOut) => {
         case states.PERMISSION_PROMPT_REQUIRED: {
           beamsClient
             .start()
+            .then(() => beamsClient.addDeviceInterest(uid))
+            .then(() => beamsClient.addDeviceInterest("public"))
             .then(() => beamsClient.addDeviceInterest(`debug-${uid}`))
             .then(() => beamsClient.addDeviceInterest("debug-public"))
             .then(() => {
