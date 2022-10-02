@@ -149,15 +149,13 @@ const CommentList = () => {
               {post?.caption && (
                 <div className="m-3 flex border-b-2 border-gray-600 pb-4 mb-5">
                   <div className="relative h-10 w-10">
-                    {post.profImg && (
-                      <Image
-                        loading="eager"
-                        alt="image"
-                        src={getUserProfilePic(post.username)}
-                        layout="fill"
-                        className="rounded-full"
-                      />
-                    )}
+                    <Image
+                      loading="eager"
+                      alt="image"
+                      src={getUserProfilePic(post.username)}
+                      layout="fill"
+                      className="rounded-full"
+                    />
                   </div>
                   <div className="ml-3 flex-1 mr-3">
                     <div className="text-md">

@@ -36,8 +36,8 @@ const ProfileSec = ({
 
   useEffect(() => {
     if (user) {
-      setTextBio(user.bio);
-      setTextName(user.fullname);
+      setTextBio(user.bio ? user.bio : "");
+      setTextName(user.fullname ? user.fullname : "");
     }
   }, [user]);
 
@@ -326,7 +326,6 @@ const ProfileSec = ({
             className="bg-transparent border-none focus:ring-0 w-full"
             type="text"
             placeholder="Enter name"
-            size="50"
             value={textName}
             onChange={(e) => setTextName(e.target.value)}
           />
@@ -336,7 +335,6 @@ const ProfileSec = ({
             className="bg-transparent border-none focus:ring-0 w-full"
             type="text"
             placeholder="Enter bio"
-            size="50"
             value={textBio}
             onChange={(e) => setTextBio(e.target.value)}
           />

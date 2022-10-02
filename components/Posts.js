@@ -39,7 +39,8 @@ const Posts = ({
   }, [posts]);
 
   useEffect(() => {
-    if (router.pathname === "/") {
+    let sub = true;
+    if (router.pathname === "/" && sub) {
       onSnapshot(
         query(collection(db, "posts"), orderBy("timeStamp", "desc")),
         (snapshot) => {
@@ -47,11 +48,13 @@ const Posts = ({
         }
       );
     }
+    return () => (sub = false);
   }, [router.pathname]);
 
   useEffect(() => {
-    if (router.pathname !== "/") {
-      getDocs(
+    let sub = true;
+    if (router.pathname !== "/" && sub) {
+      const subscribe = getDocs(
         query(
           collection(db, "posts"),
           where("username", "==", profile),
@@ -62,6 +65,7 @@ const Posts = ({
         setTotalPosts(snapshot.docs?.length);
       });
     }
+    return () => (sub = false);
   }, [profile, router.pathname]);
 
   const deletePost = async (id) => {
@@ -100,7 +104,6 @@ const Posts = ({
             key={post.id}
             id={post.id}
             username={post.data().username}
-            userImg={post.data().profImg}
             img={post.data().image}
             video={post.data().video}
             videoViews={post.data().views}

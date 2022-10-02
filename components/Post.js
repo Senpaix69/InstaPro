@@ -33,7 +33,6 @@ import { useRecoilState } from "recoil";
 const Post = ({
   id,
   username,
-  userImg,
   img,
   video,
   videoViews,
@@ -123,7 +122,13 @@ const Post = ({
                   loading="eager"
                   layout="fill"
                   className="rounded-full"
-                  src={user ? (user.profImg ? user.profImg : user.image) : userImg}
+                  src={
+                    user
+                      ? user.profImg
+                        ? user.profImg
+                        : user.image
+                      : require("../public/userimg.jpg")
+                  }
                   alt="img"
                 />
                 <span
@@ -260,7 +265,7 @@ const Post = ({
               className="px-4 text-sm text-gray-400"
             >
               view {comments.length}
-              {comments.length === 1 ? "comment" : "comments"}
+              {comments.length === 1 ? " comment" : " comments"}
             </button>
           )}
 
