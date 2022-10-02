@@ -61,15 +61,16 @@ export default function Home() {
 
   useEffect(() => {
     let observer;
-    if (session) {
-      observer = new IntersectionObserver(callback, { threshold: 0.6 });
-    }
     if (load) {
+      observer = new IntersectionObserver(callback, { threshold: 0.6 });
       const elements = document.querySelectorAll("video");
       elements.forEach((element) => {
         observer.observe(element);
       });
     }
+    return () => {
+      observer?.disconnect();
+    };
   }, [load]);
 
   return (

@@ -66,7 +66,7 @@ const Chat = () => {
         console.log("sending");
         axios
           .post("/api/sendNotification", {
-            interest: session.user.uid,
+            interest: user.uid,
             title: secUser.fullname,
             body: msgToSend,
           })

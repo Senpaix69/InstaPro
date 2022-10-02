@@ -123,7 +123,7 @@ const Post = ({
                   loading="eager"
                   layout="fill"
                   className="rounded-full"
-                  src={user ? (user.profImg ? user.profImg : userImg) : userImg}
+                  src={user ? (user.profImg ? user.profImg : user.image) : userImg}
                   alt="img"
                 />
                 <span

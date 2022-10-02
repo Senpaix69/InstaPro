@@ -98,15 +98,15 @@ const Model = () => {
     if (file) {
       setFileType(file.type.includes("image") ? "image" : "video");
       if (fileType === "image") {
-        if (file.size / (1024 * 1024) > 5) {
+        if (file.size / (1024 * 1024) > 3) {
           toast.error("Image size is larger than 3mb", {
             position: "top-center",
           });
         } else {
           setSelectFile(file);
         }
-      } else if (file.size / (1024 * 1024) > 50) {
-        toast.error("Video size is larger than 50mb", {
+      } else if (file.size / (1024 * 1024) > 20) {
+        toast.error("Video size is larger than 20mb", {
           position: "top-center",
         });
       } else {
