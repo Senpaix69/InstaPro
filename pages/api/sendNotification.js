@@ -12,9 +12,7 @@ export default function handler(req, res) {
         notification: {
           title: req.body.title,
           body: req.body.body,
-          icon: "https://drive.google.com/open?id=1P4uLWJJn6WsVA3xL62AxPbvz-5-SMMQZ&authuser=raohuraira331.rb%40gmail.com&usp=drive_fs",
-          deep_link: "https://insta-pro.vercel.app",
-          hide_notification_if_site_has_focus: true,
+          deep_link: "https//insta-pro.vercel.app",
         },
       },
     })
