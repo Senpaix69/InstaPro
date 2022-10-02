@@ -66,7 +66,7 @@ const Chat = () => {
         console.log("sending");
         axios
           .post("/api/sendNotification", {
-            interest: user.uid,
+            interest: session.user.uid,
             title: secUser.fullname,
             body: msgToSend,
           })
@@ -122,7 +122,7 @@ const Chat = () => {
     <div className={` ${darkMode ? "bg-gray-100" : "dark bg-gray-900"}`}>
       <div className="max-w-6xl lg:mx-auto flex justify-center">
         <div
-          className="bg-[url('https://i.pinimg.com/originals/b7/fc/af/b7fcaf2631fc54f28ef3f123855d03dc.jpg')] dark:bg-[url('https://www.teahub.io/photos/full/8-87389_witcher-dark-background-minimal-4k-ultra-hd-mobile.jpg')]
+          className="dark:bg-black bg-[url('https://i.pinimg.com/originals/b7/fc/af/b7fcaf2631fc54f28ef3f123855d03dc.jpg')] dark:bg-[url('https://wallpaperaccess.com/full/4599992.png')]
             bg-no-repeat bg-cover bg-center w-full flex flex-col md:w-[700px] h-screen overflow-y-scroll scrollbar-hide"
         >
           {/* Chat Header */}
@@ -190,10 +190,7 @@ const Chat = () => {
               <Loading />
             ) : (
               user?.bio && (
-                <div
-                  className="flex items-center justify-around m-2 p-2 mb-4 text-sm text-center text-gray-700 bg-gray-800 rounded-lg dark:bg-gray-900 dark:text-slate-400"
-                  role="alert"
-                >
+                <div className="flex items-center justify-around m-2 p-2 mb-4 text-sm text-center text-gray-700 dark:bg-opacity-70 rounded-lg dark:bg-gray-900 dark:text-slate-400">
                   <ArrowLeftIcon className="h-3 w-3" />
                   {user?.bio}
                   <ArrowRightIcon className="h-3 w-3" />
@@ -211,7 +208,7 @@ const Chat = () => {
                       : ""
                   }`}
                 >
-                  <div className="flex items-center rounded-md w-fit max-w-xs py-1 px-2 relative">
+                  <div className="text-gray-200 flex items-center rounded-md w-fit max-w-xs py-1 px-2 relative">
                     <div
                       className={`absolute top-1 rounded-full ${
                         msg?.data().username === session?.user.username
@@ -239,8 +236,8 @@ const Chat = () => {
                     <div
                       className={`${
                         msg?.data().username === session?.user.username
-                          ? "mr-9 bg-green-200"
-                          : "ml-9 bg-blue-200"
+                          ? "mr-9 bg-slate-600 bg-opacity-50"
+                          : "ml-9 bg-stone-700 bg-opacity-50"
                       } p-2 rounded-lg`}
                     >
                       <div>{msg?.data().text}</div>
@@ -249,11 +246,11 @@ const Chat = () => {
                           <img src={msg.data().image} alt="img" />
                         </div>
                       )}
-                      <div className="flex text-gray-500 mt-1 justify-end pl-5">
+                      <div className="flex text-gray-300 mt-1 justify-end pl-5">
                         <Moment fromNow className="text-[10px]">
                           {msg?.data()?.timeStamp?.toDate()}
                         </Moment>
-                        <span className="ml-1 text-sm font-semibold text-gray-700 bg-transparent rounded-full">
+                        <span className="ml-1 text-sm font-semibold text-gray-300 bg-transparent rounded-full">
                           <svg
                             aria-hidden="true"
                             className="w-4 h-4"
