@@ -3,7 +3,7 @@ import { toast } from "react-toastify";
 
 const initBeams = (uid, signOut) => {
   const beamsClient = new PusherPushNotifications.Client({
-    instanceId: "e7843789-8f6e-4c23-86d2-14faddde20fe",
+    instanceId: process.env.BEAMS_INSTANCE_ID,
   });
   beamsClient
     .getRegistrationState()

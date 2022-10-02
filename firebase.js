@@ -3,12 +3,12 @@ import { getFirestore } from 'firebase/firestore';
 import { getStorage } from 'firebase/storage';
 
 const firebaseConfig = {
-  apiKey: "AIzaSyDBijv2EADoLn75ss47AYKTvdJS66BZF6c",
-  authDomain: "instaapp-25839.firebaseapp.com",
-  projectId: "instaapp-25839",
-  storageBucket: "instaapp-25839.appspot.com",
-  messagingSenderId: "605639277911",
-  appId: "1:605639277911:web:80f1932521df7adb58d212"
+  apiKey: process.env.FIREBASE_API_KEY,
+  authDomain: process.env.FIREBASE_AUTH_DOMAIN,
+  projectId: process.env.FIREBASE_PROJECT_ID,
+  storageBucket: process.env.FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.FIREBASE_MESSAGING_SENDER_ID,
+  appId: process.env.FIREBASE_APP_ID
 };
 
 const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();

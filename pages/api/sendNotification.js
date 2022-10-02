@@ -1,8 +1,8 @@
 import PushNotifications from "@pusher/push-notifications-server";
 
 const pushNotifications = new PushNotifications({
-  instanceId: "e7843789-8f6e-4c23-86d2-14faddde20fe",
-  secretKey: "971CDA3FEF7ED98D8A949F7441BD30735EB6DB57254A8F5BE917A48CB6129243",
+  instanceId: process.env.PUSHER_INSTANCE_ID,
+  secretKey: process.env.PUSHER_SECRET_KEY,
 });
 
 export default function handler(req, res) {
@@ -12,7 +12,6 @@ export default function handler(req, res) {
         notification: {
           title: req.body.title,
           body: req.body.body,
-          deep_link: "https//insta-pro.vercel.app",
         },
       },
     })
