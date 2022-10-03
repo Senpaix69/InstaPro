@@ -13,7 +13,6 @@ export default function handler(req, res) {
           title: req.body.title,
           body: req.body.body,
           deep_link: "https://insta-pro.vercel.app",
-          icon: "https://ibb.co/fndWFHk",
         },
       },
     })
