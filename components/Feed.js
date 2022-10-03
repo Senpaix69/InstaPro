@@ -12,7 +12,7 @@ const Feed = ({ setLoad, user }) => {
       {session ? (
         <>
           <section>
-            {user && <InstaStories user={user} />}
+            <InstaStories user={user} />
             <Posts setLoad={setLoad} />
             <Notification />
           </section>

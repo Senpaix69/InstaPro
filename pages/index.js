@@ -83,9 +83,7 @@ export default function Home() {
         <title>InstaPro</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      {!loading && (
-        <Header darkMode={darkMode} setDarkMode={setDarkMode} user={user} />
-      )}
+      <Header darkMode={darkMode} setDarkMode={setDarkMode} user={user} />
       <Feed setLoad={setLoad} user={user} />
       <Model />
     </div>

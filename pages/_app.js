@@ -1,6 +1,6 @@
-import '../styles/globals.css';
-import { SessionProvider } from 'next-auth/react';
-import { RecoilRoot } from 'recoil';
+import "../styles/globals.css";
+import { SessionProvider } from "next-auth/react";
+import { RecoilRoot } from "recoil";
 
 function MyApp({ Component, pageProps: { session, ...pageProps } }) {
   return (
@@ -9,7 +9,7 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }) {
         <Component {...pageProps} />
       </RecoilRoot>
     </SessionProvider>
-  )
+  );
 }
 
 export default MyApp;

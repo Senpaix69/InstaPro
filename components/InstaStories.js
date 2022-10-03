@@ -24,7 +24,7 @@ const InstaStories = ({ user }) => {
       users?.forEach((user) => {
         if (
           followings.forEach((us) => {
-            if (us.username === user.username) {
+            if (us.username === user?.username) {
               setValidUsers((prev) => [...prev, user]);
             }
           })
@@ -34,7 +34,7 @@ const InstaStories = ({ user }) => {
     if (!fLoading && !uLoading && validUsers.length === 0) {
       getValidUsers();
     }
-  }, [fLoading, uLoading]);
+  }, [fLoading, uLoading, user]);
 
   const postStories = () => {
     setStoryOpen(true);
@@ -55,22 +55,24 @@ const InstaStories = ({ user }) => {
           Add Story
         </p>
       </div>
-      <div>
-        <div className="flex items-center justify-center p-[1px] rounded-full border-red-500 border-2 object-contain cursor-pointer hover:scale-110 transition transform duration-200 ease-out">
-          <div className="relative w-14 h-14">
-            <Image
-              loading="eager"
-              layout="fill"
-              src={user.profImg ? user.profImg : user.image}
-              alt="story"
-              className="rounded-full"
-            />
+      {user && (
+        <div>
+          <div className="flex items-center justify-center p-[1px] rounded-full border-red-500 border-2 object-contain cursor-pointer hover:scale-110 transition transform duration-200 ease-out">
+            <div className="relative w-14 h-14">
+              <Image
+                loading="eager"
+                layout="fill"
+                src={user.profImg ? user.profImg : user.image}
+                alt="story"
+                className="rounded-full"
+              />
+            </div>
           </div>
+          <p className="text-xs w-14 mt-1 truncate text-center dark:text-gray-300">
+            {user.username}
+          </p>
         </div>
-        <p className="text-xs w-14 mt-1 truncate text-center dark:text-gray-300">
-          {user.username}
-        </p>
-      </div>
+      )}
       {validUsers?.map((curruser, index) => (
         <div key={index}>
           <div className="flex items-center justify-center p-[1px] rounded-full border-red-500 border-2 object-contain cursor-pointer hover:scale-110 transition transform duration-200 ease-out">
