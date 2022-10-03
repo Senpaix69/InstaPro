@@ -12,6 +12,8 @@ export default function handler(req, res) {
         notification: {
           title: req.body.title,
           body: req.body.body,
+          deep_link: "https://insta-pro.vercel.app",
+          icon: "https://ibb.co/fndWFHk",
         },
       },
     })
