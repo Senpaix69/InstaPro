@@ -114,7 +114,7 @@ const Chat = () => {
     if (user?.username === username) {
       return user.profImg ? user.profImg : user.image;
     } else {
-      return secUser.profImg ? secUser.profImg : user.image;
+      return secUser.profImg ? secUser.profImg : secUser.image;
     }
   };
 
