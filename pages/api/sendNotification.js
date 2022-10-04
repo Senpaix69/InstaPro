@@ -1,9 +1,4 @@
-import PushNotifications from "@pusher/push-notifications-server";
-
-const pushNotifications = new PushNotifications({
-  instanceId: process.env.PUSHER_INSTANCE_ID,
-  secretKey: process.env.PUSHER_SECRET_KEY,
-});
+import pushNotifications from "../../lib/pusher";
 
 export default function handler(req, res) {
   pushNotifications
@@ -12,7 +7,8 @@ export default function handler(req, res) {
         notification: {
           title: req.body.title,
           body: req.body.body,
-          deep_link: "https://insta-pro.vercel.app",
+          icon: req.body.icon,
+          deep_link: req.body.link,
         },
       },
     })

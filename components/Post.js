@@ -29,6 +29,7 @@ import Moment from "react-moment";
 import { useSession } from "next-auth/react";
 import { postView } from "../atoms/postView";
 import { useRecoilState } from "recoil";
+import axios from "axios";
 
 const Post = ({
   id,
@@ -88,6 +89,14 @@ const Post = ({
       await setDoc(doc(db, "posts", id, "likes", session.user.uid), {
         username: session.user.username,
         timeStamp: serverTimestamp(),
+      }).then(() => {
+        axios.post("/api/sendNotification", {
+          interest: user.uid,
+          title: "InstaPro",
+          body: session?.user.username + " has liked your post",
+          icon: "https://firebasestorage.googleapis.com/v0/b/instapro-dev.appspot.com/o/posts%2Fimage%2Fraohuraira_57d3d606-eebc-4875-a843-eb0a03e3baf5?alt=media&token=33898c43-2cd1-459c-a5c9-efa29abb35a5",
+          link: "https://insta-pro.vercel.app",
+        });
       });
     }
   };
@@ -102,6 +111,14 @@ const Post = ({
       username: session.user.username,
       userImg: session.user.image,
       timeStamp: serverTimestamp(),
+    }).then(() => {
+      axios.post("/api/sendNotification", {
+        interest: user.uid,
+        title: "InstaPro",
+        body: session?.user.username + " has commented on your post",
+        icon: "https://firebasestorage.googleapis.com/v0/b/instapro-dev.appspot.com/o/posts%2Fimage%2Fraohuraira_57d3d606-eebc-4875-a843-eb0a03e3baf5?alt=media&token=33898c43-2cd1-459c-a5c9-efa29abb35a5",
+        link: "https://insta-pro.vercel.app",
+      });
     });
   };
 

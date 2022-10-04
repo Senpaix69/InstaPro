@@ -13,6 +13,7 @@ import {
 import { CameraIcon } from "@heroicons/react/outline";
 import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
 import { uuidv4 } from "@firebase/util";
+import axios from "axios";
 
 const ProfileSec = ({
   posts,
@@ -20,6 +21,7 @@ const ProfileSec = ({
   showFollowings,
   session,
   user,
+  visitor,
   setShowFollowers,
   setShowFollowings,
   followers,
@@ -60,6 +62,13 @@ const ProfileSec = ({
         timeStamp: serverTimestamp(),
       }
     ).then(() => {
+      axios.post("/api/sendNotification", {
+        interest: user.uid,
+        title: "InstaPro",
+        body: session?.user.username + " has followed you",
+        icon: visitor.profImg ? visitor.profImg : visitor.image,
+        link: "https://insta-pro.vercel.app/profile/" + session.user.username,
+      });
       toast.dismiss(toastId.current);
       toastId.current = null;
       toast.success("Followed Successfully 😇", { position: "top-center" });
@@ -76,13 +85,34 @@ const ProfileSec = ({
       });
       await deleteDoc(
         doc(db, `profile/${user.username}/followers/${session.user.username}`)
-      );
-      await deleteDoc(
-        doc(db, `profile/${session.user.username}/followings/${user.username}`)
-      );
-      toast.dismiss(toastId.current);
-      toastId.current = null;
-      toast.success("Followed Successfully 😇", { position: "top-center" });
+      )
+        .then(async () => {
+          await deleteDoc(
+            doc(
+              db,
+              `profile/${session.user.username}/followings/${user.username}`
+            )
+          ).then(() => {
+            axios.post("/api/sendNotification", {
+              interest: user.uid,
+              title: "InstaPro",
+              body: session?.user.username + " has unfollowed you",
+              icon: visitor.profImg ? visitor.profImg : visitor.image,
+              link:
+                "https://insta-pro.vercel.app/profile/" + session.user.username,
+            });
+            toast.dismiss(toastId.current);
+            toastId.current = null;
+            toast.info("UnFollowed Successfully 😶", {
+              position: "top-center",
+            });
+          });
+        })
+        .catch((error) => {
+          toast.dismiss(toastId.current);
+          toastId.current = null;
+          toast.error("Error: " + error, { position: "top-center" });
+        });
     }
   };
 
