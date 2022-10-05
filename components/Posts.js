@@ -9,7 +9,7 @@ import {
   where,
 } from "firebase/firestore";
 import { useEffect, useRef, useState } from "react";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { db } from "../firebase";
 import Post from "./Post";
@@ -70,16 +70,12 @@ const Posts = ({
 
   const deletePost = async (id) => {
     if (confirm("Do you really want to delete this post?")) {
-      toastId.current = toast.loading("deleting...", {
-        position: "top-center",
-      });
+      toastId.current = toast.loading("deleting...");
       setPosts(posts?.filter((post) => post.id !== id));
       await deleteDoc(doc(db, "posts", id)).then(() => {
         toast.dismiss(toastId.current);
         toastId.current = null;
-        toast.success("Post Deleted Successfully 👍", {
-          position: "top-center",
-        });
+        toast.success("Post Deleted Successfully 👍");
       });
     }
   };
@@ -122,7 +118,6 @@ const Posts = ({
           No posts yet 🙁
         </h1>
       )}
-      <ToastContainer autoClose={2500} theme="dark" pauseOnFocusLoss={false} />
     </div>
   );
 };

@@ -28,6 +28,7 @@ import axios from "axios";
 import { useRecoilState } from "recoil";
 import { themeState } from "../../atoms/theme";
 import { uuidv4 } from "@firebase/util";
+import { toast } from "react-toastify";
 
 const Chat = () => {
   const [text, setText] = useState("");
@@ -134,16 +135,12 @@ const Chat = () => {
       setFileType(file.type.includes("image") ? "image" : "video");
       if (fileType === "image") {
         if (file.size / (1024 * 1024) > 3) {
-          toast.error("Image size is larger than 3mb", {
-            position: "top-center",
-          });
+          toast.error("Image size is larger than 3mb");
         } else {
           setSelectFile(file);
         }
-      } else if (file.size / (1024 * 1024) > 30) {
-        toast.error("Video size is larger than 30mb", {
-          position: "top-center",
-        });
+      } else if (file.size / (1024 * 1024) > 50) {
+        toast.error("Video size is larger than 50mb");
       } else {
         setSelectFile(file);
       }
@@ -172,8 +169,8 @@ const Chat = () => {
                 onClick={() => router?.back()}
                 className="btn m-1"
               />
-              <div className="flex items-center justify-center p-[1px] rounded-full border-2 object-contain mx-2">
-                <div className="relative w-10 h-10">
+              <div className="flex items-center justify-center p-[1px] rounded-full object-contain mx-2">
+                <div className="relative w-12 h-12">
                   <Image
                     loading="eager"
                     layout="fill"
@@ -210,16 +207,23 @@ const Chat = () => {
                     </div>
                   )}
                 </div>
-                <span className="text-xs md:text-sm text-gray-400">
-                  active{" "}
-                </span>
-                {user?.active ? (
-                  <span className="text-xs md:text-sm text-gray-400"> now</span>
-                ) : (
-                  <Moment fromNow className="text-xs md:text-sm text-gray-400">
-                    {user?.timeStamp?.toDate()}
-                  </Moment>
-                )}
+                <div className="flex space-x-1">
+                  <span className="text-xs md:text-sm text-gray-400">
+                    active
+                  </span>
+                  {user?.active ? (
+                    <span className="text-xs md:text-sm text-gray-400">
+                      now
+                    </span>
+                  ) : (
+                    <Moment
+                      fromNow
+                      className="text-xs md:text-sm text-gray-400"
+                    >
+                      {user?.timeStamp?.toDate()}
+                    </Moment>
+                  )}
+                </div>
               </button>
             </div>
           </section>
@@ -227,7 +231,7 @@ const Chat = () => {
           {/* Chat Body */}
           <section className="flex-1">
             {loading ? (
-              <Loading />
+              <Loading page={"List"} />
             ) : (
               user?.bio && (
                 <div className="flex items-center justify-around m-2 p-2 mb-4 text-sm text-center text-gray-700 dark:bg-opacity-70 rounded-lg dark:bg-gray-900 dark:text-slate-400">
@@ -332,7 +336,7 @@ const Chat = () => {
                 </div>
               ))
             ) : (
-              <Loading />
+              <Loading page={"List"} />
             )}
           </section>
 

@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { db, storage } from "../firebase";
 import {
@@ -47,7 +47,7 @@ const ProfileSec = ({
     if (toast.isActive(toastId)) {
       toast.dismiss(toastId);
     }
-    toastId.current = toast.loading("Following...", { position: "top-center" });
+    toastId.current = toast.loading("Following...");
     await setDoc(
       doc(db, `profile/${user?.username}/followers/${session.user.username}`),
       {
@@ -71,7 +71,7 @@ const ProfileSec = ({
       });
       toast.dismiss(toastId.current);
       toastId.current = null;
-      toast.success("Followed Successfully 😇", { position: "top-center" });
+      toast.success("Followed Successfully 😇");
     });
   };
 
@@ -80,9 +80,7 @@ const ProfileSec = ({
       if (toast.isActive(toastId)) {
         toast.dismiss(toastId);
       }
-      toastId.current = toast.loading("unfollowing...", {
-        position: "top-center",
-      });
+      toastId.current = toast.loading("unfollowing...");
       await deleteDoc(
         doc(db, `profile/${user.username}/followers/${session.user.username}`)
       )
@@ -103,15 +101,13 @@ const ProfileSec = ({
             });
             toast.dismiss(toastId.current);
             toastId.current = null;
-            toast.info("UnFollowed Successfully 😶", {
-              position: "top-center",
-            });
+            toast.info("UnFollowed Successfully 😶");
           });
         })
         .catch((error) => {
           toast.dismiss(toastId.current);
           toastId.current = null;
-          toast.error("Error: " + error, { position: "top-center" });
+          toast.error("Error: " + error);
         });
     }
   };
@@ -119,9 +115,7 @@ const ProfileSec = ({
   const addProfile = async (file) => {
     if (file && file?.type?.includes("image")) {
       if (file.size / (1024 * 1024) > 5) {
-        toast.error("Image size is larger than 3mb", {
-          position: "top-center",
-        });
+        toast.error("Image size is larger than 3mb");
       } else {
         setProfilePic(file);
       }
@@ -132,9 +126,7 @@ const ProfileSec = ({
     if (toast.isActive(toastId)) {
       toast.dismiss(toastId);
     }
-    toastId.current = toast.loading("Saving...", {
-      position: "top-center",
-    });
+    toastId.current = toast.loading("Saving...");
 
     if (profilePic) {
       const storageRef = ref(
@@ -151,9 +143,7 @@ const ProfileSec = ({
           console.log(percent);
         },
         (err) => {
-          toast.error(err, {
-            position: "top-center",
-          });
+          toast.error(err);
           setEditProf(false);
           setProfilePic("");
         },
@@ -167,9 +157,7 @@ const ProfileSec = ({
             }).then(() => {
               toast.dismiss(toastId.current);
               toastId.current = null;
-              toast.success("Profile Edited Successfully 😀", {
-                position: "top-center",
-              });
+              toast.success("Profile Edited Successfully 😀");
               setEditProf(false);
               setProfilePic("");
             });
@@ -183,9 +171,7 @@ const ProfileSec = ({
       }).then(() => {
         toast.dismiss(toastId.current);
         toastId.current = null;
-        toast.success("Profile Edited Successfully 😀", {
-          position: "top-center",
-        });
+        toast.success("Profile Edited Successfully 😀");
         setEditProf(false);
         setProfilePic("");
       });
@@ -387,7 +373,6 @@ const ProfileSec = ({
           </div>
         </div>
       )}
-      <ToastContainer autoClose={2500} theme="dark" pauseOnFocusLoss={false} />
     </div>
   );
 };

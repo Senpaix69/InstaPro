@@ -12,16 +12,13 @@ const initBeams = (uid, signOut) => {
       switch (state) {
         case states.PERMISSION_DENIED: {
           toast.warn("You have blocked notifications", {
-            position: "top-center",
             toastId: uid,
           });
           break;
         }
         case states.PERMISSION_GRANTED_REGISTERED_WITH_BEAMS: {
           if (uid === "") {
-            const toastId = toast.loading("Logging Out, Please Wait", {
-              position: "top-center",
-            });
+            const toastId = toast.loading("Logging Out, Please Wait");
             console.log("Clearing Beams");
             beamsClient
               .clearAllState()
@@ -30,21 +27,19 @@ const initBeams = (uid, signOut) => {
                   .stop()
                   .then(() => {
                     toast.dismiss(toastId);
-                    toast("Logged Out Successfully", {
-                      position: "top-center",
-                    });
+                    toast("Logged Out Successfully");
                     console.log("Beams SDK has been stopped");
                     signOut();
                   })
                   .catch((e) => {
                     toast.dismiss(toastId);
-                    toast.error(`Error: ${e}`, { position: "top-center" });
+                    toast.error(`Error: ${e}`);
                     console.error("Could not stop Beams SDK", e);
                   });
               })
               .catch((e) => {
                 toast.dismiss(toastId);
-                toast.error(`Error: ${e}`, { position: "top-center" });
+                toast.error(`Error: ${e}`);
                 console.error("Could not clear Beams state", e);
               });
           }
@@ -60,7 +55,6 @@ const initBeams = (uid, signOut) => {
             .then(() => beamsClient.addDeviceInterest("debug-public"))
             .then(() => {
               toast.success("Push Notifications Enabled", {
-                position: "top-center",
                 toastId: uid,
               });
             });

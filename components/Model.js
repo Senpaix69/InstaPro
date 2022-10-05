@@ -27,9 +27,7 @@ const Model = () => {
   const postMedia = async () => {
     if (loading) return;
     setLoading(true);
-    toastId.current = toast.loading("Uploading...", {
-      position: "top-center",
-    });
+    toastId.current = toast.loading("Uploading...");
 
     const storageRef = ref(
       storage,
@@ -48,9 +46,7 @@ const Model = () => {
         setStatus(percent);
       },
       (err) => {
-        toast.error(err, {
-          position: "top-center",
-        });
+        toast.error(err);
         setOpen(false);
         setLoading(false);
         setStatus(0);
@@ -82,9 +78,7 @@ const Model = () => {
 
         toast.dismiss(toastId.current);
         toastId.current = null;
-        toast.success("Post Uploaded Successfully 👍", {
-          position: "top-center",
-        });
+        toast.success("Post Uploaded Successfully 👍");
         setOpen(false);
         setLoading(false);
         setStatus(0);
@@ -99,16 +93,12 @@ const Model = () => {
       setFileType(file.type.includes("image") ? "image" : "video");
       if (fileType === "image") {
         if (file.size / (1024 * 1024) > 3) {
-          toast.error("Image size is larger than 3mb", {
-            position: "top-center",
-          });
+          toast.error("Image size is larger than 3mb");
         } else {
           setSelectFile(file);
         }
       } else if (file.size / (1024 * 1024) > 20) {
-        toast.error("Video size is larger than 20mb", {
-          position: "top-center",
-        });
+        toast.error("Video size is larger than 20mb");
       } else {
         setSelectFile(file);
       }

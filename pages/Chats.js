@@ -13,7 +13,7 @@ import { useRouter } from "next/router";
 import Loading from "../components/Loading";
 import getUserData from "../utils/getUserData";
 import getOtherEmail from "../utils/getOtherEmail";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import ChatList from "../components/ChatList";
 import getUserActivity from "../utils/getUserActivity";
@@ -61,9 +61,7 @@ const Chats = () => {
         if (!chatExits(uName)) {
           const ind = values.findIndex((user) => user.username === uName);
           if (ind !== -1 && !loading) {
-            toastId.current = toast.loading("Finding...", {
-              position: "top-center",
-            });
+            toastId.current = toast.loading("Finding...");
             await addDoc(collection(db, "chats"), {
               users: [
                 { username: values[ind].username },
@@ -72,24 +70,16 @@ const Chats = () => {
             }).then(() => {
               toast.dismiss(toastId.current);
               toastId.current = null;
-              toast.success("User Added Successfully 🤞", {
-                position: "top-center",
-              });
+              toast.success("User Added Successfully 🤞");
             });
           } else {
-            toast.warn("User Not Found 😐", {
-              position: "top-center",
-            });
+            toast.warn("User Not Found 😐");
           }
         } else {
-          toast.error("User Already Exist 🙂", {
-            position: "top-center",
-          });
+          toast.error("User Already Exist 🙂");
         }
       } else {
-        toast.error("You can not add yourselt 🙄", {
-          position: "top-center",
-        });
+        toast.error("You can not add yourselt 🙄");
       }
     }
   };
@@ -157,6 +147,7 @@ const Chats = () => {
                     <ChatList
                       toast={toast}
                       key={i}
+                      visitor={session.user.username}
                       id={user.id}
                       redirect={redirect}
                       user={getOtherEmail(user, session.user)}
@@ -167,7 +158,6 @@ const Chats = () => {
           </div>
         </div>
       </div>
-      <ToastContainer autoClose={2500} theme="dark" pauseOnFocusLoss={false} />
     </div>
   );
 };
