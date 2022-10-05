@@ -28,7 +28,7 @@ import axios from "axios";
 import { useRecoilState } from "recoil";
 import { themeState } from "../../atoms/theme";
 import { uuidv4 } from "@firebase/util";
-import { toast } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 
 const Chat = () => {
   const [text, setText] = useState("");
@@ -397,6 +397,12 @@ const Chat = () => {
           </section>
         </div>
       </div>
+      <ToastContainer
+        autoClose={2500}
+        position={"top-center"}
+        theme="dark"
+        pauseOnFocusLoss={false}
+      />
     </div>
   );
 };
