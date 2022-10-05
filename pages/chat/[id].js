@@ -63,16 +63,13 @@ const Chat = () => {
       timeStamp: serverTimestamp(),
     }).then(() => {
       if (typeof Notification !== "undefined") {
-        console.log("sending");
-        axios
-          .post("/api/sendNotification", {
-            interest: user.uid,
-            title: secUser.fullname,
-            body: msgToSend,
-            icon: secUser.profImg ? secUser.profImg : secUser.image,
-            link: "https://insta-pro.vercel.app/chat/" + id,
-          })
-          .then(() => console.log("sent"));
+        axios.post("/api/sendNotification", {
+          interest: user.uid,
+          title: secUser.fullname,
+          body: msgToSend,
+          icon: secUser.profImg ? secUser.profImg : secUser.image,
+          link: "https://insta-pro.vercel.app/chat/" + id,
+        });
       }
     });
 
