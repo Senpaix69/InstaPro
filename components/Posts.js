@@ -54,7 +54,7 @@ const Posts = ({
   useEffect(() => {
     let sub = true;
     if (router.pathname !== "/" && sub) {
-      const subscribe = getDocs(
+      getDocs(
         query(
           collection(db, "posts"),
           where("username", "==", profile),

@@ -90,13 +90,15 @@ const Post = ({
         username: session.user.username,
         timeStamp: serverTimestamp(),
       }).then(() => {
-        axios.post("/api/sendNotification", {
-          interest: user.uid,
-          title: "InstaPro",
-          body: session?.user.username + " has liked your post",
-          icon: "https://firebasestorage.googleapis.com/v0/b/instapro-dev.appspot.com/o/posts%2Fimage%2Fraohuraira_57d3d606-eebc-4875-a843-eb0a03e3baf5?alt=media&token=33898c43-2cd1-459c-a5c9-efa29abb35a5",
-          link: "https://insta-pro.vercel.app",
-        });
+        if (typeof Notification !== "undefined") {
+          axios.post("/api/sendNotification", {
+            interest: user.uid,
+            title: "InstaPro",
+            body: session?.user.username + " has liked your post",
+            icon: "https://firebasestorage.googleapis.com/v0/b/instapro-dev.appspot.com/o/posts%2Fimage%2Fraohuraira_57d3d606-eebc-4875-a843-eb0a03e3baf5?alt=media&token=33898c43-2cd1-459c-a5c9-efa29abb35a5",
+            link: "https://insta-pro.vercel.app",
+          });
+        }
       });
     }
   };
@@ -112,13 +114,15 @@ const Post = ({
       userImg: session.user.image,
       timeStamp: serverTimestamp(),
     }).then(() => {
-      axios.post("/api/sendNotification", {
-        interest: user.uid,
-        title: "InstaPro",
-        body: session?.user.username + " has commented on your post",
-        icon: "https://firebasestorage.googleapis.com/v0/b/instapro-dev.appspot.com/o/posts%2Fimage%2Fraohuraira_57d3d606-eebc-4875-a843-eb0a03e3baf5?alt=media&token=33898c43-2cd1-459c-a5c9-efa29abb35a5",
-        link: "https://insta-pro.vercel.app",
-      });
+      if (typeof Notification !== "undefined") {
+        axios.post("/api/sendNotification", {
+          interest: user.uid,
+          title: "InstaPro",
+          body: session?.user.username + " has commented on your post",
+          icon: "https://firebasestorage.googleapis.com/v0/b/instapro-dev.appspot.com/o/posts%2Fimage%2Fraohuraira_57d3d606-eebc-4875-a843-eb0a03e3baf5?alt=media&token=33898c43-2cd1-459c-a5c9-efa29abb35a5",
+          link: "https://insta-pro.vercel.app",
+        });
+      }
     });
   };
 
@@ -200,14 +204,10 @@ const Post = ({
             )}
             {video && (
               <video
-                autoPlay
-                loop
-                onPlay={handlePlay}
                 playsInline
-                muted={
-                  router.pathname?.includes("profile") && !view ? "muted" : ""
-                }
-                onClick={(e) => (e.target.muted = !e.target.muted)}
+                controls
+                preload="none"
+                poster="https://domainjava.com/wp-content/uploads/2022/07/Link-Bokeh-Full-111.90-l50-204-Chrome-Video-Bokeh-Museum-2022.jpg"
                 className="w-full h-auto max-h-[500px] overflow-hidden"
               >
                 <source src={video} />
@@ -325,8 +325,7 @@ const Post = ({
               <>
                 <VideoCameraIcon className="h-5 w-5 absolute text-slate-200 m-1" />
                 <video
-                  preload="metadata"
-                  muted
+                  preload="none"
                   src={video}
                   className="h-full w-full overflow-hidden"
                 ></video>
@@ -338,4 +337,5 @@ const Post = ({
     </div>
   );
 };
+
 export default Post;

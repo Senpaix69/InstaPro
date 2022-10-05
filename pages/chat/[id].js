@@ -18,20 +18,19 @@ import {
   addDoc,
   serverTimestamp,
   deleteDoc,
-  updateDoc,
 } from "firebase/firestore";
 import { db, storage } from "../../firebase";
 import Loading from "../../components/Loading";
-import { ref, getDownloadURL, uploadString } from "firebase/storage";
+import { ref, getDownloadURL, uploadBytesResumable } from "firebase/storage";
 import getChatMessages from "../../utils/getChatMessages";
 import getOtherEmail from "../../utils/getOtherEmail";
 import axios from "axios";
 import { useRecoilState } from "recoil";
 import { themeState } from "../../atoms/theme";
+import { uuidv4 } from "@firebase/util";
 
 const Chat = () => {
   const [text, setText] = useState("");
-  const [uploading, setUploading] = useState(false);
   const { data: session } = useSession();
   const router = useRouter();
   const { id } = router.query;
@@ -39,7 +38,9 @@ const Chat = () => {
   const [sending, setSending] = useState(false);
   const messages = getChatMessages(id);
   const [selectFile, setSelectFile] = useState(null);
+  const [fileType, setFileType] = useState("");
   const filePickerRef = useRef(null);
+  const [status, setStatus] = useState(0);
   const [darkMode] = useRecoilState(themeState);
   const [chat] = useDocumentData(doc(db, `chats/${id}`));
   const [user] = useDocumentData(
@@ -52,40 +53,69 @@ const Chat = () => {
   const sendMessage = async (e) => {
     e.preventDefault();
     const msgToSend = text;
-    const imgRef = selectFile;
-    setUploading(true);
-    setSelectFile(null);
     setText("");
-    if (imgRef) setSending(true);
-    const docRef = await addDoc(collection(db, "chats", id, "messages"), {
-      text: msgToSend,
-      username: session.user.username,
-      timeStamp: serverTimestamp(),
-    }).then(() => {
-      if (typeof Notification !== "undefined") {
-        axios.post("/api/sendNotification", {
-          interest: user.uid,
-          title: secUser.fullname,
-          body: msgToSend,
-          icon: secUser.profImg ? secUser.profImg : secUser.image,
-          link: "https://insta-pro.vercel.app/chat/" + id,
-        });
-      }
-    });
 
     if (selectFile) {
-      const imageRef = ref(storage, `chats/${docRef.id}/image`);
-      await uploadString(imageRef, imgRef, "data_url").then(async () => {
-        const downloadURL = await getDownloadURL(imageRef);
-
-        await updateDoc(doc(db, "chats", id, "messages", docRef.id), {
-          image: downloadURL,
-        });
+      const imgRef = selectFile;
+      setSelectFile(null);
+      setSending(true);
+      const storageRef = ref(
+        storage,
+        `chats/${fileType}/${session?.user.username}-${uuidv4()}`
+      );
+      const uploadTask = uploadBytesResumable(storageRef, imgRef);
+      uploadTask.on(
+        "state_changed",
+        (snapshot) => {
+          const percent = Math.round(
+            (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+          );
+          setStatus(percent);
+        },
+        (err) => {
+          setStatus(0);
+          setFileType("");
+          setSending(false);
+        },
+        () => {
+          // download url
+          getDownloadURL(uploadTask.snapshot.ref)
+            .then(async (url) => {
+              await addDoc(collection(db, "chats", id, "messages"), {
+                text: msgToSend,
+                username: session.user.username,
+                timeStamp: serverTimestamp(),
+                [fileType]: url,
+              });
+            })
+            .then(() => {
+              msgSend(msgToSend);
+            });
+        }
+      );
+    } else {
+      await addDoc(collection(db, "chats", id, "messages"), {
+        text: msgToSend,
+        username: session.user.username,
+        timeStamp: serverTimestamp(),
+      }).then(() => {
+        msgSend(msgToSend);
       });
-      setSending(false);
-      imgRef = null;
     }
-    setUploading(false);
+  };
+  const msgSend = (msgToSend) => {
+    if (typeof Notification !== "undefined") {
+      axios.post("/api/sendNotification", {
+        interest: user.uid,
+        title: secUser.fullname,
+        body: msgToSend ? msgToSend : fileType ? fileType : "You Got Message",
+        icon: secUser.profImg ? secUser.profImg : secUser.image,
+        link: "https://insta-pro.vercel.app/chat/" + id,
+      });
+    }
+    setStatus(0);
+    setFileType("");
+    setSending(false);
   };
 
   const scrollToBottom = () => {
@@ -99,14 +129,25 @@ const Chat = () => {
     }
   };
 
-  const addMedia = (e) => {
-    const read = new FileReader();
-    if (e.target.files[0]) {
-      read.readAsDataURL(e.target.files[0]);
+  const addMedia = (file) => {
+    if (file) {
+      setFileType(file.type.includes("image") ? "image" : "video");
+      if (fileType === "image") {
+        if (file.size / (1024 * 1024) > 3) {
+          toast.error("Image size is larger than 3mb", {
+            position: "top-center",
+          });
+        } else {
+          setSelectFile(file);
+        }
+      } else if (file.size / (1024 * 1024) > 30) {
+        toast.error("Video size is larger than 30mb", {
+          position: "top-center",
+        });
+      } else {
+        setSelectFile(file);
+      }
     }
-    read.onload = (readEvent) => {
-      setSelectFile(readEvent.target.result);
-    };
   };
 
   const getProfileImage = (username) => {
@@ -121,7 +162,7 @@ const Chat = () => {
     <div className={` ${darkMode ? "bg-gray-100" : "dark bg-gray-900"}`}>
       <div className="max-w-6xl lg:mx-auto flex justify-center">
         <div
-          className="dark:bg-black bg-[url('https://i.pinimg.com/originals/b7/fc/af/b7fcaf2631fc54f28ef3f123855d03dc.jpg')] dark:bg-[url('https://wallpaperaccess.com/full/4599992.png')]
+          className="dark:bg-black bg-[url('https://i.pinimg.com/originals/b7/fc/af/b7fcaf2631fc54f28ef3f123855d03dc.jpg')] dark:bg-[url('https://wallpapercave.com/wp/wp9100371.jpg')]
             bg-no-repeat bg-cover bg-center w-full flex flex-col md:w-[700px] h-screen overflow-y-scroll scrollbar-hide"
         >
           {/* Chat Header */}
@@ -245,7 +286,18 @@ const Chat = () => {
                           <img src={msg.data().image} alt="img" />
                         </div>
                       )}
-                      <div className="flex text-gray-300 mt-1 justify-end pl-5">
+                      {msg.data().video && (
+                        <video
+                          playsInline
+                          controls
+                          preload="none"
+                          poster="https://domainjava.com/wp-content/uploads/2022/07/Link-Bokeh-Full-111.90-l50-204-Chrome-Video-Bokeh-Museum-2022.jpg"
+                          className="w-full h-auto max-h-[300px] overflow-hidden"
+                        >
+                          <source src={msg.data().video} />
+                        </video>
+                      )}
+                      <div className="flex text-gray-300 justify-end">
                         <Moment fromNow className="text-[10px]">
                           {msg?.data()?.timeStamp?.toDate()}
                         </Moment>
@@ -286,26 +338,15 @@ const Chat = () => {
 
           {/* Chat Bottom */}
           <section className="bg-gray-50 sticky bottom-0 z-50 shadow-sm mx-1 px-1 dark:text-white rounded-3xl dark:bg-gray-900">
-            <form>
-              {sending ? (
-                <p className="font-bold p-4 mr-3 text-gray-500 w-full text-right">
-                  Uploading Image
-                </p>
-              ) : (
-                selectFile && (
-                  <div className="relative flex gap-5 items-center p-5 text-semibold italic">
-                    <Image
-                      height="100px"
-                      width="100px"
-                      className="object-contain cursor-pointer"
-                      src={selectFile}
-                      alt="file"
-                      onClick={() => setSelectFile(null)}
-                    />
-                    <h1>Status: </h1>
-                    {uploading ? <h1>Uploading...</h1> : <h1>Loaded</h1>}
-                  </div>
-                )
+            <form onSubmit={(e) => sendMessage(e)}>
+              {(selectFile || sending) && (
+                <div className="font-bold p-4 mr-3 text-gray-500 w-full text-right">
+                  {sending ? (
+                    <p>{`Uploading ${fileType}: ${status}%`}</p>
+                  ) : (
+                    selectFile && <h1>{selectFile.name}</h1>
+                  )}
+                </div>
               )}
               <div className="w-full border rounded-3xl h-12 flex justify-between items-center dark:border-none">
                 <div className="flex items-center flex-1">
@@ -335,13 +376,12 @@ const Chat = () => {
                         ref={filePickerRef}
                         type="file"
                         hidden
-                        onChange={addMedia}
+                        onChange={(e) => addMedia(e.target.files[0])}
                       />
                     </div>
                   </div>
                   <button
                     type="submit"
-                    onClick={sendMessage}
                     disabled={text || selectFile ? false : true}
                   >
                     <ArrowRightIcon
