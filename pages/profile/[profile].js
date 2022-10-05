@@ -76,7 +76,7 @@ const Profile = () => {
         >
           <div className="max-w-3xl min-w-[380px] dark:text-gray-200 flex-1 overflow-y-scroll scrollbar-hide">
             {loading ? (
-              <Loading />
+              <Loading page={"profile"} />
             ) : (
               <>
                 <FollowList
@@ -134,13 +134,15 @@ const Profile = () => {
                 </button>
               </>
             )}
-            <Posts
-              showFollowers={showFollowers}
-              showFollowings={showFollowings}
-              setLoad={setLoad}
-              setTotalPosts={setTotalPosts}
-              profile={profile}
-            />
+            <div className={loading ? "hidden" : ""}>
+              <Posts
+                showFollowers={showFollowers}
+                showFollowings={showFollowings}
+                setLoad={setLoad}
+                setTotalPosts={setTotalPosts}
+                profile={profile}
+              />
+            </div>
           </div>
         </div>
       ) : (

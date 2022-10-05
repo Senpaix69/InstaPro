@@ -11,7 +11,12 @@
     .navBtn {
         @apply hidden h-6 md:inline-flex cursor-pointer transition-all duration-150 ease-out;
     }
+
     .btn {
         @apply h-7 cursor-pointer transition-all duration-150 ease-out;
     }
+}
+
+button:focus {
+    outline: none;
 }

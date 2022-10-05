@@ -93,7 +93,7 @@ const Posts = ({
       }`}
     >
       {loading && posts === undefined ? (
-        <Loading page={"List"} />
+        <Loading page={" "} />
       ) : (
         posts?.map((post) => (
           <Post

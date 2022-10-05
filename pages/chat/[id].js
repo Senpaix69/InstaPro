@@ -230,16 +230,12 @@ const Chat = () => {
 
           {/* Chat Body */}
           <section className="flex-1">
-            {loading ? (
-              <Loading page={"List"} />
-            ) : (
-              user?.bio && (
-                <div className="flex items-center justify-around m-2 p-2 mb-4 text-sm text-center text-gray-700 dark:bg-opacity-70 rounded-lg dark:bg-gray-900 dark:text-slate-400">
-                  <ArrowLeftIcon className="h-3 w-3" />
-                  {user?.bio}
-                  <ArrowRightIcon className="h-3 w-3" />
-                </div>
-              )
+            {user?.bio && (
+              <div className="flex items-center justify-around m-2 p-2 mb-4 text-sm text-center text-gray-700 dark:bg-opacity-70 rounded-lg dark:bg-gray-900 dark:text-slate-400">
+                <ArrowLeftIcon className="h-3 w-3" />
+                {user?.bio}
+                <ArrowRightIcon className="h-3 w-3" />
+              </div>
             )}
             {user?.username ? (
               messages?.map((msg, i) => (

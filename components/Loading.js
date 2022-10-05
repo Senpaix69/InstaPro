@@ -4,8 +4,14 @@ const Loading = ({ page }) => {
   return (
     <div
       className={`flex flex-col w-full items-center ${
-        page ? page === "List" ? "mt-72" : "mt-44" : "justify-center"
-      } h-screen`}
+        page
+          ? page === "List"
+            ? "mt-72"
+            : page === "profile"
+            ? "mt-80"
+            : "mt-44"
+          : "justify-center"
+      }`}
     >
       <Puff color="white" height={50} width={40} />
     </div>
