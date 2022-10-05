@@ -19,6 +19,7 @@ import ChatList from "../components/ChatList";
 import getUserActivity from "../utils/getUserActivity";
 import { useRecoilState } from "recoil";
 import { themeState } from "../atoms/theme";
+import axios from "axios";
 
 const Chats = () => {
   const { data: session } = useSession();
@@ -29,9 +30,7 @@ const Chats = () => {
   const chats = snapshot?.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
   const values = getUserActivity();
   const [darkMode, setDarkMode] = useRecoilState(themeState);
-  const [user, loadingUser] = useDocumentData(
-    doc(db, `profile/${session?.user.username}`)
-  );
+  const [user] = useDocumentData(doc(db, `profile/${session?.user.username}`));
   const toastId = useRef(null);
 
   const chatExits = (email) => {
@@ -59,9 +58,9 @@ const Chats = () => {
     if (uName?.length) {
       if (uName !== session.user.username) {
         if (!chatExits(uName)) {
+          toastId.current = toast.loading("Finding...");
           const ind = values.findIndex((user) => user.username === uName);
           if (ind !== -1 && !loading) {
-            toastId.current = toast.loading("Finding...");
             await addDoc(collection(db, "chats"), {
               users: [
                 { username: values[ind].username },
@@ -71,6 +70,15 @@ const Chats = () => {
               toast.dismiss(toastId.current);
               toastId.current = null;
               toast.success("User Added Successfully 🤞");
+              if (typeof Notification !== "undefined") {
+                axios.post("/api/sendNotification", {
+                  interest: values[ind].uid,
+                  title: "InstaPro",
+                  body: user.fullname + " has added you in chat",
+                  icon: "https://firebasestorage.googleapis.com/v0/b/instapro-dev.appspot.com/o/posts%2Fimage%2Fraohuraira_57d3d606-eebc-4875-a843-eb0a03e3baf5?alt=media&token=33898c43-2cd1-459c-a5c9-efa29abb35a5",
+                  link: "https://insta-pro.vercel.app/Chats",
+                });
+              }
             });
           } else {
             toast.warn("User Not Found 😐");
@@ -143,14 +151,15 @@ const Chats = () => {
                       search.toLowerCase()
                     )
                   )
-                  .map((user, i) => (
+                  .map((curuser, i) => (
                     <ChatList
                       toast={toast}
+                      axios={axios}
                       key={i}
-                      visitor={session.user.username}
-                      id={user.id}
+                      visitor={user}
+                      id={curuser.id}
                       redirect={redirect}
-                      user={getOtherEmail(user, session.user)}
+                      user={getOtherEmail(curuser, session.user)}
                     />
                   ))
               )}

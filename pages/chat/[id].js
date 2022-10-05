@@ -156,7 +156,7 @@ const Chat = () => {
   };
 
   return (
-    <div className={` ${darkMode ? "bg-gray-100" : "dark bg-gray-900"}`}>
+    <div className={darkMode ? "bg-gray-100" : "dark bg-gray-900"}>
       <div className="max-w-6xl lg:mx-auto flex justify-center">
         <div
           className="dark:bg-black bg-[url('https://i.pinimg.com/originals/b7/fc/af/b7fcaf2631fc54f28ef3f123855d03dc.jpg')] dark:bg-[url('https://wallpapercave.com/wp/wp9100371.jpg')]
@@ -395,14 +395,14 @@ const Chat = () => {
               </div>
             </form>
           </section>
+          <ToastContainer
+            autoClose={2500}
+            position={"top-center"}
+            theme="dark"
+            pauseOnFocusLoss={false}
+          />
         </div>
       </div>
-      <ToastContainer
-        autoClose={2500}
-        position={"top-center"}
-        theme="dark"
-        pauseOnFocusLoss={false}
-      />
     </div>
   );
 };

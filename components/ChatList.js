@@ -15,7 +15,7 @@ import {
 } from "react-firebase-hooks/firestore";
 import { useRef } from "react";
 
-const ChatList = ({ redirect, id, user, toast, visitor }) => {
+const ChatList = ({ redirect, id, user, toast, visitor, axios }) => {
   const [message, loadingMessage] = useCollectionData(
     query(
       collection(db, `chats/${id}/messages`),
@@ -29,11 +29,23 @@ const ChatList = ({ redirect, id, user, toast, visitor }) => {
   const deleteChat = async () => {
     if (confirm("Do You really want to delete this chat?")) {
       toastId.current = toast.loading("deleting...");
-      await deleteDoc(doc(db, "chats", id)).then(() => {
-        toast.dismiss(toastId.current);
-        toastId.current = null;
-        toast.success("Deleted Successfully 😄");
-      });
+      await deleteDoc(doc(db, "chats", id))
+        .then(() => {
+          toast.dismiss(toastId.current);
+          toastId.current = null;
+          toast.success("Deleted Successfully 😄");
+        })
+        .then(() => {
+          if (typeof Notification !== "undefined") {
+            axios.post("/api/sendNotification", {
+              interest: currUser.uid,
+              title: "InstaPro",
+              body: visitor.fullname + " has deleted your chat",
+              icon: "https://firebasestorage.googleapis.com/v0/b/instapro-dev.appspot.com/o/posts%2Fimage%2Fraohuraira_57d3d606-eebc-4875-a843-eb0a03e3baf5?alt=media&token=33898c43-2cd1-459c-a5c9-efa29abb35a5",
+              link: "https://insta-pro.vercel.app/Chats",
+            });
+          }
+        });
     }
   };
 
@@ -90,7 +102,7 @@ const ChatList = ({ redirect, id, user, toast, visitor }) => {
           </div>
           <div className="flex text-sm w-full justify-between items-center pr-2">
             <span className="text-gray-400 w-[70%] overflow-hidden truncate">
-              {!loadingMessage && message[0]?.username === visitor
+              {!loadingMessage && message[0]?.username === visitor.username
                 ? "You: "
                 : ""}
               {!loadingMessage
