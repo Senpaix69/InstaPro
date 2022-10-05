@@ -108,7 +108,7 @@ const Chat = () => {
       axios.post("/api/sendNotification", {
         interest: user.uid,
         title: secUser.fullname,
-        body: msgToSend ? msgToSend : fileType ? fileType : "You Got Message",
+        body: fileType ? fileType + "/" : msgToSend,
         icon: secUser.profImg ? secUser.profImg : secUser.image,
         link: "https://insta-pro.vercel.app/chat/" + id,
       });
@@ -282,7 +282,7 @@ const Chat = () => {
                     >
                       <div>{msg?.data().text}</div>
                       {msg.data().image && (
-                        <div className="mt-2 shadow-md p-2">
+                        <div className="my-2 shadow-md p-2">
                           <img src={msg.data().image} alt="img" />
                         </div>
                       )}
@@ -292,7 +292,7 @@ const Chat = () => {
                           controls
                           preload="none"
                           poster="https://domainjava.com/wp-content/uploads/2022/07/Link-Bokeh-Full-111.90-l50-204-Chrome-Video-Bokeh-Museum-2022.jpg"
-                          className="w-full h-auto max-h-[300px] overflow-hidden"
+                          className="w-full h-auto max-h-[300px] overflow-hidden my-2"
                         >
                           <source src={msg.data().video} />
                         </video>
@@ -357,6 +357,7 @@ const Chat = () => {
                     />
                   </div>
                   <input
+                    disabled={sending}
                     placeholder="Message..."
                     className="mx-2 outline-none text-md focus:ring-0 bg-transparent w-full"
                     value={text}

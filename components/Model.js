@@ -193,6 +193,7 @@ const Model = () => {
                   </div>
                   <div className="mt-2">
                     <input
+                      disabled={loading}
                       onChange={(e) => setCaption(e.target.value)}
                       className="border-none focus:ring-0 w-full text-center"
                       type="text"

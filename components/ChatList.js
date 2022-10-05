@@ -97,6 +97,8 @@ const ChatList = ({ redirect, id, user, toast }) => {
                   ? message[0].text
                   : message[0]?.image
                   ? "image/"
+                  : message[0]?.image
+                  ? "video/"
                   : "tap to send text"
                 : "loading.."}
             </span>
