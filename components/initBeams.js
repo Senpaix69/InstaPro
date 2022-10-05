@@ -27,7 +27,7 @@ const initBeams = (uid, signOut) => {
                   .stop()
                   .then(() => {
                     toast.dismiss(toastId);
-                    toast("Logged Out Successfully");
+                    toast.info("Logged Out Successfully");
                     console.log("Beams SDK has been stopped");
                     signOut();
                   })
@@ -49,10 +49,17 @@ const initBeams = (uid, signOut) => {
         case states.PERMISSION_PROMPT_REQUIRED: {
           beamsClient
             .start()
-            .then(() => beamsClient.addDeviceInterest(uid))
-            .then(() => beamsClient.addDeviceInterest("public"))
-            .then(() => beamsClient.addDeviceInterest(`debug-${uid}`))
-            .then(() => beamsClient.addDeviceInterest("debug-public"))
+            .then(() =>
+              beamsClient.setDeviceInterests([
+                "public",
+                uid,
+                `debug-${uid}`,
+                "debug-public",
+              ])
+            )
+            .then(() =>
+              beamsClient.getDeviceInterests().then((int) => console.log(int))
+            )
             .then(() => {
               toast.success("Push Notifications Enabled", {
                 toastId: uid,
