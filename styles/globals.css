@@ -17,6 +17,11 @@
     }
 }
 
-button:focus {
+button:active {
     outline: none;
+    border: none;
+}
+
+button:focus {
+    outline: 0;
 }
