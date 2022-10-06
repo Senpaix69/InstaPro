@@ -104,9 +104,7 @@ const FollowList = ({
                     </button>
                     {user.timeStamp && (
                       <div className="flex items-center space-x-1">
-                        <span className="text-gray-400 text-xs">
-                          Followed:{" "}
-                        </span>
+                        <span className="text-gray-400 text-xs">Followed:</span>
                         <Moment
                           className="text-gray-400 text-xs align-text-top"
                           fromNow

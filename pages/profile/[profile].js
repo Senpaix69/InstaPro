@@ -131,7 +131,7 @@ const Profile = () => {
                   followings={followings}
                 />
                 <button
-                  hidden={showFollowers || showFollowings ? true : false}
+                  hidden={showFollowers || showFollowings || openLikes ? true : false}
                   className="absolute z-50 bottom-20 text-white dark:text-gray-300 bg-blue-400 font-semibold dark:bg-slate-700 rounded-r-2xl py-1 px-4"
                   onClick={() => setView(!view)}
                 >

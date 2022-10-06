@@ -95,7 +95,7 @@ const Posts = ({
         />
       )}
       <div
-        className={`relative ${openLikes ? "hidden" : ""} mb-14 ${
+        className={`relative mb-14 ${
           showFollowers || showFollowings ? "hidden" : ""
         } ${
           router.asPath !== "/" && !view
