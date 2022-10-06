@@ -11,9 +11,9 @@ const Likes = ({ setOpenLikes, users, likes, router }) => {
 
   return (
     <div className="overflow-y-scroll scrollbar-hide">
-      <div className="w-full md:max-w-3xl m-auto bg-gray-100 dark:text-gray-200 dark:bg-gray-900 fixed top-0 z-50 h-screen">
+      <div className="w-full md:max-w-3xl m-auto bg-gray-100 dark:text-gray-200 dark:bg-gray-900 fixed top-0 z-40 h-screen">
         {/* likes header */}
-        <section className="sticky top-0 z-40 w-full md:max-w-3xl dark:bg-gray-900">
+        <section className="sticky top-0 z-50 w-full md:max-w-3xl dark:bg-gray-900">
           <div className="flex space-x-3 px-3 items-center dark:bg-gray-900 dark:text-white h-16">
             <ArrowLeftIcon
               className="h-6 w-6 cursor-pointer"
