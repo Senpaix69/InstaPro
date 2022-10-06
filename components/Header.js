@@ -78,12 +78,11 @@ const Header = ({
 
   return (
     <div
-      hidden={
+      className={`shadow-sm sticky top-0 z-20 text-white ${
         showFollowers || showFollowings || openLikes || openComments
-          ? true
-          : false
-      }
-      className={`shadow-sm sticky top-0 z-50 text-white`}
+          ? "hidden"
+          : ""
+      }`}
     >
       {session && (
         <div className="flex bg-blue-500 justify-between max-w-3xl px-5 lg:mx-auto dark:shadow-gray-600 dark:border-gray-500 dark:bg-gray-900 py-1">
