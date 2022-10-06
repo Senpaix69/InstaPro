@@ -1,26 +1,23 @@
 import { useSession } from "next-auth/react";
 import { useRecoilState } from "recoil";
-import { themeState } from "../../atoms/theme";
+import { themeState, postView } from "../../atoms/states";
 import Login from "../../pages/login";
 import Header from "../../components/Header";
 import Posts from "../../components/Posts";
 import ProfileSec from "../../components/ProfileSec";
 import FollowList from "../../components/FollowList";
 import Loading from "../../components/Loading";
-import { postView } from "../../atoms/postView";
 import { useEffect, useState } from "react";
 import { db } from "../../firebase";
 import { useRouter } from "next/router";
 import { collection, query, orderBy } from "firebase/firestore";
 import { useCollectionData } from "react-firebase-hooks/firestore";
-import { likesView } from "../../atoms/likesView";
 
 const Profile = () => {
   const { data: session } = useSession();
   const router = useRouter();
   const [darkMode, setDarkMode] = useRecoilState(themeState);
   const [view, setView] = useRecoilState(postView);
-  const [openLikes, setOpenLikes] = useRecoilState(likesView);
   const [totalPosts, setTotalPosts] = useState(0);
   const [showFollowers, setShowFollowers] = useState(false);
   const [showFollowings, setShowFollowings] = useState(false);
@@ -112,8 +109,6 @@ const Profile = () => {
                 <ProfileSec
                   posts={totalPosts}
                   session={session}
-                  openLikes={openLikes}
-                  setOpenLikes={setOpenLikes}
                   view={view}
                   user={
                     users.filter((ituser) => ituser.username === profile)[0]
@@ -131,7 +126,9 @@ const Profile = () => {
                   followings={followings}
                 />
                 <button
-                  hidden={showFollowers || showFollowings || openLikes ? true : false}
+                  hidden={
+                    showFollowers || showFollowings ? true : false
+                  }
                   className="absolute z-50 bottom-20 text-white dark:text-gray-300 bg-blue-400 font-semibold dark:bg-slate-700 rounded-r-2xl py-1 px-4"
                   onClick={() => setView(!view)}
                 >

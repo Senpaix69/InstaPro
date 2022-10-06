@@ -26,19 +26,22 @@ import { useEffect, useState } from "react";
 import { db } from "../firebase";
 import Moment from "react-moment";
 import { useSession } from "next-auth/react";
-import { postView } from "../atoms/postView";
+import { postView } from "../atoms/states";
 import { useRecoilState } from "recoil";
 import axios from "axios";
 import { useCollectionData } from "react-firebase-hooks/firestore";
 
 const Post = ({
-  id,
   post,
   router,
   deletePost,
   user,
+  openComments,
   setOpenLikes,
   setPostLikes,
+  setOpenComments,
+  setPostComments,
+  setCurPost,
 }) => {
   const { data: session } = useSession();
   const [comment, setComment] = useState("");
@@ -46,7 +49,10 @@ const Post = ({
   const [hasLike, setHasLike] = useState(false);
   const [view, setView] = useRecoilState(postView);
   const [likes] = useCollectionData(
-    query(collection(db, `posts/${id}/likes`), orderBy("timeStamp", "desc"))
+    query(
+      collection(db, `posts/${post.id}/likes`),
+      orderBy("timeStamp", "desc")
+    )
   );
 
   useEffect(() => {
@@ -57,12 +63,12 @@ const Post = ({
     () =>
       onSnapshot(
         query(
-          collection(db, "posts", id, "comments"),
-          orderBy("timeStamp", "asc")
+          collection(db, "posts", post.id, "comments"),
+          orderBy("timeStamp", "desc")
         ),
         (snapshot) => setComments(snapshot.docs)
       ),
-    [id]
+    [post.id]
   );
 
   useEffect(() => {
@@ -76,9 +82,9 @@ const Post = ({
 
   const likePost = async () => {
     if (hasLike) {
-      await deleteDoc(doc(db, "posts", id, "likes", session.user.uid));
+      await deleteDoc(doc(db, "posts", post.id, "likes", session.user.uid));
     } else {
-      await setDoc(doc(db, "posts", id, "likes", session.user.uid), {
+      await setDoc(doc(db, "posts", post.id, "likes", session.user.uid), {
         username: session.user.username,
         timeStamp: serverTimestamp(),
       }).then(() => {
@@ -100,7 +106,7 @@ const Post = ({
     const commentToSend = comment;
     setComment("");
 
-    await addDoc(collection(db, "posts", id, "comments"), {
+    await addDoc(collection(db, "posts", post.id, "comments"), {
       comment: commentToSend,
       username: session.user.username,
       userImg: session.user.image,
@@ -118,13 +124,24 @@ const Post = ({
     });
   };
 
+  useEffect(() => {
+    if (openComments) {
+      setPostComments(comments);
+    }
+  }, [comments]);
+
   const handleOpenLikes = () => {
     setPostLikes(likes);
     setOpenLikes(true);
   };
+  const handleOpenComments = () => {
+    setPostComments(comments);
+    setCurPost(post);
+    setOpenComments(true);
+  };
 
   const handlePlay = async () => {
-    await updateDoc(doc(db, "posts", id), {
+    await updateDoc(doc(db, "posts", post.id), {
       views: videoViews ? videoViews + 1 : 1,
     });
   };
@@ -179,7 +196,7 @@ const Post = ({
             {session?.user?.username === post.data().username ? (
               <XCircleIcon
                 className="w-8 h-8 mr-3 cursor-pointer dark:text-gray-200"
-                onClick={() => deletePost(id)}
+                onClick={() => deletePost(post.id)}
               />
             ) : (
               <DotsHorizontalIcon className="btn pr-3 dark:text-gray-200" />
@@ -224,7 +241,8 @@ const Post = ({
               )}
               <ChatAlt2Icon
                 className="btn"
-                onClick={() => router.push(`/comment/${id}`)}
+                // onClick={() => router.push(`/comment/${post.id}`)}
+                onClick={handleOpenComments}
               />
               <PaperAirplaneIcon className="btn pt-1 rotate-90" />
             </div>
@@ -271,7 +289,8 @@ const Post = ({
 
           {comments.length > 0 && (
             <button
-              onClick={() => router.push(`/comment/${id}`)}
+              // onClick={() => router.push(`/comment/${post.id}`)}
+              onClick={handleOpenComments}
               className="px-4 text-sm text-gray-400"
             >
               view {comments.length}

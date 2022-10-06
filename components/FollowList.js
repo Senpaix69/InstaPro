@@ -2,6 +2,7 @@ import { ArrowLeftIcon, SearchIcon } from "@heroicons/react/outline";
 import { useEffect, useState } from "react";
 import Moment from "react-moment";
 import Image from "next/image";
+import getUserProfilePic from "../utils/getUserProfilePic";
 const randomImg = require("../public/userimg.jpg");
 
 const FollowList = ({
@@ -18,15 +19,6 @@ const FollowList = ({
 }) => {
   const [show, setShow] = useState([]);
   const [search, setSearch] = useState("");
-
-  const getUserImage = (username) => {
-    let profImg;
-    users.forEach((user) => {
-      if (user.username === username)
-        profImg = user.profImg ? user.profImg : randomImg;
-    });
-    return profImg;
-  };
 
   useEffect(() => {
     if (followers) {
@@ -79,7 +71,11 @@ const FollowList = ({
                   <Image
                     loading="eager"
                     alt="image"
-                    src={users ? getUserImage(user.username) : randomImg}
+                    src={
+                      users
+                        ? getUserProfilePic(user.username, users)
+                        : randomImg
+                    }
                     height="40px"
                     width="40px"
                     className="rounded-full"

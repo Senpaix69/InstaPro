@@ -10,12 +10,10 @@ import { useSession, signOut } from "next-auth/react";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
 import { useRecoilState } from "recoil";
-import { modelState } from "../atoms/modelAtom";
-import { userActivity } from "../atoms/userActivity";
+import { modelState, userActivity } from "../atoms/states";
 import Menu from "./Menu";
 import { db } from "../firebase";
 import { doc, updateDoc, serverTimestamp, getDoc } from "firebase/firestore";
-import { likesView } from "../atoms/likesView";
 
 const Header = ({
   darkMode,
@@ -26,7 +24,6 @@ const Header = ({
 }) => {
   const { data: session } = useSession();
   const [open, setOpen] = useRecoilState(modelState);
-  const [openLikes, setOpenLikes] = useRecoilState(likesView);
   const router = useRouter();
   const [active, setActive] = useRecoilState(userActivity);
 
@@ -67,13 +64,9 @@ const Header = ({
     }
   }, [session, active]);
 
-  useEffect(() => {
-    setOpenLikes(false);
-  }, [router.pathname]);
-
   return (
     <div
-      hidden={showFollowers || showFollowings || openLikes ? true : false}
+      hidden={showFollowers || showFollowings ? true : false}
       className={`shadow-sm sticky top-0 z-50 text-white`}
     >
       {session && (

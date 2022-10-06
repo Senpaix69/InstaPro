@@ -6,10 +6,9 @@ import { useSession } from "next-auth/react";
 import { doc, setDoc, serverTimestamp, getDoc } from "firebase/firestore";
 import { db } from "../firebase";
 import { useRecoilState } from "recoil";
-import { themeState } from "../atoms/theme";
+import { themeState, userActivity } from "../atoms/states";
 import { useEffect, useState } from "react";
 import initBeams from "../components/initBeams";
-import { userActivity } from "../atoms/userActivity";
 import { useDocumentData } from "react-firebase-hooks/firestore";
 
 export default function Home() {

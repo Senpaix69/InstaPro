@@ -3,20 +3,11 @@ import { useSession } from "next-auth/react";
 import Image from "next/image";
 import { useState } from "react";
 import Moment from "react-moment";
+import getUserProfilePic from "../utils/getUserProfilePic";
 
 const Likes = ({ setOpenLikes, users, likes, router }) => {
   const [search, setSearch] = useState("");
   const { data: session } = useSession();
-
-  const getUserProfilePic = (username) => {
-    let profileImg;
-    users?.forEach((user) => {
-      if (user.username === username) {
-        profileImg = user.profImg ? user.profImg : user.image;
-      }
-    });
-    return profileImg;
-  };
 
   return (
     <div className="overflow-y-scroll scrollbar-hide">
@@ -66,7 +57,7 @@ const Likes = ({ setOpenLikes, users, likes, router }) => {
                     <Image
                       loading="eager"
                       alt="image"
-                      src={getUserProfilePic(like.username)}
+                      src={getUserProfilePic(like.username, users)}
                       height="40px"
                       width="40px"
                       className="rounded-full"

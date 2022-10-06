@@ -18,7 +18,7 @@ import "react-toastify/dist/ReactToastify.css";
 import ChatList from "../components/ChatList";
 import getUserActivity from "../utils/getUserActivity";
 import { useRecoilState } from "recoil";
-import { themeState } from "../atoms/theme";
+import { themeState } from "../atoms/states";
 import axios from "axios";
 
 const Chats = () => {

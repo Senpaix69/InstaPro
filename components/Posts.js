@@ -17,9 +17,9 @@ import Loading from "./Loading";
 import { useRouter } from "next/router";
 import Likes from "../components/Likes";
 import { useCollectionData } from "react-firebase-hooks/firestore";
-import { postView } from "../atoms/postView";
+import { postView } from "../atoms/states";
 import { useRecoilState } from "recoil";
-import { likesView } from "../atoms/likesView";
+import Comments from "./Comments";
 
 const Posts = ({
   setTotalPosts,
@@ -30,11 +30,14 @@ const Posts = ({
 }) => {
   const [posts, setPosts] = useState(undefined);
   const [postLikes, setPostLikes] = useState([]);
+  const [postComments, setPostComments] = useState([]);
+  const [curPost, setCurPost] = useState(null);
   const router = useRouter();
   const [view] = useRecoilState(postView);
   const toastId = useRef(null);
   const [users, loading] = useCollectionData(collection(db, "profile"));
-  const [openLikes, setOpenLikes] = useRecoilState(likesView);
+  const [openLikes, setOpenLikes] = useState(false);
+  const [openComments, setOpenComments] = useState(false);
 
   useEffect(() => {
     if (posts) {
@@ -94,6 +97,18 @@ const Posts = ({
           router={router}
         />
       )}
+      {openComments && (
+        <Comments
+          setOpenComments={setOpenComments}
+          users={users}
+          router={router}
+          comments={postComments}
+          collection={collection}
+          post={curPost}
+          doc={doc}
+          deleteDoc={deleteDoc}
+        />
+      )}
       <div
         className={`relative mb-14 ${
           showFollowers || showFollowings ? "hidden" : ""
@@ -111,11 +126,14 @@ const Posts = ({
           posts?.map((post, index) => (
             <Post
               key={post.id}
-              id={post.id}
               ind={index}
               post={post}
               router={router}
               deletePost={deletePost}
+              setOpenComments={setOpenComments}
+              openComments={openComments}
+              setPostComments={setPostComments}
+              setCurPost={setCurPost}
               setOpenLikes={setOpenLikes}
               setPostLikes={setPostLikes}
               user={

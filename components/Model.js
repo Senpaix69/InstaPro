@@ -1,5 +1,5 @@
 import { useRecoilState } from "recoil";
-import { modelState } from "../atoms/modelAtom";
+import { modelState, storyState } from "../atoms/states";
 import { Dialog, Transition } from "@headlessui/react";
 import { CameraIcon } from "@heroicons/react/outline";
 import { VideoCameraIcon, PhotographIcon } from "@heroicons/react/solid";
@@ -10,7 +10,6 @@ import { useSession } from "next-auth/react";
 import { ref, getDownloadURL, uploadBytesResumable } from "firebase/storage";
 import { uuidv4 } from "@firebase/util";
 import { toast } from "react-toastify";
-import { storyState } from "../atoms/storyModel";
 
 const Model = () => {
   const { data: session } = useSession();

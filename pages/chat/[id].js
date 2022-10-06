@@ -26,7 +26,7 @@ import getChatMessages from "../../utils/getChatMessages";
 import getOtherEmail from "../../utils/getOtherEmail";
 import axios from "axios";
 import { useRecoilState } from "recoil";
-import { themeState } from "../../atoms/theme";
+import { themeState } from "../../atoms/states";
 import { uuidv4 } from "@firebase/util";
 import { toast, ToastContainer } from "react-toastify";
 
@@ -47,7 +47,7 @@ const Chat = () => {
   const [user] = useDocumentData(
     doc(db, `profile/${getOtherEmail(chat, session?.user)}`)
   );
-  const [secUser, loading] = useDocumentData(
+  const [secUser] = useDocumentData(
     doc(db, `profile/${session?.user.username}`)
   );
 
