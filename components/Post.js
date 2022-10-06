@@ -5,7 +5,6 @@ import {
   DotsHorizontalIcon,
   HeartIcon,
   PaperAirplaneIcon,
-  DownloadIcon,
   VideoCameraIcon,
 } from "@heroicons/react/outline";
 import { XCircleIcon } from "@heroicons/react/solid";
@@ -30,37 +29,29 @@ import { useSession } from "next-auth/react";
 import { postView } from "../atoms/postView";
 import { useRecoilState } from "recoil";
 import axios from "axios";
+import { useCollectionData } from "react-firebase-hooks/firestore";
 
 const Post = ({
   id,
-  username,
-  img,
-  video,
-  videoViews,
-  caption,
-  timeStamp,
+  post,
   router,
   deletePost,
   user,
+  setOpenLikes,
+  setPostLikes,
 }) => {
   const { data: session } = useSession();
   const [comment, setComment] = useState("");
   const [comments, setComments] = useState([]);
-  const [likes, setLikes] = useState([]);
   const [hasLike, setHasLike] = useState(false);
   const [view, setView] = useRecoilState(postView);
+  const [likes] = useCollectionData(
+    query(collection(db, `posts/${id}/likes`), orderBy("timeStamp", "desc"))
+  );
 
   useEffect(() => {
     setView(false);
   }, [router]);
-
-  useEffect(
-    () =>
-      onSnapshot(collection(db, "posts", id, "likes"), (snapshot) =>
-        setLikes(snapshot.docs)
-      ),
-    [id]
-  );
 
   useEffect(
     () =>
@@ -74,13 +65,14 @@ const Post = ({
     [id]
   );
 
-  useEffect(
-    () =>
+  useEffect(() => {
+    if (likes) {
       setHasLike(
-        likes.findIndex((like) => like.id === session?.user?.uid) !== -1
-      ),
-    [likes, session?.user?.uid]
-  );
+        likes.findIndex((like) => like.username === session?.user?.username) !==
+          -1
+      );
+    }
+  }, [likes, session?.user?.uid]);
 
   const likePost = async () => {
     if (hasLike) {
@@ -126,6 +118,11 @@ const Post = ({
     });
   };
 
+  const handleOpenLikes = () => {
+    setPostLikes(likes);
+    setOpenLikes(true);
+  };
+
   const handlePlay = async () => {
     await updateDoc(doc(db, "posts", id), {
       views: videoViews ? videoViews + 1 : 1,
@@ -159,10 +156,10 @@ const Post = ({
                 ></span>
               </div>
               <button
-                onClick={() => router.push(`/profile/${username}`)}
+                onClick={() => router.push(`/profile/${post.data().username}`)}
                 className="font-bold dark:text-gray-200 cursor-pointer w-auto"
               >
-                {user ? user.fullname : username}
+                {user ? user.fullname : post.data().username}
               </button>
               {user?.username === "hurairayounas" && (
                 <div className="relative h-4 w-4">
@@ -177,9 +174,9 @@ const Post = ({
               )}
             </div>
             <Moment fromNow className="mr-2 text-[10px]">
-              {timeStamp?.toDate()}
+              {post.data().timeStamp?.toDate()}
             </Moment>
-            {session?.user?.username === username ? (
+            {session?.user?.username === post.data().username ? (
               <XCircleIcon
                 className="w-8 h-8 mr-3 cursor-pointer dark:text-gray-200"
                 onClick={() => deletePost(id)}
@@ -190,19 +187,19 @@ const Post = ({
           </div>
           <div
             className={`${
-              img ? "relative w-full h-[400px] md:h-[500px]" : ""
+              post.data().image ? "relative w-full h-[400px] md:h-[500px]" : ""
             } dark:bg-black bg-blue-200`}
           >
-            {img && (
+            {post.data().image && (
               <Image
                 loading="eager"
                 layout="fill"
                 objectFit="contain"
-                src={img}
+                src={post.data().image}
                 alt="cover"
               />
             )}
-            {video && (
+            {post.data().video && (
               <video
                 playsInline
                 controls
@@ -210,7 +207,7 @@ const Post = ({
                 poster="https://domainjava.com/wp-content/uploads/2022/07/Link-Bokeh-Full-111.90-l50-204-Chrome-Video-Bokeh-Museum-2022.jpg"
                 className="w-full h-auto max-h-[500px] overflow-hidden"
               >
-                <source src={video} />
+                <source src={post.data().video} />
               </video>
             )}
           </div>
@@ -231,35 +228,31 @@ const Post = ({
               />
               <PaperAirplaneIcon className="btn pt-1 rotate-90" />
             </div>
-            <div className="flex space-x-3 items-center">
-              <a href={img ? img : video} alt="" download={img ? img : video}>
-                <DownloadIcon className="btn" />
-              </a>
-              <BookmarkIcon className="btn" />
-            </div>
+            <BookmarkIcon className="btn" />
           </div>
           <div className="px-4 dark:text-gray-200 mb-2">
             <p className="flex space-x-2 font-semibold">
-              {likes.length > 0 && (
-                <button
-                  onClick={() => router.push(`/like/${id}`)}
-                  className="mb-1 flex"
-                >
+              {likes?.length > 0 && (
+                <button onClick={handleOpenLikes} className="mb-1 flex">
                   {likes.length} {likes.length === 1 ? "like" : "likes"}
                 </button>
               )}
-              {videoViews && (
-                <span>{videoViews > 1 ? `${videoViews} views` : "1 view"}</span>
+              {post.data().views && (
+                <span>
+                  {post.data().views > 1
+                    ? `${post.data().views} views`
+                    : "1 view"}
+                </span>
               )}
             </p>
             <button
-              onClick={() => router.push(`/profile/${username}`)}
+              onClick={() => router.push(`/profile/${post.data().username}`)}
               className={`font-bold relative ${
-                username === "hurairayounas" ? "mr-5" : "mr-1"
+                post.data().username === "hurairayounas" ? "mr-5" : "mr-1"
               }`}
             >
-              {username}
-              {username === "hurairayounas" && (
+              {post.data().username}
+              {post.data().username === "hurairayounas" && (
                 <div className="absolute top-[5px] left-[103px] sm:left-[107px]">
                   <div className="relative h-4 w-4">
                     <Image
@@ -273,7 +266,7 @@ const Post = ({
                 </div>
               )}
             </button>
-            <span className="text-sm">{caption}</span>
+            <span className="text-sm">{post.data().caption}</span>
           </div>
 
           {comments.length > 0 && (
@@ -311,9 +304,9 @@ const Post = ({
             onClick={() => setView(true)}
             className="relative h-[120px] w-[120px] sm:w-36 sm:h-36 rounded-md"
           >
-            {img && (
+            {post.data().image && (
               <Image
-                src={img}
+                src={post.data().image}
                 layout="fill"
                 objectFit="cover"
                 loading="eager"
@@ -321,12 +314,12 @@ const Post = ({
                 className="rounded-md"
               />
             )}
-            {video && (
+            {post.data().video && (
               <>
                 <VideoCameraIcon className="h-5 w-5 absolute text-slate-200 m-1" />
                 <video
                   preload="none"
-                  src={video}
+                  src={post.data().video}
                   className="h-full w-full overflow-hidden"
                 ></video>
               </>

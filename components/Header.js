@@ -15,6 +15,7 @@ import { userActivity } from "../atoms/userActivity";
 import Menu from "./Menu";
 import { db } from "../firebase";
 import { doc, updateDoc, serverTimestamp, getDoc } from "firebase/firestore";
+import { likesView } from "../atoms/likesView";
 
 const Header = ({
   darkMode,
@@ -25,12 +26,13 @@ const Header = ({
 }) => {
   const { data: session } = useSession();
   const [open, setOpen] = useRecoilState(modelState);
+  const [openLikes, setOpenLikes] = useRecoilState(likesView);
   const router = useRouter();
   const [active, setActive] = useRecoilState(userActivity);
 
   useEffect(() => {
     let status = true;
-    if(status) {
+    if (status) {
       window.addEventListener("focus", () => setActive(true));
       window.addEventListener("blur", () => setActive(false));
       window.addEventListener("online", () => setActive(true));
@@ -42,7 +44,7 @@ const Header = ({
       window.removeEventListener("online", () => setActive(true));
       window.removeEventListener("offline", () => setActive(false));
       status = false;
-    }
+    };
   }, []);
 
   useEffect(() => {
@@ -65,9 +67,13 @@ const Header = ({
     }
   }, [session, active]);
 
+  useEffect(() => {
+    setOpenLikes(false);
+  }, [router.pathname]);
+
   return (
     <div
-      hidden={showFollowers || showFollowings ? true : false}
+      hidden={showFollowers || showFollowings || openLikes ? true : false}
       className={`shadow-sm sticky top-0 z-50 text-white`}
     >
       {session && (

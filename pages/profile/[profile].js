@@ -13,12 +13,14 @@ import { db } from "../../firebase";
 import { useRouter } from "next/router";
 import { collection, query, orderBy } from "firebase/firestore";
 import { useCollectionData } from "react-firebase-hooks/firestore";
+import { likesView } from "../../atoms/likesView";
 
 const Profile = () => {
   const { data: session } = useSession();
   const router = useRouter();
   const [darkMode, setDarkMode] = useRecoilState(themeState);
   const [view, setView] = useRecoilState(postView);
+  const [openLikes, setOpenLikes] = useRecoilState(likesView);
   const [totalPosts, setTotalPosts] = useState(0);
   const [showFollowers, setShowFollowers] = useState(false);
   const [showFollowings, setShowFollowings] = useState(false);
@@ -110,6 +112,9 @@ const Profile = () => {
                 <ProfileSec
                   posts={totalPosts}
                   session={session}
+                  openLikes={openLikes}
+                  setOpenLikes={setOpenLikes}
+                  view={view}
                   user={
                     users.filter((ituser) => ituser.username === profile)[0]
                   }
