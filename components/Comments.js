@@ -115,9 +115,9 @@ const Comments = ({
   }, [focusElement, subCommentRef]);
 
   return (
-    <div className="fixed top-0 z-40 bg-white dark:bg-gray-900 w-full md:max-w-3xl m-auto dark:text-gray-200 flex flex-col h-screen">
+    <div className="fixed top-0 z-50 bg-white dark:bg-gray-900 w-full md:max-w-3xl m-auto dark:text-gray-200 flex flex-col h-screen">
       {/* comments header */}
-      <section className="sticky top-0 z-50 w-full md:max-w-3xl">
+      <section className="w-full md:max-w-3xl">
         <div className="flex space-x-3 px-3 items-center bg-blue-500 dark:bg-gray-900 text-white h-16">
           <ArrowLeftIcon
             className="h-6 w-6 cursor-pointer"
