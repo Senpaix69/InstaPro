@@ -114,6 +114,8 @@ const Comments = ({
     }
   }, [focusElement, subCommentRef]);
 
+  console.log("object");
+
   return (
     <div className="fixed top-0 z-50 bg-white dark:bg-gray-900 w-full md:max-w-3xl m-auto dark:text-gray-200 flex flex-col h-screen">
       {/* comments header */}
@@ -129,7 +131,7 @@ const Comments = ({
 
       {/* comments Body */}
       <section className="flex-1 overflow-y-scroll scrollbar-hide">
-        {post.data().caption && (
+        {post?.data().caption && (
           <div className="m-3 flex border-b-2 border-gray-600 pb-4 mb-5">
             <div className="relative h-10 w-10">
               <Image

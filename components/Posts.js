@@ -55,6 +55,8 @@ const Posts = ({
         }
       );
     }
+    setOpenComments(false);
+    setOpenLikes(false);
     return () => (sub = false);
   }, [router.pathname]);
 
