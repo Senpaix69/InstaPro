@@ -17,11 +17,6 @@
     }
 }
 
-button:active {
+*:focus {
     outline: none;
-    border: none;
-}
-
-button:focus {
-    outline: 0;
 }
