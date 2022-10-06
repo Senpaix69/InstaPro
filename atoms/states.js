@@ -1,5 +1,15 @@
 import { atom } from "recoil";
 
+const likesView = atom({
+  key: "likesView",
+  default: false,
+});
+
+const commentsView = atom({
+  key: "commentsView",
+  default: false,
+});
+
 const modelState = atom({
   key: "modelState",
   default: false,
@@ -26,6 +36,8 @@ const userActivity = atom({
 });
 
 export {
+  likesView,
+  commentsView,
   modelState,
   postView,
   storyState,

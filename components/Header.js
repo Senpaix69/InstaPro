@@ -10,7 +10,12 @@ import { useSession, signOut } from "next-auth/react";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
 import { useRecoilState } from "recoil";
-import { modelState, userActivity } from "../atoms/states";
+import {
+  modelState,
+  userActivity,
+  likesView,
+  commentsView,
+} from "../atoms/states";
 import Menu from "./Menu";
 import { db } from "../firebase";
 import { doc, updateDoc, serverTimestamp, getDoc } from "firebase/firestore";
@@ -24,6 +29,8 @@ const Header = ({
 }) => {
   const { data: session } = useSession();
   const [open, setOpen] = useRecoilState(modelState);
+  const [openLikes, setOpenLikes] = useRecoilState(likesView);
+  const [openComments, setOpenComments] = useRecoilState(commentsView);
   const router = useRouter();
   const [active, setActive] = useRecoilState(userActivity);
 
@@ -64,9 +71,18 @@ const Header = ({
     }
   }, [session, active]);
 
+  useEffect(() => {
+    setOpenLikes(false);
+    setOpenComments(false);
+  }, [router.pathname]);
+
   return (
     <div
-      hidden={showFollowers || showFollowings ? true : false}
+      hidden={
+        showFollowers || showFollowings || openLikes || openComments
+          ? true
+          : false
+      }
       className={`shadow-sm sticky top-0 z-50 text-white`}
     >
       {session && (

@@ -1,6 +1,11 @@
 import { useSession } from "next-auth/react";
 import { useRecoilState } from "recoil";
-import { themeState, postView } from "../../atoms/states";
+import {
+  themeState,
+  postView,
+  likesView,
+  commentsView,
+} from "../../atoms/states";
 import Login from "../../pages/login";
 import Header from "../../components/Header";
 import Posts from "../../components/Posts";
@@ -18,6 +23,8 @@ const Profile = () => {
   const router = useRouter();
   const [darkMode, setDarkMode] = useRecoilState(themeState);
   const [view, setView] = useRecoilState(postView);
+  const [openLikes, setOpenLikes] = useRecoilState(likesView);
+  const [openComments, setOpenComments] = useRecoilState(commentsView);
   const [totalPosts, setTotalPosts] = useState(0);
   const [showFollowers, setShowFollowers] = useState(false);
   const [showFollowings, setShowFollowings] = useState(false);
@@ -109,6 +116,10 @@ const Profile = () => {
                 <ProfileSec
                   posts={totalPosts}
                   session={session}
+                  openLikes={openLikes}
+                  setOpenLikes={setOpenLikes}
+                  openComments={openComments}
+                  setOpenComments={setOpenComments}
                   view={view}
                   user={
                     users.filter((ituser) => ituser.username === profile)[0]
@@ -127,7 +138,9 @@ const Profile = () => {
                 />
                 <button
                   hidden={
-                    showFollowers || showFollowings ? true : false
+                    showFollowers || showFollowings || openLikes || openComments
+                      ? true
+                      : false
                   }
                   className="absolute z-50 bottom-20 text-white dark:text-gray-300 bg-blue-400 font-semibold dark:bg-slate-700 rounded-r-2xl py-1 px-4"
                   onClick={() => setView(!view)}

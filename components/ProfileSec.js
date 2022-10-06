@@ -25,6 +25,10 @@ const ProfileSec = ({
   view,
   setShowFollowers,
   setShowFollowings,
+  setOpenLikes,
+  openLikes,
+  setOpenComments,
+  openComments,
   followers,
   followings,
 }) => {
@@ -42,6 +46,8 @@ const ProfileSec = ({
       setTextBio(user.bio ? user.bio : "");
       setTextName(user.fullname ? user.fullname : "");
     }
+    setOpenLikes(false);
+    setOpenComments(false);
   }, [user]);
 
   const followUser = async () => {
@@ -202,7 +208,9 @@ const ProfileSec = ({
   return (
     <div
       className={`relative w-full p-1 px-3 text-black dark:text-white ${
-        showFollowers || showFollowings || view ? "hidden" : "flex"
+        showFollowers || showFollowings || openLikes || openComments || view
+          ? "hidden"
+          : "flex"
       } flex-col`}
     >
       <div className="flex px-2 relative">

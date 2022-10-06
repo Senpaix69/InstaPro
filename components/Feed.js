@@ -4,20 +4,24 @@ import { useSession } from "next-auth/react";
 import Login from "../pages/login";
 import Notification from "./Notification";
 import { useRecoilState } from "recoil";
+import { commentsView, likesView } from "../atoms/states";
 
 const Feed = ({ setLoad, user }) => {
   const { data: session } = useSession();
+  const [openLikes] = useRecoilState(likesView);
+  const [openComments] = useRecoilState(commentsView);
 
   return (
     <main className="max-w-3xl mx-auto dark:bg-black scroll-smooth relative">
       {session ? (
         <>
           <section>
-            <InstaStories user={user} />
-            <Posts
-              setLoad={setLoad}
-              useRecoilState={useRecoilState}
+            <InstaStories
+              user={user}
+              openLikes={openLikes}
+              openComments={openComments}
             />
+            <Posts setLoad={setLoad} />
             <Notification />
           </section>
         </>

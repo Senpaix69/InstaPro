@@ -31,7 +31,7 @@ const FollowList = ({
   return (
     <div hidden={showFollowers || showFollowings ? false : true}>
       {/* Followers header */}
-      <section className="sticky top-0 z-50 w-full md:max-w-3xl">
+      <section className="sticky top-0 z-40 w-full md:max-w-3xl">
         <div className="flex space-x-3 px-3 items-center bg-blue-500 dark:bg-gray-900 text-white h-16">
           <ArrowLeftIcon
             className="h-6 w-6 cursor-pointer"

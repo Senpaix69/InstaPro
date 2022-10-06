@@ -17,7 +17,7 @@ import Loading from "./Loading";
 import { useRouter } from "next/router";
 import Likes from "../components/Likes";
 import { useCollectionData } from "react-firebase-hooks/firestore";
-import { postView } from "../atoms/states";
+import { postView, likesView, commentsView } from "../atoms/states";
 import { useRecoilState } from "recoil";
 import Comments from "./Comments";
 
@@ -36,8 +36,8 @@ const Posts = ({
   const [view] = useRecoilState(postView);
   const toastId = useRef(null);
   const [users, loading] = useCollectionData(collection(db, "profile"));
-  const [openLikes, setOpenLikes] = useState(false);
-  const [openComments, setOpenComments] = useState(false);
+  const [openLikes, setOpenLikes] = useRecoilState(likesView);
+  const [openComments, setOpenComments] = useRecoilState(commentsView);
 
   useEffect(() => {
     if (posts) {
