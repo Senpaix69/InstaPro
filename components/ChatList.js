@@ -85,7 +85,7 @@ const ChatList = ({ redirect, id, user, toast, visitor, axios }) => {
         </div>
         <div className="ml-3 flex flex-col -space-y-1 w-full truncate">
           <div className="flex items-center">
-            <h1 className="font-semibold -mt-1 h-[22px]">
+            <h1 className="font-semibold">
               {currUser?.fullname}
             </h1>
             {currUser?.username === "hurairayounas" && (
