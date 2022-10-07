@@ -52,72 +52,70 @@ const Likes = ({ setOpenLikes, users, likes, router }) => {
       </section>
 
       <section className="flex-1 overflow-y-scroll scrollbar-hide bg-white dark:bg-gray-900">
-        <div className="mx-3">
-          {likes
-            ?.filter((user) => user.username.includes(search.toLowerCase()))
-            .map((like, i) => (
-              <div
-                key={i}
-                className="mt-1 pl-2 w-full flex justify-between items-center shadow-sm rounded-md dark:bg-gray-900 dark:shadow-gray-600"
-              >
-                <div className="relative h-16 flex items-center w-full">
-                  <div className="relative">
-                    <Image
-                      loading="eager"
-                      alt="image"
-                      src={getUserProfilePic(like.username, users)}
-                      height="40px"
-                      width="40px"
-                      className="rounded-full"
-                    />
-                    <span
-                      className={`-top-1 right-0 absolute  w-3.5 h-3.5 ${
-                        getUser(like.username)?.active
-                          ? "bg-green-400"
-                          : "bg-slate-400"
-                      } border-[3px] border-white dark:border-gray-900 rounded-full`}
-                    ></span>
-                  </div>
-
-                  <div className="ml-3">
-                    <h1
-                      onClick={() => router.push(`/profile/${like.username}`)}
-                      className="font-semibold mt-1 cursor-pointer flex space-x-1 items-center"
-                    >
-                      {getName(getUser(like.username))}
-                      {like.username === "hurairayounas" && (
-                        <div className="relative h-4 w-4">
-                          <Image
-                            src={require("../public/verified.png")}
-                            layout="fill"
-                            loading="eager"
-                            alt="profile"
-                            className="rounded-full"
-                          />
-                        </div>
-                      )}
-                    </h1>
-                    {like.timeStamp && (
-                      <Moment
-                        className="text-gray-400 text-xs align-text-top"
-                        fromNow
-                      >
-                        {like.timeStamp.toDate()}
-                      </Moment>
-                    )}
-                  </div>
+        {likes
+          ?.filter((user) => user.username.includes(search.toLowerCase()))
+          .map((like, i) => (
+            <div
+              key={i}
+              className="mt-1 px-3 w-full flex justify-between items-center border-b dark:border-gray-800"
+            >
+              <div className="relative h-16 flex items-center w-full">
+                <div className="relative">
+                  <Image
+                    loading="eager"
+                    alt="image"
+                    src={getUserProfilePic(like.username, users)}
+                    height="40px"
+                    width="40px"
+                    className="rounded-full"
+                  />
+                  <span
+                    className={`-top-1 right-0 absolute  w-3.5 h-3.5 ${
+                      getUser(like.username)?.active
+                        ? "bg-green-400"
+                        : "bg-slate-400"
+                    } border-[3px] border-white dark:border-gray-900 rounded-full`}
+                  ></span>
                 </div>
-                {like.username !== session?.user.username && (
-                  <button
+
+                <div className="ml-3">
+                  <h1
                     onClick={() => router.push(`/profile/${like.username}`)}
-                    className="bg-gray-900 dark:bg-slate-600 dark:text-white bg-opacity-80 dark:bg-opacity-90 border-gray-400 py-1 px-6 text-xs font-semibold rounded-md"
+                    className="font-semibold mt-1 cursor-pointer flex space-x-1 items-center"
                   >
-                    Profile
-                  </button>
-                )}
+                    {getName(getUser(like.username))}
+                    {like.username === "hurairayounas" && (
+                      <div className="relative h-4 w-4">
+                        <Image
+                          src={require("../public/verified.png")}
+                          layout="fill"
+                          loading="eager"
+                          alt="profile"
+                          className="rounded-full"
+                        />
+                      </div>
+                    )}
+                  </h1>
+                  {like.timeStamp && (
+                    <Moment
+                      className="text-gray-400 text-xs align-text-top"
+                      fromNow
+                    >
+                      {like.timeStamp.toDate()}
+                    </Moment>
+                  )}
+                </div>
               </div>
-            ))}
-        </div>
+              {like.username !== session?.user.username && (
+                <button
+                  onClick={() => router.push(`/profile/${like.username}`)}
+                  className="bg-gray-900 dark:bg-slate-600 dark:text-white bg-opacity-80 dark:bg-opacity-90 border-gray-400 py-1 px-6 text-xs font-semibold rounded-md"
+                >
+                  Profile
+                </button>
+              )}
+            </div>
+          ))}
       </section>
     </div>
   );

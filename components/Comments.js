@@ -138,7 +138,7 @@ const Comments = ({
       {/* comments Body */}
       <section className="flex-1 overflow-y-scroll scrollbar-hide">
         {post?.data().caption && (
-          <div className="m-3 px-2 flex border-b-2 border-gray-600 pb-4 mb-5">
+          <div className="m-3 flex border-b-2 border-gray-600 pb-4 mb-5">
             <div className="relative h-10 w-10">
               <Image
                 loading="eager"
@@ -161,9 +161,7 @@ const Comments = ({
                   onClick={() =>
                     router.push(`/profile/${post.data().username}`)
                   }
-                  className={`font-bold cursor-pointer relative ${
-                    post.data().username === "hurairayounas" ? "mr-4" : ""
-                  }`}
+                  className={"font-bold cursor-pointer relative"}
                 >
                   {getName(getUser(post.data().username))}
                   {/* {post.data().username === "hurairayounas" && (
@@ -188,41 +186,37 @@ const Comments = ({
             </div>
           </div>
         )}
-        <div className="m-3">
-          {comments?.map((comment, i) => (
-            <div
-              key={i}
-              className="mb-1 px-2 py-3 shadow-sm rounded-md dark:bg-gray-900 dark:shadow-gray-600"
-            >
-              <div key={i} className="relative w-full flex">
-                <div className="absolute">
-                  <div className="relative h-10 w-10">
-                    <Image
-                      loading="eager"
-                      alt="image"
-                      src={getUserProfilePic(comment.data().username, users)}
-                      layout="fill"
-                      className="rounded-full"
-                    />
-                    <span
-                      className={`-top-1 right-0 absolute  w-3.5 h-3.5 ${
-                        getUser(comment.data().username)?.active
-                          ? "bg-green-400"
-                          : "bg-slate-400"
-                      } border-[3px] border-white dark:border-gray-900 rounded-full`}
-                    ></span>
-                  </div>
+        {comments?.map((comment, i) => (
+          <div key={i} className="mb-1 mx-3 py-3 border-b dark:border-gray-800">
+            <div key={i} className="relative w-full flex">
+              <div className="absolute">
+                <div className="relative h-10 w-10">
+                  <Image
+                    loading="eager"
+                    alt="image"
+                    src={getUserProfilePic(comment.data().username, users)}
+                    layout="fill"
+                    className="rounded-full"
+                  />
+                  <span
+                    className={`-top-1 right-0 absolute  w-3.5 h-3.5 ${
+                      getUser(comment.data().username)?.active
+                        ? "bg-green-400"
+                        : "bg-slate-400"
+                    } border-[3px] border-white dark:border-gray-900 rounded-full`}
+                  ></span>
                 </div>
-                <div className="ml-12 flex-1 mr-3">
-                  <div className="text-sm">
-                    <span
-                      onClick={() =>
-                        router.push(`/profile/${comment?.data().username}`)
-                      }
-                      className={"font-bold cursor-pointer relative"}
-                    >
-                      {getName(getUser(comment?.data().username))}
-                      {/* {comment?.data().username === "hurairayounas" && (
+              </div>
+              <div className="ml-12 flex-1 mr-3">
+                <div className="text-sm">
+                  <span
+                    onClick={() =>
+                      router.push(`/profile/${comment?.data().username}`)
+                    }
+                    className={"font-bold cursor-pointer relative"}
+                  >
+                    {getName(getUser(comment?.data().username))}
+                    {/* {comment?.data().username === "hurairayounas" && (
                         <div className="absolute top-[1.5px] left-[90px] sm:left-[94px]">
                           <div className="relative h-4 w-4">
                             <Image
@@ -235,54 +229,54 @@ const Comments = ({
                           </div>
                         </div>
                       )} */}
-                    </span>{" "}
-                    {comment.data().comment}
-                  </div>
+                  </span>{" "}
+                  {comment.data().comment}
                 </div>
-                <HeartIcon className="h-5 w-5 btn" />
               </div>
-              <div className="mt-1 text-xs text-gray-400 px-12 flex space-x-3 font-semibold">
-                <Moment fromNow>{comment.data().timeStamp?.toDate()}</Moment>
-                <button onClick={() => triggerUsername(comment)}>Reply</button>
-                {comment.data().username === session?.user.username && (
-                  <button onClick={() => deleteComment(comment.id)}>
-                    Delete
-                  </button>
-                )}
-              </div>
-              {comment.data().subcomments?.map((subCom, index) => (
-                <div key={index} className="ml-14 mt-5">
-                  <div className="w-full flex relative">
-                    <div className="absolute">
-                      <div className="relative h-7 w-7">
-                        <Image
-                          loading="eager"
-                          alt="image"
-                          src={getUserProfilePic(subCom.username, users)}
-                          layout="fill"
-                          className="rounded-full"
-                        />
-                        <span
-                          className={`-top-1 right-0 absolute  w-3.5 h-3.5 ${
-                            getUser(subCom.username)?.active
-                              ? "bg-green-400"
-                              : "bg-slate-400"
-                          } border-[3px] border-white dark:border-gray-900 rounded-full`}
-                        ></span>
-                      </div>
+              <HeartIcon className="h-5 w-5 btn" />
+            </div>
+            <div className="mt-1 text-xs text-gray-400 px-12 flex space-x-3 font-semibold">
+              <Moment fromNow>{comment.data().timeStamp?.toDate()}</Moment>
+              <button onClick={() => triggerUsername(comment)}>Reply</button>
+              {comment.data().username === session?.user.username && (
+                <button onClick={() => deleteComment(comment.id)}>
+                  Delete
+                </button>
+              )}
+            </div>
+            {comment.data().subcomments?.map((subCom, index) => (
+              <div key={index} className="ml-14 mt-5">
+                <div className="w-full flex relative">
+                  <div className="absolute">
+                    <div className="relative h-7 w-7">
+                      <Image
+                        loading="eager"
+                        alt="image"
+                        src={getUserProfilePic(subCom.username, users)}
+                        layout="fill"
+                        className="rounded-full"
+                      />
+                      <span
+                        className={`-top-1 right-0 absolute  w-3.5 h-3.5 ${
+                          getUser(subCom.username)?.active
+                            ? "bg-green-400"
+                            : "bg-slate-400"
+                        } border-[3px] border-white dark:border-gray-900 rounded-full`}
+                      ></span>
                     </div>
-                    <div className="flex-1 ml-11 mr-3">
-                      <div className="text-sm">
-                        <span
-                          onClick={() =>
-                            router.push(`/profile/${subCom.username}`)
-                          }
-                          className={`font-bold cursor-pointer relative ${
-                            subCom.username === "hurairayounas" ? "mr-5" : ""
-                          }`}
-                        >
-                          {getName(getUser(subCom.username))}
-                          {/* {subCom.username === "hurairayounas" && (
+                  </div>
+                  <div className="flex-1 ml-11 mr-3">
+                    <div className="text-sm">
+                      <span
+                        onClick={() =>
+                          router.push(`/profile/${subCom.username}`)
+                        }
+                        className={`font-bold cursor-pointer relative ${
+                          subCom.username === "hurairayounas" ? "mr-5" : ""
+                        }`}
+                      >
+                        {getName(getUser(subCom.username))}
+                        {/* {subCom.username === "hurairayounas" && (
                             <div className="absolute top-[1.5px] left-[90px] sm:left-[94px]">
                               <div className="relative h-4 w-4">
                                 <Image
@@ -295,30 +289,29 @@ const Comments = ({
                               </div>
                             </div>
                           )} */}
-                        </span>{" "}
-                        {subCom.comment}
-                      </div>
+                      </span>{" "}
+                      {subCom.comment}
                     </div>
-                    <HeartIcon className="h-5 w-5 btn" />
                   </div>
-                  <div className="mt-1 text-xs text-gray-400 px-11 flex space-x-3 font-semibold">
-                    <Moment fromNow>{subCom.timeStamp?.toDate()}</Moment>
-                    <button
-                      onClick={() => triggerUsername(comment, subCom.username)}
-                    >
-                      Reply
-                    </button>
-                    {subCom.username === session?.user.username && (
-                      <button onClick={() => deleteSubComment(comment, index)}>
-                        Delete
-                      </button>
-                    )}
-                  </div>
+                  <HeartIcon className="h-5 w-5 btn" />
                 </div>
-              ))}
-            </div>
-          ))}
-        </div>
+                <div className="mt-1 text-xs text-gray-400 px-11 flex space-x-3 font-semibold">
+                  <Moment fromNow>{subCom.timeStamp?.toDate()}</Moment>
+                  <button
+                    onClick={() => triggerUsername(comment, subCom.username)}
+                  >
+                    Reply
+                  </button>
+                  {subCom.username === session?.user.username && (
+                    <button onClick={() => deleteSubComment(comment, index)}>
+                      Delete
+                    </button>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        ))}
       </section>
 
       {/* comments bottom */}

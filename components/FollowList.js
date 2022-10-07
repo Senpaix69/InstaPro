@@ -77,7 +77,7 @@ const FollowList = ({
             .map((user, i) => (
               <div
                 key={i}
-                className="px-2 mt-1 pl-2 w-full flex justify-between items-center shadow-sm rounded-md dark:shadow-gray-600"
+                className="py-1 mt-2 mb-1 w-full flex justify-between items-center border-b dark:border-gray-800"
               >
                 <div className="h-16 flex items-center w-full">
                   <div className="relative h-14 w-14">
