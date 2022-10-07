@@ -83,7 +83,7 @@ const ChatList = ({ redirect, id, user, toast, visitor, axios }) => {
             ></span>
           </div>
         </div>
-        <div className="ml-3 flex flex-col -space-y-2 w-full truncate">
+        <div className="ml-3 flex flex-col -space-y-1 w-full truncate">
           <div className="flex items-center">
             <h1 className="font-semibold -mt-1 h-[22px]">
               {currUser?.fullname}
