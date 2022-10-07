@@ -5,6 +5,7 @@ import Header from "../components/Header";
 import {
   UserAddIcon,
   UserCircleIcon,
+  UserGroupIcon,
   SearchIcon,
 } from "@heroicons/react/solid";
 import { addDoc, collection, doc } from "firebase/firestore";
@@ -20,6 +21,7 @@ import getUserActivity from "../utils/getUserActivity";
 import { useRecoilState } from "recoil";
 import { themeState } from "../atoms/states";
 import axios from "axios";
+import Image from "next/image";
 
 const Chats = () => {
   const { data: session } = useSession();
@@ -31,6 +33,7 @@ const Chats = () => {
   const values = getUserActivity();
   const [darkMode, setDarkMode] = useRecoilState(themeState);
   const [user] = useDocumentData(doc(db, `profile/${session?.user.username}`));
+  const [menu, setMenu] = useState(false);
   const toastId = useRef(null);
 
   const chatExits = (email) => {
@@ -54,6 +57,7 @@ const Chats = () => {
   }, [snapshot]);
 
   const addUser = async () => {
+    setMenu(false);
     const uName = prompt("Enter username: ")?.split(" ").join("").toLowerCase();
     if (uName?.length) {
       if (uName !== session.user.username) {
@@ -81,6 +85,8 @@ const Chats = () => {
               }
             });
           } else {
+            toast.dismiss(toastId.current);
+            toastId.current = null;
             toast.warn("User Not Found 😐");
           }
         } else {
@@ -90,6 +96,11 @@ const Chats = () => {
         toast.error("You can not add yourselt 🙄");
       }
     }
+  };
+
+  const createGroup = () => {
+    setMenu(false);
+    toast.info("Will Be Creating Soon");
   };
 
   const redirect = (id) => {
@@ -107,17 +118,90 @@ const Chats = () => {
         <Header setDarkMode={setDarkMode} darkMode={darkMode} user={user} />
         <div className="bg-gray-100 flex justify-center dark:text-gray-200 dark:bg-gray-900 h-screen">
           <div className="flex flex-col shadow-md md:w-[700px] w-full">
-            <button className="w-full flex text-lg justify-center items-center p-3 mb-2 shadow-md">
-              <UserCircleIcon className="h-6 w-6 mr-2" />
-              <h1
-                onClick={() =>
-                  router.push(`/profile/${session?.user.username}`)
-                }
-                className="font-semibold"
+            <div className="relative w-full flex items-center justfy-between">
+              <button className="flex text-lg w-full justify-center items-center p-3 mb-2 shadow-md">
+                <div className="relative w-12 h-12">
+                  <Image
+                    loading="eager"
+                    layout="fill"
+                    src={user?.profImg ? user.profImg : session?.user.image}
+                    alt="story"
+                    className="rounded-full"
+                  />
+                </div>
+                <h1
+                  onClick={() =>
+                    router.push(`/profile/${session?.user.username}`)
+                  }
+                  className="font-semibold ml-2"
+                >
+                  {user?.fullname ? user.fullname : session?.user.username}
+                </h1>
+              </button>
+              <button
+                onClick={() => setMenu(!menu)}
+                className="absolute right-3 top-5 items-center p-2 text-sm font-medium text-center text-gray-900 bg-white rounded-lg hover:bg-gray-100 focus:ring-0 focus:outline-none dark:text-white dark:bg-gray-800"
+                type="button"
               >
-                {session?.user.username}
-              </h1>
-            </button>
+                <div className="flex space-x-2">
+                  Create
+                  {menu ? (
+                    <svg
+                      className="w-6 h-6"
+                      aria-hidden="true"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                        clipRule="evenodd"
+                      ></path>
+                    </svg>
+                  ) : (
+                    <svg
+                      className="w-6 h-6"
+                      aria-hidden="true"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
+                        clipRule="evenodd"
+                      ></path>
+                    </svg>
+                  )}
+                </div>
+              </button>
+              <div
+                hidden={!menu}
+                className="absolute right-3 top-14 z-10 w-44 bg-white rounded divide-y divide-gray-100 shadow dark:bg-gray-700 dark:divide-gray-600"
+              >
+                <ul className="py-1 text-sm text-gray-700 dark:text-gray-200">
+                  <li>
+                    <button
+                      onClick={addUser}
+                      className="flex items-center w-full py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white text-left"
+                    >
+                      <UserAddIcon className="mr-2 h-5 w-5" />
+                      Create Chat
+                    </button>
+                  </li>
+                  <li>
+                    <button
+                      onClick={createGroup}
+                      className="flex items-center w-full py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white text-left"
+                    >
+                      <UserGroupIcon className="mr-2 h-5 w-5" />
+                      Create Group
+                    </button>
+                  </li>
+                </ul>
+              </div>
+            </div>
             <div className="mx-3 mb-5 flex">
               <div className="flex items-center space-x-3 m-auto h-9 bg-slate-100 dark:bg-gray-700 rounded-lg p-3 w-full text-sm md:w-[60%] dark:bg-opacity-40">
                 <SearchIcon className="h-4 w-4" />
@@ -129,18 +213,7 @@ const Chats = () => {
                 />
               </div>
             </div>
-            <div className="flex items-center">
-              <p className="font-bold ml-5 mb-2 flex-1">Messages</p>
-              <button
-                onClick={addUser}
-                className="font-bold mr-5 text-sm text-blue-500 hover:underline"
-              >
-                <div className="flex">
-                  <UserAddIcon className="h-4 w-4 mr-2 mt-[2px]" />
-                  Add Chat
-                </div>
-              </button>
-            </div>
+            <p className="font-bold ml-5 mb-2">Messages</p>
             <div className="mt-1">
               {loading && values === undefined ? (
                 <Loading page={router?.pathname} />

@@ -1,8 +1,5 @@
 import {
   ArrowLeftIcon,
-  CameraIcon,
-  MicrophoneIcon,
-  PhotographIcon,
   XCircleIcon,
   ArrowRightIcon,
 } from "@heroicons/react/solid";
@@ -337,61 +334,91 @@ const Chat = () => {
           </section>
 
           {/* Chat Bottom */}
-          <section className="bg-gray-50 sticky bottom-0 z-50 shadow-sm mx-1 px-1 dark:text-white rounded-3xl dark:bg-gray-900">
+          <section className="bg-gray-50 sticky bottom-0 z-50 shadow-sm px-1 dark:text-white dark:bg-gray-900">
+            {(selectFile || sending) && (
+              <div className="font-bold p-4 mr-3 text-gray-500 w-full text-right">
+                {sending ? (
+                  <p>{`Uploading ${fileType}: ${status}%`}</p>
+                ) : (
+                  selectFile && <h1>{selectFile.name}</h1>
+                )}
+              </div>
+            )}
             <form onSubmit={(e) => sendMessage(e)}>
-              {(selectFile || sending) && (
-                <div className="font-bold p-4 mr-3 text-gray-500 w-full text-right">
-                  {sending ? (
-                    <p>{`Uploading ${fileType}: ${status}%`}</p>
-                  ) : (
-                    selectFile && <h1>{selectFile.name}</h1>
-                  )}
-                </div>
-              )}
-              <div className="w-full border rounded-3xl h-12 flex justify-between items-center dark:border-none">
-                <div className="flex items-center flex-1">
-                  <div>
-                    <CameraIcon
-                      className="h-9 w-9 cursor-pointer text-gray-500 ml-2 dark:text-gray-200 bg-red-400 rounded-full p-1"
-                      onClick={() => filePickerRef.current.click()}
-                    />
-                  </div>
-                  <input
-                    disabled={sending}
-                    placeholder="Message..."
-                    className="mx-2 outline-none text-md focus:ring-0 bg-transparent w-full"
-                    value={text}
-                    name={text}
-                    onChange={(e) => setText(e.target.value)}
-                  />
-                </div>
-                <div className="flex items-center">
-                  <MicrophoneIcon className="h-7 w-7 cursor-pointer text-gray-500 dark:text-gray-200" />
-                  <div>
-                    <PhotographIcon
-                      className="mx-2 h-8 w-8 cursor-pointer text-gray-500 dark:text-gray-200"
-                      onClick={() => filePickerRef.current.click()}
-                    />
-                    <div>
-                      <input
-                        ref={filePickerRef}
-                        type="file"
-                        hidden
-                        onChange={(e) => addMedia(e.target.files[0])}
-                      />
-                    </div>
-                  </div>
-                  <button
-                    type="submit"
-                    disabled={text || selectFile ? false : true}
+              <div className="flex items-center py-2 px-3 bg-gray-50 rounded-lg dark:bg-gray-900">
+                <button
+                  onClick={() => filePickerRef.current.click()}
+                  type="button"
+                  className="inline-flex justify-center p-2 text-gray-500 rounded-lg cursor-pointer hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-600"
+                >
+                  <svg
+                    aria-hidden="true"
+                    className="w-6 h-6"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                    xmlns="http://www.w3.org/2000/svg"
                   >
-                    <ArrowRightIcon
-                      className={`mr-2 h-7 w-7 cursor-pointer text-blue-500 ${
-                        text || selectFile ? "text-blue-500" : "text-gray-500"
-                      }`}
-                    />
-                  </button>
-                </div>
+                    <path
+                      fillRule="evenodd"
+                      d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z"
+                      clipRule="evenodd"
+                    ></path>
+                  </svg>
+                  <span className="sr-only">Upload image</span>
+                </button>
+                <input
+                  ref={filePickerRef}
+                  hidden
+                  type="file"
+                  onChange={(e) => addMedia(e.target.files[0])}
+                />
+                <button
+                  type="button"
+                  className="p-2 text-gray-500 rounded-lg cursor-pointer hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-600"
+                >
+                  <svg
+                    aria-hidden="true"
+                    className="w-6 h-6"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M10 18a8 8 0 100-16 8 8 0 000 16zM7 9a1 1 0 100-2 1 1 0 000 2zm7-1a1 1 0 11-2 0 1 1 0 012 0zm-.464 5.535a1 1 0 10-1.415-1.414 3 3 0 01-4.242 0 1 1 0 00-1.415 1.414 5 5 0 007.072 0z"
+                      clipRule="evenodd"
+                    ></path>
+                  </svg>
+                  <span className="sr-only">Add emoji</span>
+                </button>
+                <textarea
+                  disabled={sending}
+                  value={text}
+                  name={text}
+                  onChange={(e) => setText(e.target.value)}
+                  rows="1"
+                  className="block mx-4 p-2.5 w-full text-sm text-gray-900 bg-white rounded-lg border border-gray-300 focus:ring-0 dark:bg-gray-800 dark:border-gray-800 dark:text-white resize-none scrollbar-none"
+                  placeholder="Your message..."
+                ></textarea>
+                <button
+                  onClick={sendMessage}
+                  disabled={text || selectFile ? false : true}
+                  type="submit"
+                  className="inline-flex justify-center p-2 text-blue-600 rounded-full cursor-pointer hover:bg-blue-100 dark:text-blue-500 dark:hover:bg-gray-600 transition-all duration-200"
+                >
+                  <svg
+                    aria-hidden="true"
+                    className={`w-6 h-6 rotate-90 ${
+                      text || selectFile ? "animate-pulse" : ""
+                    }`}
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z"></path>
+                  </svg>
+                  <span className="sr-only">Send message</span>
+                </button>
               </div>
             </form>
           </section>
