@@ -114,9 +114,12 @@ const Comments = ({
     }
   }, [focusElement, subCommentRef]);
 
-  const getName = (username) => {
+  const getUser = (username) => {
     const currUser = users?.filter((user) => user.username === username)[0];
-    return currUser.fullname ? currUser.fullname : username;
+    return currUser;
+  };
+  const getName = (user) => {
+    return user.fullname ? user.fullname : user.username;
   };
 
   return (
@@ -144,6 +147,13 @@ const Comments = ({
                 layout="fill"
                 className="rounded-full"
               />
+              <span
+                className={`-top-1 right-0 absolute  w-3.5 h-3.5 ${
+                  getUser(post.data().username)?.active
+                    ? "bg-green-400"
+                    : "bg-slate-400"
+                } border-[3px] border-white dark:border-gray-900 rounded-full`}
+              ></span>
             </div>
             <div className="ml-3 flex-1 mr-3">
               <div className="text-md">
@@ -155,8 +165,8 @@ const Comments = ({
                     post.data().username === "hurairayounas" ? "mr-4" : ""
                   }`}
                 >
-                  {getName(post.data().username)}
-                  {post.data().username === "hurairayounas" && (
+                  {getName(getUser(post.data().username))}
+                  {/* {post.data().username === "hurairayounas" && (
                     <div className="absolute top-[2.5px] left-[103px] sm:left-[107px]">
                       <div className="relative h-4 w-4">
                         <Image
@@ -168,7 +178,7 @@ const Comments = ({
                         />
                       </div>{" "}
                     </div>
-                  )}{" "}
+                  )} */}{" "}
                 </span>
                 {post.data().caption}
               </div>
@@ -180,7 +190,10 @@ const Comments = ({
         )}
         <div className="m-3">
           {comments?.map((comment, i) => (
-            <div key={i} className="mb-1 px-2 py-3 shadow-sm rounded-md dark:bg-gray-900 dark:shadow-gray-400">
+            <div
+              key={i}
+              className="mb-1 px-2 py-3 shadow-sm rounded-md dark:bg-gray-900 dark:shadow-gray-600"
+            >
               <div key={i} className="relative w-full flex">
                 <div className="absolute">
                   <div className="relative h-10 w-10">
@@ -191,6 +204,13 @@ const Comments = ({
                       layout="fill"
                       className="rounded-full"
                     />
+                    <span
+                      className={`-top-1 right-0 absolute  w-3.5 h-3.5 ${
+                        getUser(comment.data().username)?.active
+                          ? "bg-green-400"
+                          : "bg-slate-400"
+                      } border-[3px] border-white dark:border-gray-900 rounded-full`}
+                    ></span>
                   </div>
                 </div>
                 <div className="ml-12 flex-1 mr-3">
@@ -199,14 +219,10 @@ const Comments = ({
                       onClick={() =>
                         router.push(`/profile/${comment?.data().username}`)
                       }
-                      className={`font-bold cursor-pointer relative ${
-                        comment?.data().username === "hurairayounas"
-                          ? "mr-4"
-                          : ""
-                      }`}
+                      className={"font-bold cursor-pointer relative"}
                     >
-                      {getName(comment?.data().username)}
-                      {comment?.data().username === "hurairayounas" && (
+                      {getName(getUser(comment?.data().username))}
+                      {/* {comment?.data().username === "hurairayounas" && (
                         <div className="absolute top-[1.5px] left-[90px] sm:left-[94px]">
                           <div className="relative h-4 w-4">
                             <Image
@@ -218,8 +234,8 @@ const Comments = ({
                             />
                           </div>
                         </div>
-                      )}{" "}
-                    </span>
+                      )} */}
+                    </span>{" "}
                     {comment.data().comment}
                   </div>
                 </div>
@@ -246,6 +262,13 @@ const Comments = ({
                           layout="fill"
                           className="rounded-full"
                         />
+                        <span
+                          className={`-top-1 right-0 absolute  w-3.5 h-3.5 ${
+                            getUser(subCom.username)?.active
+                              ? "bg-green-400"
+                              : "bg-slate-400"
+                          } border-[3px] border-white dark:border-gray-900 rounded-full`}
+                        ></span>
                       </div>
                     </div>
                     <div className="flex-1 ml-11 mr-3">
@@ -258,8 +281,8 @@ const Comments = ({
                             subCom.username === "hurairayounas" ? "mr-5" : ""
                           }`}
                         >
-                          {getName(subCom.username)}
-                          {subCom.username === "hurairayounas" && (
+                          {getName(getUser(subCom.username))}
+                          {/* {subCom.username === "hurairayounas" && (
                             <div className="absolute top-[1.5px] left-[90px] sm:left-[94px]">
                               <div className="relative h-4 w-4">
                                 <Image
@@ -271,7 +294,7 @@ const Comments = ({
                                 />
                               </div>
                             </div>
-                          )}
+                          )} */}
                         </span>{" "}
                         {subCom.comment}
                       </div>

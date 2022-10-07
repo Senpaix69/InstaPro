@@ -111,6 +111,7 @@ const Post = ({
       username: session.user.username,
       userImg: session.user.image,
       timeStamp: serverTimestamp(),
+      subcomments: [],
     }).then(() => {
       if (typeof Notification !== "undefined") {
         axios.post("/api/sendNotification", {
@@ -149,8 +150,8 @@ const Post = ({
   return (
     <div>
       {router.asPath === "/" || view ? (
-        <div className="bg-white border rounded-lg mt-2 mb-3 shadow-sm shadow-slate-400 dark:bg-gray-900 dark:border-gray-800">
-          <div className="flex items-center py-2 px-[5px] shadow-md bg-blue-500 dark:bg-gray-900 text-white">
+        <div className="bg-white border rounded-lg mb-2 mt-1 shadow-sm dark:shadow-gray-600 dark:bg-gray-900 dark:border-gray-800">
+          <div className="flex items-center py-2 px-[5px] shadow-md bg-white dark:bg-gray-900 dark:text-white">
             <div className="flex flex-1 items-center">
               <div className="relative rounded-full h-9 w-9 mx-2">
                 <Image
@@ -169,14 +170,18 @@ const Post = ({
                 <span
                   className={`-top-1 right-0 absolute  w-3.5 h-3.5 ${
                     user && user?.active ? "bg-green-400" : "bg-slate-400"
-                  } border-[3px] border-blue-500 dark:border-gray-900 rounded-full`}
+                  } border-[3px] border-white dark:border-gray-900 rounded-full`}
                 ></span>
               </div>
               <button
                 onClick={() => router.push(`/profile/${post.data().username}`)}
                 className="font-bold dark:text-gray-200 cursor-pointer w-auto"
               >
-                {user ? user.fullname : post.data().username}
+                {user
+                  ? user.fullname
+                    ? user.fullname
+                    : user.username
+                  : post.data().username}
               </button>
               {user?.username === "hurairayounas" && (
                 <div className="relative h-4 w-4">
@@ -194,10 +199,12 @@ const Post = ({
               {post.data().timeStamp?.toDate()}
             </Moment>
             {session?.user?.username === post.data().username ? (
-              <XCircleIcon
-                className="w-8 h-8 mr-3 opacity-80 cursor-pointer dark:text-slate-200"
-                onClick={() => deletePost(post.id)}
-              />
+              <div className="relative rounded-full h-6 w-6 bg-white">
+                <XCircleIcon
+                  className="absolute -top-[4px] -left-1 w-8 h-8 mr-3 opacity-80 cursor-pointer text-red-600"
+                  onClick={() => deletePost(post.id)}
+                />
+              </div>
             ) : (
               <DotsHorizontalIcon className="btn pr-3 dark:text-gray-200" />
             )}
@@ -266,7 +273,7 @@ const Post = ({
               }`}
             >
               {user?.fullname ? user.fullname : post?.data().username}
-              {post.data().username === "hurairayounas" && (
+              {/* {post.data().username === "hurairayounas" && (
                 <div className="absolute top-[5px] left-[103px] sm:left-[107px]">
                   <div className="relative h-4 w-4">
                     <Image
@@ -278,7 +285,7 @@ const Post = ({
                     />
                   </div>
                 </div>
-              )}
+              )} */}
             </button>
             <span className="text-sm">{post.data().caption}</span>
           </div>
