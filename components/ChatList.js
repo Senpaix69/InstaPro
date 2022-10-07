@@ -50,7 +50,7 @@ const ChatList = ({ redirect, id, user, toast, visitor, axios }) => {
   };
 
   return (
-    <div className="relative mx-3 mt-1 border-b dark:border-gray-700">
+    <div className="relative mx-3 my-1">
       <button
         className="absolute right-2 cursor-pointer bg-red-600 text-gray-200 text-sm font-semibold mt-2 px-2 py-[1.5px] rounded-lg shadow-sm dark:bg-opacity-90"
         onClick={deleteChat}
@@ -83,7 +83,7 @@ const ChatList = ({ redirect, id, user, toast, visitor, axios }) => {
             ></span>
           </div>
         </div>
-        <div className="ml-3 w-full truncate">
+        <div className="ml-3 flex flex-col -space-y-2 w-full truncate">
           <div className="flex items-center">
             <h1 className="font-semibold -mt-1 h-[22px]">
               {currUser?.fullname}

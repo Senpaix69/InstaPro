@@ -57,7 +57,7 @@ const Likes = ({ setOpenLikes, users, likes, router }) => {
           .map((like, i) => (
             <div
               key={i}
-              className="mt-1 px-3 w-full flex justify-between items-center border-b dark:border-gray-800"
+              className="mt-1 px-3 w-full flex justify-between items-center"
             >
               <div className="relative h-16 flex items-center w-full">
                 <div className="relative h-14 w-14">
