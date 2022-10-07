@@ -149,7 +149,7 @@ const Post = ({
   return (
     <div>
       {router.asPath === "/" || view ? (
-        <div className="bg-white border rounded-lg my-2 shadow-md dark:bg-gray-900 dark:border-gray-800">
+        <div className="bg-white border rounded-lg mt-2 mb-3 shadow-sm shadow-slate-400 dark:bg-gray-900 dark:border-gray-800">
           <div className="flex items-center py-2 px-[5px] shadow-md bg-blue-500 dark:bg-gray-900 text-white">
             <div className="flex flex-1 items-center">
               <div className="relative rounded-full h-9 w-9 mx-2">
@@ -195,7 +195,7 @@ const Post = ({
             </Moment>
             {session?.user?.username === post.data().username ? (
               <XCircleIcon
-                className="w-8 h-8 mr-3 cursor-pointer dark:text-gray-200"
+                className="w-8 h-8 mr-3 opacity-80 cursor-pointer dark:text-slate-200"
                 onClick={() => deletePost(post.id)}
               />
             ) : (
@@ -239,11 +239,7 @@ const Post = ({
               ) : (
                 <HeartIcon onClick={likePost} className="btn" />
               )}
-              <ChatAlt2Icon
-                className="btn"
-                // onClick={() => router.push(`/comment/${post.id}`)}
-                onClick={handleOpenComments}
-              />
+              <ChatAlt2Icon className="btn" onClick={handleOpenComments} />
               <PaperAirplaneIcon className="btn pt-1 rotate-90" />
             </div>
             <BookmarkIcon className="btn" />
@@ -269,7 +265,7 @@ const Post = ({
                 post.data().username === "hurairayounas" ? "mr-5" : "mr-1"
               }`}
             >
-              {post.data().username}
+              {user?.fullname ? user.fullname : post?.data().username}
               {post.data().username === "hurairayounas" && (
                 <div className="absolute top-[5px] left-[103px] sm:left-[107px]">
                   <div className="relative h-4 w-4">
@@ -289,7 +285,6 @@ const Post = ({
 
           {comments.length > 0 && (
             <button
-              // onClick={() => router.push(`/comment/${post.id}`)}
               onClick={handleOpenComments}
               className="px-4 text-sm text-gray-400"
             >

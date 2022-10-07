@@ -2,7 +2,6 @@ import Posts from "./Posts";
 import InstaStories from "./InstaStories";
 import { useSession } from "next-auth/react";
 import Login from "../pages/login";
-import Notification from "./Notification";
 import { useRecoilState } from "recoil";
 import { commentsView, likesView } from "../atoms/states";
 
@@ -22,7 +21,6 @@ const Feed = ({ setLoad, user }) => {
               openComments={openComments}
             />
             <Posts setLoad={setLoad} />
-            <Notification />
           </section>
         </>
       ) : (

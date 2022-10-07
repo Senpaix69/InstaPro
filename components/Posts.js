@@ -2,7 +2,6 @@ import {
   collection,
   deleteDoc,
   doc,
-  getDocs,
   onSnapshot,
   orderBy,
   query,
@@ -46,9 +45,9 @@ const Posts = ({
   }, [posts]);
 
   useEffect(() => {
-    let sub = true;
-    if (router.pathname === "/" && sub) {
-      onSnapshot(
+    let unsub;
+    if (router.pathname === "/") {
+      unsub = onSnapshot(
         query(collection(db, "posts"), orderBy("timeStamp", "desc")),
         (snapshot) => {
           setPosts(snapshot.docs);
@@ -57,30 +56,30 @@ const Posts = ({
     }
     setOpenComments(false);
     setOpenLikes(false);
-    return () => (sub = false);
+    return () => unsub;
   }, [router.pathname]);
 
   useEffect(() => {
-    let sub = true;
-    if (router.pathname !== "/" && sub) {
-      getDocs(
+    let unsub;
+    if (router.pathname !== "/") {
+      unsub = onSnapshot(
         query(
           collection(db, "posts"),
           where("username", "==", profile),
           orderBy("timeStamp", "desc")
-        )
-      ).then((snapshot) => {
-        setPosts(snapshot?.docs);
-        setTotalPosts(snapshot.docs?.length);
-      });
+        ),
+        (snapshot) => {
+          setPosts(snapshot?.docs);
+          setTotalPosts(snapshot.docs?.length);
+        }
+      );
     }
-    return () => (sub = false);
+    return () => unsub;
   }, [profile, router.pathname]);
 
   const deletePost = async (id) => {
     if (confirm("Do you really want to delete this post?")) {
       toastId.current = toast.loading("deleting...");
-      setPosts(posts?.filter((post) => post.id !== id));
       await deleteDoc(doc(db, "posts", id)).then(() => {
         toast.dismiss(toastId.current);
         toastId.current = null;
@@ -147,7 +146,7 @@ const Posts = ({
           ))
         )}
         {posts?.length === 0 && (
-          <h1 className="absolute font-bold left-[41%] top-[200px] text-gray-400">
+          <h1 className="absolute font-bold left-[40%] top-[200px] text-gray-400">
             No posts yet 🙁
           </h1>
         )}

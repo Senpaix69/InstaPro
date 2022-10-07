@@ -69,7 +69,7 @@ const InstaStories = ({ user, openLikes, openComments }) => {
               </div>
             </div>
             <p className="text-xs w-14 mt-1 truncate text-center dark:text-gray-300">
-              {user.username}
+              {user.fullname}
             </p>
           </div>
         )}
@@ -87,7 +87,7 @@ const InstaStories = ({ user, openLikes, openComments }) => {
               </div>
             </div>
             <p className="text-xs w-14 mt-1 truncate text-center dark:text-gray-300">
-              {curruser.username}
+              {curruser.fullname ? curruser.fullname : curruser.username}
             </p>
           </div>
         ))}

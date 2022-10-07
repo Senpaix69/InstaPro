@@ -114,7 +114,10 @@ const Comments = ({
     }
   }, [focusElement, subCommentRef]);
 
-  console.log("object");
+  const getName = (username) => {
+    const currUser = users?.filter((user) => user.username === username)[0];
+    return currUser.fullname ? currUser.fullname : username;
+  };
 
   return (
     <div className="fixed top-0 z-50 bg-white dark:bg-gray-900 w-full md:max-w-3xl m-auto dark:text-gray-200 flex flex-col h-screen">
@@ -132,7 +135,7 @@ const Comments = ({
       {/* comments Body */}
       <section className="flex-1 overflow-y-scroll scrollbar-hide">
         {post?.data().caption && (
-          <div className="m-3 flex border-b-2 border-gray-600 pb-4 mb-5">
+          <div className="m-3 px-2 flex border-b-2 border-gray-600 pb-4 mb-5">
             <div className="relative h-10 w-10">
               <Image
                 loading="eager"
@@ -152,7 +155,7 @@ const Comments = ({
                     post.data().username === "hurairayounas" ? "mr-4" : ""
                   }`}
                 >
-                  {post.data().username}
+                  {getName(post.data().username)}
                   {post.data().username === "hurairayounas" && (
                     <div className="absolute top-[2.5px] left-[103px] sm:left-[107px]">
                       <div className="relative h-4 w-4">
@@ -177,7 +180,7 @@ const Comments = ({
         )}
         <div className="m-3">
           {comments?.map((comment, i) => (
-            <div key={i} className="mb-5">
+            <div key={i} className="mb-1 px-2 py-3 shadow-sm rounded-md dark:bg-gray-900 dark:shadow-gray-400">
               <div key={i} className="relative w-full flex">
                 <div className="absolute">
                   <div className="relative h-10 w-10">
@@ -202,7 +205,7 @@ const Comments = ({
                           : ""
                       }`}
                     >
-                      {comment?.data().username}
+                      {getName(comment?.data().username)}
                       {comment?.data().username === "hurairayounas" && (
                         <div className="absolute top-[1.5px] left-[90px] sm:left-[94px]">
                           <div className="relative h-4 w-4">
@@ -255,7 +258,7 @@ const Comments = ({
                             subCom.username === "hurairayounas" ? "mr-5" : ""
                           }`}
                         >
-                          {subCom.username}
+                          {getName(subCom.username)}
                           {subCom.username === "hurairayounas" && (
                             <div className="absolute top-[1.5px] left-[90px] sm:left-[94px]">
                               <div className="relative h-4 w-4">
@@ -299,7 +302,7 @@ const Comments = ({
       <section className="py-2 px-4">
         {subCommentRef?.id && (
           <div className="text-sm flex justify-between text-gray-500 my-2">
-            replying to @{subCommentRef.data().username}
+            replying to @{getName(subCommentRef.data().username)}
             <button onClick={cancelSubComment}>cancel</button>
           </div>
         )}

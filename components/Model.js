@@ -113,7 +113,7 @@ const Model = () => {
     <Transition.Root show={open} as={Fragment}>
       <Dialog
         as="div"
-        className="fixed z-10 inset-0 overflow-y-auto"
+        className="fixed z-50 inset-0 overflow-y-auto"
         onClose={closeModels}
       >
         <div className="flex items-end justify-center min-h-[600px] md:min-h-[600px] pt-4 px-4 pb-20 text-center sm:block sm:p-0">

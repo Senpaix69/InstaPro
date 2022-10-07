@@ -119,10 +119,10 @@ const Chats = () => {
               </h1>
             </button>
             <div className="mx-3 mb-5 flex">
-              <div className="flex items-center space-x-3 m-auto h-9 bg-slate-100 dark:bg-gray-700 rounded-lg p-3 w-full text-sm md:w-[60%]">
+              <div className="flex items-center space-x-3 m-auto h-9 bg-slate-100 dark:bg-gray-700 rounded-lg p-3 w-full text-sm md:w-[60%] dark:bg-opacity-40">
                 <SearchIcon className="h-4 w-4" />
                 <input
-                  className="bg-transparent outline-none focus:ring-0"
+                  className="bg-transparent outline-none focus:ring-0 dark:placeholder:text-gray-300"
                   placeholder="Search"
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
@@ -141,7 +141,7 @@ const Chats = () => {
                 </div>
               </button>
             </div>
-            <div>
+            <div className="mt-1">
               {loading && values === undefined ? (
                 <Loading page={router?.pathname} />
               ) : (

@@ -50,9 +50,9 @@ const ChatList = ({ redirect, id, user, toast, visitor, axios }) => {
   };
 
   return (
-    <div className="relative hover:bg-gray-200 dark:hover:bg-gray-800">
+    <div className="relative mx-3 mt-1 shadow-sm rounded-md dark:shadow-gray-400">
       <button
-        className="absolute right-4 cursor-pointer bg-gray-500 text-gray-200 text-sm font-semibold mt-2 px-2 py-[1.5px] rounded-lg shadow-sm"
+        className="absolute right-4 cursor-pointer bg-red-600 text-gray-200 text-sm font-semibold mt-2 px-2 py-[1.5px] rounded-lg shadow-sm dark:bg-opacity-90"
         onClick={deleteChat}
       >
         delete
@@ -79,7 +79,7 @@ const ChatList = ({ redirect, id, user, toast, visitor, axios }) => {
             <span
               className={`top-0 right-0 absolute w-4 h-4 ${
                 !loading && currUser?.active ? "bg-green-400" : "bg-slate-400"
-              } border-[3px] border-blue-500 dark:border-gray-900 rounded-full`}
+              } border-[3px] border-white dark:border-gray-900 rounded-full`}
             ></span>
           </div>
         </div>
