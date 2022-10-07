@@ -60,17 +60,16 @@ const Likes = ({ setOpenLikes, users, likes, router }) => {
               className="mt-1 px-3 w-full flex justify-between items-center border-b dark:border-gray-800"
             >
               <div className="relative h-16 flex items-center w-full">
-                <div className="relative">
+                <div className="relative h-14 w-14">
                   <Image
                     loading="eager"
                     alt="image"
                     src={getUserProfilePic(like.username, users)}
-                    height="40px"
-                    width="40px"
+                    layout="fill"
                     className="rounded-full"
                   />
                   <span
-                    className={`-top-1 right-0 absolute  w-3.5 h-3.5 ${
+                    className={`top-0 right-0 absolute  w-4 h-4 ${
                       getUser(like.username)?.active
                         ? "bg-green-400"
                         : "bg-slate-400"

@@ -199,7 +199,7 @@ const Post = ({
               {post.data().timeStamp?.toDate()}
             </Moment>
             {session?.user?.username === post.data().username ? (
-              <div className="relative rounded-full h-6 w-6 bg-white">
+              <div className="relative rounded-full h-6 w-6 bg-white mr-2">
                 <XCircleIcon
                   className="absolute -top-[4px] -left-1 w-8 h-8 mr-3 opacity-80 cursor-pointer text-red-600"
                   onClick={() => deletePost(post.id)}
@@ -268,9 +268,7 @@ const Post = ({
             </p>
             <button
               onClick={() => router.push(`/profile/${post.data().username}`)}
-              className={`font-bold relative ${
-                post.data().username === "hurairayounas" ? "mr-5" : "mr-1"
-              }`}
+              className="font-bold relative mr-1"
             >
               {user?.fullname ? user.fullname : post?.data().username}
               {/* {post.data().username === "hurairayounas" && (

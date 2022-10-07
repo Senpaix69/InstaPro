@@ -50,7 +50,7 @@ const ChatList = ({ redirect, id, user, toast, visitor, axios }) => {
   };
 
   return (
-    <div className="relative mx-3 mt-1 shadow-sm rounded-md dark:shadow-gray-400">
+    <div className="relative mx-3 mt-1 shadow-sm rounded-md dark:shadow-gray-700">
       <button
         className="absolute right-4 cursor-pointer bg-red-600 text-gray-200 text-sm font-semibold mt-2 px-2 py-[1.5px] rounded-lg shadow-sm dark:bg-opacity-90"
         onClick={deleteChat}

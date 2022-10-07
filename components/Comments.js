@@ -161,7 +161,7 @@ const Comments = ({
                   onClick={() =>
                     router.push(`/profile/${post.data().username}`)
                   }
-                  className={"font-bold cursor-pointer relative"}
+                  className="font-bold cursor-pointer relative"
                 >
                   {getName(getUser(post.data().username))}
                   {/* {post.data().username === "hurairayounas" && (
@@ -213,7 +213,7 @@ const Comments = ({
                     onClick={() =>
                       router.push(`/profile/${comment?.data().username}`)
                     }
-                    className={"font-bold cursor-pointer relative"}
+                    className="font-bold cursor-pointer relative"
                   >
                     {getName(getUser(comment?.data().username))}
                     {/* {comment?.data().username === "hurairayounas" && (
@@ -271,9 +271,7 @@ const Comments = ({
                         onClick={() =>
                           router.push(`/profile/${subCom.username}`)
                         }
-                        className={`font-bold cursor-pointer relative ${
-                          subCom.username === "hurairayounas" ? "mr-5" : ""
-                        }`}
+                        className="font-bold cursor-pointer relative"
                       >
                         {getName(getUser(subCom.username))}
                         {/* {subCom.username === "hurairayounas" && (
@@ -318,7 +316,7 @@ const Comments = ({
       <section className="py-2 px-4">
         {subCommentRef?.id && (
           <div className="text-sm flex justify-between text-gray-500 my-2">
-            replying to @{getName(subCommentRef.data().username)}
+            replying to @{getName(getUser(subCommentRef.data().username))}
             <button onClick={cancelSubComment}>cancel</button>
           </div>
         )}
