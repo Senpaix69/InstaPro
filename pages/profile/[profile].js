@@ -70,6 +70,9 @@ const Profile = () => {
         observer.observe(element);
       });
     }
+    return () => {
+      observer?.disconnect();
+    };
   }, [load, view]);
 
   return (

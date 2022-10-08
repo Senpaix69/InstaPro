@@ -43,7 +43,7 @@ export default function Home() {
       addProfile();
       setActive(true);
       if (typeof Notification !== "undefined") {
-        initBeams(session.user.uid);
+        initBeams(session.user.uid, session.user.username);
       }
     }
   }, [session]);

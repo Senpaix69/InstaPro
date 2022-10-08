@@ -42,7 +42,7 @@ const Menu = ({
   const signout = () => {
     setUserStatus(false);
     if (typeof Notification !== "undefined") {
-      initBeams("", signOut);
+      initBeams("", "", signOut);
     }
   };
 
@@ -57,10 +57,7 @@ const Menu = ({
           )}
         </div>
         {router.pathname.includes("/profile") && (
-          <LogoutIcon
-            onClick={signout}
-            className="h-8 w-8 my-2 btn"
-          />
+          <LogoutIcon onClick={signout} className="h-8 w-8 my-2 btn" />
         )}
       </div>
       <div className=" bg-white text-black dark:bg-gray-900 dark:text-gray-100 fixed bottom-0 w-full left-0 z-40 border-t border-gray-600">
