@@ -2,7 +2,7 @@ import pushNotifications from "../../lib/pusher";
 
 export default function handler(req, res) {
   pushNotifications
-    .publishToInterests([req.body.interest], {
+    .publishToInterests([`debug-${req.body.interest}`], {
       web: {
         notification: {
           title: req.body.title,
