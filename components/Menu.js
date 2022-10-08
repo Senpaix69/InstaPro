@@ -42,7 +42,8 @@ const Menu = ({
   const signout = () => {
     setUserStatus(false);
     if (typeof Notification !== "undefined") {
-      initBeams("", "", signOut);
+      localStorage.setItem("beamsState", JSON.stringify(false));
+      initBeams("", "", undefined, signOut);
     }
   };
 

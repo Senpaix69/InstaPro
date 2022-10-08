@@ -6,7 +6,7 @@ import { useSession } from "next-auth/react";
 import { doc, setDoc, serverTimestamp, getDoc } from "firebase/firestore";
 import { db } from "../firebase";
 import { useRecoilState } from "recoil";
-import { themeState, userActivity } from "../atoms/states";
+import { themeState, userActivity, beamsState } from "../atoms/states";
 import { useEffect, useState } from "react";
 import initBeams from "../components/initBeams";
 import { useDocumentData } from "react-firebase-hooks/firestore";
@@ -14,6 +14,7 @@ import { useDocumentData } from "react-firebase-hooks/firestore";
 export default function Home() {
   const { data: session } = useSession();
   const [darkMode, setDarkMode] = useRecoilState(themeState);
+  const [beamsInitialized, setBeamsInitialized] = useRecoilState(beamsState);
   const [load, setLoad] = useState(false);
   const [active, setActive] = useRecoilState(userActivity);
   const [user, loading] = useDocumentData(
@@ -23,30 +24,36 @@ export default function Home() {
   useEffect(() => {
     const theme = JSON.parse(localStorage.getItem("theme"));
     setDarkMode(theme);
+    const beams = JSON.parse(localStorage.getItem("beamsState"));
+    setBeamsInitialized(beams);
   }, []);
 
   useEffect(() => {
-    const addProfile = async () => {
-      getDoc(doc(db, "profile", session.user.username)).then(async (data) => {
-        if (!data.exists()) {
-          await setDoc(doc(db, "profile", session.user.username), {
-            username: session.user.username,
-            uid: session.user.uid,
-            image: session.user?.image,
-            email: session.user.email,
-            timeStamp: serverTimestamp(),
-          });
-        }
-      });
-    };
-    if (session) {
+    localStorage.setItem("theme", JSON.stringify(darkMode));
+  }, [darkMode]);
+
+  useEffect(() => {
+    if (!beamsInitialized && session?.user) {
+      const addProfile = async () => {
+        getDoc(doc(db, "profile", session.user.username)).then(async (data) => {
+          if (!data.exists()) {
+            await setDoc(doc(db, "profile", session.user.username), {
+              username: session.user.username,
+              uid: session.user.uid,
+              image: session.user?.image,
+              email: session.user.email,
+              timeStamp: serverTimestamp(),
+            });
+          }
+        });
+      };
       addProfile();
       setActive(true);
       if (typeof Notification !== "undefined") {
-        initBeams(session.user.uid, session.user.username);
+        initBeams(session.user.uid, session.user.username, setBeamsInitialized);
       }
     }
-  }, [session]);
+  }, [session, beamsInitialized]);
 
   const callback = (entries) => {
     entries.forEach((entry) => {

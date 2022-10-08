@@ -52,10 +52,6 @@ const Header = ({
   }, []);
 
   useEffect(() => {
-    localStorage.setItem("theme", JSON.stringify(darkMode));
-  }, [darkMode]);
-
-  useEffect(() => {
     const setStatus = async () => {
       getDoc(doc(db, "profile", session.user.username)).then(async (data) => {
         if (data.exists()) {

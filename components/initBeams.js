@@ -1,7 +1,7 @@
 import * as PusherPushNotifications from "@pusher/push-notifications-web";
 import { toast } from "react-toastify";
 
-const initBeams = (uid, username, signOut) => {
+const initBeams = (uid, username, setBeamsInitialized, signOut) => {
   const beamsClient = new PusherPushNotifications.Client({
     instanceId: process.env.BEAMS_INSTANCE_ID,
   });
@@ -47,6 +47,7 @@ const initBeams = (uid, username, signOut) => {
         }
         case states.PERMISSION_GRANTED_NOT_REGISTERED_WITH_BEAMS:
         case states.PERMISSION_PROMPT_REQUIRED: {
+          console.log("Beam is starting");
           beamsClient
             .start()
             .then(() =>
@@ -63,7 +64,9 @@ const initBeams = (uid, username, signOut) => {
               beamsClient.getDeviceInterests().then((int) => console.log(int))
             )
             .then(() => {
-              toast.success("Push Notifications Enabled", {
+              localStorage.setItem("beamsState", JSON.stringify(true));
+              setBeamsInitialized(true);
+              toast.info("Push Notifications Enabled", {
                 toastId: uid,
               });
             });
