@@ -1,7 +1,7 @@
 import {
   ArrowLeftIcon,
-  XCircleIcon,
   ArrowRightIcon,
+  TrashIcon,
 } from "@heroicons/react/solid";
 import Moment from "react-moment";
 import Image from "next/image";
@@ -319,8 +319,8 @@ const Chat = () => {
 
                     {msg?.data().username === session?.user.username && (
                       <>
-                        <XCircleIcon
-                          className="h-7 w-7 absolute -left-6 cursor-pointer text-gray-800 overflow-hidden dark:text-gray-200"
+                        <TrashIcon
+                          className="h-5 w-5 absolute -left-6 cursor-pointer text-gray-800 overflow-hidden dark:text-gray-200"
                           onClick={() => unsendMessage(msg.id)}
                         />
                       </>
@@ -345,11 +345,11 @@ const Chat = () => {
               </div>
             )}
             <form onSubmit={(e) => sendMessage(e)}>
-              <div className="flex items-center py-2 px-3 bg-gray-50 rounded-lg dark:bg-gray-900">
+              <div className="flex items-center p-2 bg-gray-50 rounded-lg dark:bg-gray-900">
                 <button
                   onClick={() => filePickerRef.current.click()}
                   type="button"
-                  className="inline-flex justify-center p-2 text-gray-500 rounded-lg cursor-pointer hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-600"
+                  className="inline-flex justify-center py-2 text-gray-500 rounded-lg cursor-pointer dark:text-gray-400"
                 >
                   <svg
                     aria-hidden="true"
@@ -374,7 +374,7 @@ const Chat = () => {
                 />
                 <button
                   type="button"
-                  className="p-2 text-gray-500 rounded-lg cursor-pointer hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-600"
+                  className="inline-flex justify-center py-2 text-gray-500 rounded-lg cursor-pointer dark:text-gray-400 ml-2"
                 >
                   <svg
                     aria-hidden="true"
@@ -397,20 +397,20 @@ const Chat = () => {
                   name={text}
                   onChange={(e) => setText(e.target.value)}
                   rows="1"
-                  className="block mx-4 p-2.5 w-full text-sm text-gray-900 bg-white rounded-lg border border-gray-300 focus:ring-0 dark:bg-gray-800 dark:border-gray-800 dark:text-white resize-none scrollbar-none"
+                  className="block mx-4 p-2 w-full text-sm text-gray-900 bg-white rounded-lg border border-gray-300 focus:ring-0 dark:bg-gray-800 dark:border-gray-800 dark:text-white resize-none scrollbar-none"
                   placeholder="Your message..."
                 ></textarea>
                 <button
                   onClick={sendMessage}
                   disabled={text || selectFile ? false : true}
                   type="submit"
-                  className="inline-flex justify-center p-2 text-blue-600 rounded-full cursor-pointer hover:bg-blue-100 dark:text-blue-500 dark:hover:bg-gray-600 transition-all duration-200"
+                  className={`transition-all duration-500 inline-flex justify-center py-2 text-gray-500 rounded-lg cursor-pointer dark:text-gray-400 ${
+                    text || selectFile ? "animate-pulse dark:text-blue-600" : ""
+                  }`}
                 >
                   <svg
                     aria-hidden="true"
-                    className={`w-6 h-6 rotate-90 ${
-                      text || selectFile ? "animate-pulse" : ""
-                    }`}
+                    className="w-6 h-6 rotate-90"
                     fill="currentColor"
                     viewBox="0 0 20 20"
                     xmlns="http://www.w3.org/2000/svg"

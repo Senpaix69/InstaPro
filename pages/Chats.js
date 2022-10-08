@@ -4,7 +4,6 @@ import { useSession } from "next-auth/react";
 import Header from "../components/Header";
 import {
   UserAddIcon,
-  UserCircleIcon,
   UserGroupIcon,
   SearchIcon,
 } from "@heroicons/react/solid";
@@ -178,7 +177,7 @@ const Chats = () => {
               </button>
               <div
                 hidden={!menu}
-                className="absolute right-3 top-14 z-10 w-44 bg-white rounded divide-y divide-gray-100 shadow dark:bg-gray-700 dark:divide-gray-600"
+                className="absolute right-3 top-16 z-10 w-44 bg-white rounded divide-y divide-gray-100 shadow dark:bg-gray-700 dark:divide-gray-600"
               >
                 <ul className="py-1 text-sm text-gray-700 dark:text-gray-200">
                   <li>

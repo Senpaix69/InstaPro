@@ -5,7 +5,7 @@ import {
   MoonIcon,
   SunIcon,
   SearchIcon,
-  ArrowCircleRightIcon,
+  LogoutIcon,
 } from "@heroicons/react/solid";
 import {
   HomeIcon as AHomeIcon,
@@ -48,7 +48,7 @@ const Menu = ({
 
   return (
     <div className="xl:hidden max-w-6xl mx-auto">
-      <div className="flex items-center space-x-2">
+      <div className="flex items-center space-x-3">
         <div onClick={() => setDarkMode(!darkMode)}>
           {darkMode ? (
             <MoonIcon className="h-8 w-8 my-2 btn" />
@@ -57,7 +57,7 @@ const Menu = ({
           )}
         </div>
         {router.pathname.includes("/profile") && (
-          <ArrowCircleRightIcon
+          <LogoutIcon
             onClick={signout}
             className="h-8 w-8 my-2 btn"
           />
