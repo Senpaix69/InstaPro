@@ -145,7 +145,7 @@ const Model = () => {
             leaveFrom="opacity-100 translate-y-0 sm:scale-100"
             leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
           >
-            <div className="inline-block align-bottom bg-white dark:bg-gray-900 rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle w-full max-w-sm sm:p-6">
+            <div className="inline-block align-bottom bg-white dark:bg-gray-800 rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle w-full max-w-sm sm:p-6">
               <div>
                 {selectFile ? (
                   <button
@@ -187,7 +187,7 @@ const Model = () => {
                     <textarea
                       disabled={loading}
                       onChange={(e) => setCaption(e.target.value)}
-                      className="block mt-4 p-2 w-full text-sm text-gray-900 bg-white rounded-lg border border-gray-300 focus:ring-0 dark:bg-gray-800 dark:border-gray-800 dark:text-white resize-none scrollbar-none"
+                      className="block mt-4 p-2 w-full text-sm text-gray-900 bg-white rounded-lg border border-gray-300 focus:ring-0 dark:bg-gray-700 dark:border-gray-800 dark:text-white resize-none scrollbar-none dark:placeholder:text-gray-400"
                       type="text"
                       placeholder="Please enter a caption"
                     />
@@ -199,7 +199,7 @@ const Model = () => {
                 <button
                   type="button"
                   disabled={!selectFile}
-                  className="inline-flex justify-center w-full rounded-lg border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:text-sm disabled:bg-gray-500 dark:disabled:bg-gray-800 disabled:cursor-not-allowed hover:disabled:bg-gray-300 dark:hover:disabled:bg-gray-600"
+                  className="inline-flex justify-center w-full rounded-lg border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white dark:text-gray-300 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:text-sm disabled:bg-blue-500 dark:disabled:bg-gray-700 disabled:cursor-not-allowed hover:disabled:bg-gray-300 dark:hover:disabled:bg-gray-600"
                   onClick={postMedia}
                 >
                   {loading
