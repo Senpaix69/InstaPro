@@ -140,7 +140,7 @@ const Chats = () => {
               </button>
               <button
                 onClick={() => setMenu(!menu)}
-                className="absolute right-3 top-5 items-center p-2 text-sm font-medium text-center text-gray-900 bg-white rounded-lg hover:bg-gray-100 focus:ring-0 focus:outline-none dark:text-white dark:bg-gray-800"
+                className="absolute right-3 top-4 items-center p-2 text-sm font-medium text-center text-gray-900 bg-white rounded-lg hover:bg-gray-100 focus:ring-0 focus:outline-none dark:text-white dark:bg-gray-800"
                 type="button"
               >
                 <div className="flex space-x-2">
