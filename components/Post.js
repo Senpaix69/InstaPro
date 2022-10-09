@@ -48,6 +48,7 @@ const Post = ({
   const [comments, setComments] = useState([]);
   const [hasLike, setHasLike] = useState(false);
   const [view, setView] = useRecoilState(postView);
+  let unsubscribe = null;
   const [likes] = useCollectionData(
     query(
       collection(db, `posts/${post.id}/likes`),
@@ -60,16 +61,14 @@ const Post = ({
   }, [router]);
 
   useEffect(() => {
-    const sub = onSnapshot(
+    unsubscribe = onSnapshot(
       query(
         collection(db, "posts", post.id, "comments"),
         orderBy("timeStamp", "desc")
       ),
       (snapshot) => setComments(snapshot.docs)
     );
-    return () => {
-      sub();
-    };
+    return () => unsub();
   }, [post.id]);
 
   useEffect(() => {
@@ -140,6 +139,11 @@ const Post = ({
     setPostComments(comments);
     setCurPost(post);
     setOpenComments(true);
+  };
+  const unsub = () => {
+    if (unsubscribe) {
+      unsubscribe();
+    }
   };
 
   const handlePlay = async () => {

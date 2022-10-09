@@ -35,19 +35,11 @@ const Header = ({
   const [active, setActive] = useRecoilState(userActivity);
 
   useEffect(() => {
-    let status = true;
-    if (status) {
-      window.addEventListener("focus", () => setActive(true));
-      window.addEventListener("blur", () => setActive(false));
-      window.addEventListener("online", () => setActive(true));
-      window.addEventListener("offline", () => setActive(false));
-    }
+    window.addEventListener("focus", () => setActive(true));
+    window.addEventListener("blur", () => setActive(false));
     return () => {
       window.removeEventListener("focus", () => setActive(true));
       window.removeEventListener("blur", () => setActive(false));
-      window.removeEventListener("online", () => setActive(true));
-      window.removeEventListener("offline", () => setActive(false));
-      status = false;
     };
   }, []);
 

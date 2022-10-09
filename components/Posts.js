@@ -37,6 +37,7 @@ const Posts = ({
   const [users, loading] = useCollectionData(collection(db, "profile"));
   const [openLikes, setOpenLikes] = useRecoilState(likesView);
   const [openComments, setOpenComments] = useRecoilState(commentsView);
+  let unsubscribe = null;
 
   useEffect(() => {
     if (posts) {
@@ -45,26 +46,24 @@ const Posts = ({
   }, [posts]);
 
   useEffect(() => {
-    let unsub;
     if (router.pathname === "/") {
-      unsub = onSnapshot(
+      unsubscribe = onSnapshot(
         query(collection(db, "posts"), orderBy("timeStamp", "desc")),
         (snapshot) => {
           setPosts(snapshot.docs);
         }
       );
     }
-    setOpenComments(false);
-    setOpenLikes(false);
     return () => {
+      setOpenComments(false);
+      setOpenLikes(false);
       unsub();
     };
   }, [router.pathname]);
 
   useEffect(() => {
-    let unsub;
     if (router.pathname !== "/") {
-      unsub = onSnapshot(
+      unsubscribe = onSnapshot(
         query(
           collection(db, "posts"),
           where("username", "==", profile),
@@ -76,9 +75,7 @@ const Posts = ({
         }
       );
     }
-    return () => {
-      unsub();
-    };
+    return () => unsub();
   }, [profile, router.pathname]);
 
   const deletePost = async (id) => {
@@ -89,6 +86,12 @@ const Posts = ({
         toastId.current = null;
         toast.success("Post Deleted Successfully 👍");
       });
+    }
+  };
+
+  const unsub = () => {
+    if (unsubscribe) {
+      unsubscribe();
     }
   };
 
