@@ -9,7 +9,7 @@ import { useRecoilState } from "recoil";
 import { themeState, userActivity, beamsState } from "../atoms/states";
 import { useEffect, useState } from "react";
 import initBeams from "../components/initBeams";
-import { useDocumentData } from "react-firebase-hooks/firestore";
+import { toast } from "react-toastify";
 
 export default function Home() {
   const { data: session } = useSession();
@@ -17,9 +17,7 @@ export default function Home() {
   const [beamsInitialized, setBeamsInitialized] = useRecoilState(beamsState);
   const [load, setLoad] = useState(false);
   const [active, setActive] = useRecoilState(userActivity);
-  const [user, loading] = useDocumentData(
-    doc(db, `profile/${session?.user.username}`)
-  );
+  const [user, setUser] = useState(undefined);
 
   useEffect(() => {
     const theme = JSON.parse(localStorage.getItem("theme"));
@@ -33,10 +31,12 @@ export default function Home() {
   }, [darkMode]);
 
   useEffect(() => {
-    if (!beamsInitialized && session?.user) {
-      const addProfile = async () => {
-        getDoc(doc(db, "profile", session.user.username)).then(async (data) => {
-          if (!data.exists()) {
+    if (session?.user && !user) {
+      getDoc(doc(db, `profile/${session?.user.username}`)).then(
+        async (prof) => {
+          if (prof.exists()) {
+            setUser(prof.data());
+          } else {
             await setDoc(doc(db, "profile", session.user.username), {
               username: session.user.username,
               uid: session.user.uid,
@@ -44,15 +44,18 @@ export default function Home() {
               email: session.user.email,
               timeStamp: serverTimestamp(),
             });
+            toast.success(`Welcome User: ${session.user.username}🥰`, {
+              toastId: session.user.uid,
+            });
+            setUser(session.user);
           }
-        });
-      };
-      addProfile();
-      setActive(true);
-      if (typeof Notification !== "undefined") {
+        }
+      );
+      if (typeof Notification !== "undefined" && !beamsInitialized) {
         initBeams(session.user.uid, session.user.username, setBeamsInitialized);
       }
     }
+    setActive(true);
   }, [session, beamsInitialized]);
 
   const callback = (entries) => {
