@@ -56,7 +56,9 @@ const Posts = ({
     }
     setOpenComments(false);
     setOpenLikes(false);
-    return () => unsub;
+    return () => {
+      unsub();
+    };
   }, [router.pathname]);
 
   useEffect(() => {
@@ -74,7 +76,9 @@ const Posts = ({
         }
       );
     }
-    return () => unsub;
+    return () => {
+      unsub();
+    };
   }, [profile, router.pathname]);
 
   const deletePost = async (id) => {

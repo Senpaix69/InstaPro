@@ -45,7 +45,9 @@ const Comments = ({
         timeStamp: serverTimestamp(),
         subcomments: [],
       }).then(() => {
-        sendNotification(post.data().username, "has commented to your post");
+        if (session.user.username !== post.data().username) {
+          sendNotification(post.data().username, "has commented to your post");
+        }
       });
     }
     setSubCommentRef({});
@@ -64,31 +66,31 @@ const Comments = ({
           {
             username: session.user.username,
             timeStamp: time,
-            comment: commentToSend,
+            comment: `@${subCommentRef.username} ${commentToSend}`,
           },
         ],
       }
     ).then(() => {
-      if (subCommentRef.comment.data().username !== session.user.username) {
-        sendNotification(
-          subCommentRef.comment.data().username,
-          " has replied to your comment"
-        );
-      } else if (
-        post.data().username === session.user.username &&
-        subCommentRef.username === session.user.username
-      ) {
-        sendNotification(
-          subCommentRef.username,
-          " has replied to your comment"
-        );
-      } else {
-        sendNotification(post.data().username, "has commented to your post");
-        sendNotification(
-          subCommentRef.username,
-          " has replied to your comment"
-        );
-      }
+      // ---------------------------------------------------------------------
+      const you = session.user.username;
+      const yourSubComment = you === subCommentRef.username ? true : false;
+      const isYourPost = post.data().username === you ? true : false;
+      const isYourComment =
+        subCommentRef.comment.data()?.username === you ? true : false;
+      const ownerComment =
+        subCommentRef.comment.data()?.username === post.data().username
+          ? true
+          : false;
+      const ownerSubComment =
+        post.data().username === subCommentRef.username ? true : false;
+      // ---------------------------------------------------------------------
+
+      console.log("You:", you);
+      console.log("Is Your Post:", isYourPost);
+      console.log("Comment is yours:", isYourComment);
+      console.log("To your subcomment:", yourSubComment);
+      console.log("Owners Comment:", ownerComment);
+      console.log("You replying to owner's subcomment:", ownerSubComment);
     });
     setSubCommentRef({});
   };

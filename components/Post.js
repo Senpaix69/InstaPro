@@ -59,17 +59,18 @@ const Post = ({
     setView(false);
   }, [router]);
 
-  useEffect(
-    () =>
-      onSnapshot(
-        query(
-          collection(db, "posts", post.id, "comments"),
-          orderBy("timeStamp", "desc")
-        ),
-        (snapshot) => setComments(snapshot.docs)
+  useEffect(() => {
+    const sub = onSnapshot(
+      query(
+        collection(db, "posts", post.id, "comments"),
+        orderBy("timeStamp", "desc")
       ),
-    [post.id]
-  );
+      (snapshot) => setComments(snapshot.docs)
+    );
+    return () => {
+      sub();
+    };
+  }, [post.id]);
 
   useEffect(() => {
     if (likes) {
@@ -271,19 +272,6 @@ const Post = ({
               className="font-bold relative mr-1"
             >
               {user?.fullname ? user.fullname : post?.data().username}
-              {/* {post.data().username === "hurairayounas" && (
-                <div className="absolute top-[5px] left-[103px] sm:left-[107px]">
-                  <div className="relative h-4 w-4">
-                    <Image
-                      src={require("../public/verified.png")}
-                      layout="fill"
-                      loading="eager"
-                      alt="profile"
-                      className="rounded-full"
-                    />
-                  </div>
-                </div>
-              )} */}
             </button>
             <span className="text-sm">{post.data().caption}</span>
           </div>
