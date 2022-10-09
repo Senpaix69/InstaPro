@@ -9,6 +9,7 @@ export default function handler(req, res) {
           body: req.body.body,
           icon: req.body.icon,
           deep_link: req.body.link,
+          hide_notification_if_site_has_focus: true,
         },
       },
     })

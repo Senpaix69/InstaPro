@@ -16,7 +16,6 @@ import { useEffect, useRef, useState } from "react";
 import Moment from "react-moment";
 import { db } from "../firebase";
 import getUserProfilePic from "../utils/getUserProfilePic";
-const verfiedBadge = require("../public/verified.png");
 
 const Comments = ({
   users,
@@ -35,8 +34,8 @@ const Comments = ({
 
   const postComment = async (e) => {
     e.preventDefault();
-    if (subCommentRef?.id) {
-      addSubComment(subCommentRef.id, subCommentRef.data()?.subcomments);
+    if (subCommentRef?.username) {
+      addSubComment();
     } else {
       const commentToSend = comment;
       setComment("");
@@ -46,41 +45,68 @@ const Comments = ({
         timeStamp: serverTimestamp(),
         subcomments: [],
       }).then(() => {
-        if (typeof Notification !== "undefined") {
-          axios.post("/api/sendNotification", {
-            interest: users.filter(
-              (user) => user.username === post.data().username
-            )[0].uid,
-            title: "InstaPro",
-            body: session?.user.username + " has commented on your post",
-            icon: "https://firebasestorage.googleapis.com/v0/b/instapro-dev.appspot.com/o/posts%2Fimage%2Fraohuraira_57d3d606-eebc-4875-a843-eb0a03e3baf5?alt=media&token=33898c43-2cd1-459c-a5c9-efa29abb35a5",
-            link: "https://insta-pro.vercel.app",
-          });
-        }
+        sendNotification(post.data().username, "has commented to your post");
       });
     }
     setSubCommentRef({});
   };
 
-  const addSubComment = async (id, prevCom) => {
+  const addSubComment = async () => {
     const time = Timestamp.now();
     const commentToSend = comment;
+    const prevCom = subCommentRef.comment.data().subcomments;
     setComment("");
-    await updateDoc(doc(db, `posts/${post.id}/comments/${id}`), {
-      subcomments: [
-        ...prevCom,
-        {
-          username: session.user.username,
-          timeStamp: time,
-          comment: commentToSend,
-        },
-      ],
+    await updateDoc(
+      doc(db, `posts/${post.id}/comments/${subCommentRef.comment.id}`),
+      {
+        subcomments: [
+          ...prevCom,
+          {
+            username: session.user.username,
+            timeStamp: time,
+            comment: commentToSend,
+          },
+        ],
+      }
+    ).then(() => {
+      if (subCommentRef.comment.data().username !== session.user.username) {
+        sendNotification(
+          subCommentRef.comment.data().username,
+          " has replied to your comment"
+        );
+      } else if (
+        post.data().username === session.user.username &&
+        subCommentRef.username === session.user.username
+      ) {
+        sendNotification(
+          subCommentRef.username,
+          " has replied to your comment"
+        );
+      } else {
+        sendNotification(post.data().username, "has commented to your post");
+        sendNotification(
+          subCommentRef.username,
+          " has replied to your comment"
+        );
+      }
     });
     setSubCommentRef({});
   };
 
-  const triggerUsername = (comment) => {
-    setSubCommentRef(comment);
+  const sendNotification = (sendToUser, message) => {
+    if (typeof Notification !== "undefined") {
+      axios.post("/api/sendNotification", {
+        interest: getUser(sendToUser).uid,
+        title: "InstaPro",
+        body: getName(getUser(session?.user.username)) + " " + message,
+        icon: "https://firebasestorage.googleapis.com/v0/b/instapro-dev.appspot.com/o/posts%2Fimage%2Fraohuraira_57d3d606-eebc-4875-a843-eb0a03e3baf5?alt=media&token=33898c43-2cd1-459c-a5c9-efa29abb35a5",
+        link: "https://insta-pro.vercel.app",
+      });
+    }
+  };
+
+  const triggerUsername = (comment, username) => {
+    setSubCommentRef({ comment: comment, username: username });
   };
 
   const cancelSubComment = () => {
@@ -109,7 +135,7 @@ const Comments = ({
   };
 
   useEffect(() => {
-    if (subCommentRef.id) {
+    if (subCommentRef.username) {
       focusElement.current.focus();
     }
   }, [focusElement, subCommentRef]);
@@ -164,20 +190,7 @@ const Comments = ({
                   className="font-bold cursor-pointer relative"
                 >
                   {getName(getUser(post.data().username))}
-                  {/* {post.data().username === "hurairayounas" && (
-                    <div className="absolute top-[2.5px] left-[103px] sm:left-[107px]">
-                      <div className="relative h-4 w-4">
-                        <Image
-                          src={verfiedBadge}
-                          layout="fill"
-                          loading="eager"
-                          alt="profile"
-                          className="rounded-full"
-                        />
-                      </div>{" "}
-                    </div>
-                  )} */}{" "}
-                </span>
+                </span>{" "}
                 {post.data().caption}
               </div>
               <Moment fromNow className="text-xs font-semibold text-gray-400">
@@ -188,7 +201,7 @@ const Comments = ({
         )}
         {comments?.map((comment, i) => (
           <div key={i} className="mb-1 mx-3 py-3 border-b dark:border-gray-800">
-            <div key={i} className="relative w-full flex">
+            <div className="relative w-full flex">
               <div className="absolute">
                 <div className="relative h-10 w-10">
                   <Image
@@ -216,19 +229,6 @@ const Comments = ({
                     className="font-bold cursor-pointer relative"
                   >
                     {getName(getUser(comment?.data().username))}
-                    {/* {comment?.data().username === "hurairayounas" && (
-                        <div className="absolute top-[1.5px] left-[90px] sm:left-[94px]">
-                          <div className="relative h-4 w-4">
-                            <Image
-                              src={verfiedBadge}
-                              layout="fill"
-                              loading="eager"
-                              alt="profile"
-                              className="rounded-full"
-                            />
-                          </div>
-                        </div>
-                      )} */}
                   </span>{" "}
                   {comment.data().comment}
                 </div>
@@ -237,14 +237,20 @@ const Comments = ({
             </div>
             <div className="mt-1 text-xs text-gray-400 px-12 flex space-x-3 font-semibold">
               <Moment fromNow>{comment.data().timeStamp?.toDate()}</Moment>
-              <button onClick={() => triggerUsername(comment)}>Reply</button>
+              <button
+                onClick={() =>
+                  triggerUsername(comment, comment.data().username)
+                }
+              >
+                Reply
+              </button>
               {comment.data().username === session?.user.username && (
                 <button onClick={() => deleteComment(comment.id)}>
                   Delete
                 </button>
               )}
             </div>
-            {comment.data().subcomments?.map((subCom, index) => (
+            {comment.data()?.subcomments?.map((subCom, index) => (
               <div key={index} className="ml-14 mt-5">
                 <div className="w-full flex relative">
                   <div className="absolute">
@@ -274,19 +280,6 @@ const Comments = ({
                         className="font-bold cursor-pointer relative"
                       >
                         {getName(getUser(subCom.username))}
-                        {/* {subCom.username === "hurairayounas" && (
-                            <div className="absolute top-[1.5px] left-[90px] sm:left-[94px]">
-                              <div className="relative h-4 w-4">
-                                <Image
-                                  src={verfiedBadge}
-                                  layout="fill"
-                                  loading="eager"
-                                  alt="profile"
-                                  className="rounded-full"
-                                />
-                              </div>
-                            </div>
-                          )} */}
                       </span>{" "}
                       {subCom.comment}
                     </div>
@@ -314,9 +307,9 @@ const Comments = ({
 
       {/* comments bottom */}
       <section className="py-2 px-4">
-        {subCommentRef?.id && (
+        {subCommentRef?.username && (
           <div className="text-sm flex justify-between text-gray-500 my-2">
-            replying to @{getName(getUser(subCommentRef.data().username))}
+            replying to @{getName(getUser(subCommentRef.username))}
             <button onClick={cancelSubComment}>cancel</button>
           </div>
         )}
