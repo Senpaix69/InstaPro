@@ -190,7 +190,11 @@ const Chat = () => {
               >
                 <div className="flex items-center">
                   <h1 className="font-bold">
-                    {user ? user?.fullname : "Loading..."}
+                    {user
+                      ? user?.fullname
+                        ? user.fullname
+                        : user.username
+                      : "Loading..."}
                   </h1>
                   {user?.username === "hurairayounas" && (
                     <div className="relative h-4 w-4">

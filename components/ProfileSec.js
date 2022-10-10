@@ -46,8 +46,6 @@ const ProfileSec = ({
       setTextBio(user.bio ? user.bio : "");
       setTextName(user.fullname ? user.fullname : "");
     }
-    setOpenLikes(false);
-    setOpenComments(false);
   }, [user]);
 
   const followUser = async () => {
@@ -279,15 +277,15 @@ const ProfileSec = ({
             <p className="font-bold">{followings ? followings.length : 0}</p>
             <p className="text-sm mt-1 dark:text-gray-200">Followings</p>
           </button>
-          {user?.username !== session.user.username && followings && (
-            <div className="bg-gray-100 border border-gray-700 dark:bg-black text-sm text-center w-[226px] xl:w-[290px] py-1 rounded-md absolute -bottom-10 font-semibold">
-              <span
-                className={`${followYou ? "text-green-500" : "text-red-500"}`}
-              >
-                {followYou ? "Follows You" : "Not Follows You"}
-              </span>
-            </div>
-          )}
+          <div
+            className={`bg-gray-100 border border-gray-700 dark:bg-black text-sm text-center w-[226px] xl:w-[290px] py-1 rounded-md absolute -bottom-10 font-semibold transition-opacity duration-300 ${
+              user.username && followings ? "opacity-100" : "opacity-0"
+            }`}
+          >
+            <span className={followYou ? "text-green-500" : "text-red-500"}>
+              {followYou ? "Follows You" : "Not Follows You"}
+            </span>
+          </div>
         </div>
       </div>
 

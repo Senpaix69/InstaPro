@@ -46,7 +46,10 @@ const Profile = () => {
   );
 
   useEffect(() => {
-    followings ? setShowFollowings(false) : setShowFollowers(false);
+    return () => {
+      setShowFollowings(false);
+      setShowFollowers(false);
+    };
   }, [followings]);
 
   const callback = (entries) => {
@@ -72,6 +75,8 @@ const Profile = () => {
     }
     return () => {
       observer?.disconnect();
+      setOpenComments(false);
+      setOpenLikes(false);
     };
   }, [load, view]);
 
