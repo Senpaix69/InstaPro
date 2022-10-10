@@ -3,20 +3,11 @@ import { useSession } from "next-auth/react";
 import Image from "next/image";
 import { useState } from "react";
 import Moment from "react-moment";
-import getUserProfilePic from "../utils/getUserProfilePic";
+import { getUserProfilePic, getUser, getName } from "../utils/utilityFunctions";
 
 const Likes = ({ setOpenLikes, users, likes, router }) => {
   const [search, setSearch] = useState("");
   const { data: session } = useSession();
-
-  const getUser = (username) => {
-    const currUser = users?.filter((user) => user.username === username)[0];
-    return currUser;
-  };
-
-  const getName = (user) => {
-    return user.fullname ? user.fullname : user.username;
-  };
 
   return (
     <div className="w-full md:max-w-3xl m-auto bg-gray-100 dark:text-gray-200 dark:bg-gray-900 fixed top-0 z-50 h-screen flex flex-col">
@@ -70,7 +61,7 @@ const Likes = ({ setOpenLikes, users, likes, router }) => {
                   />
                   <span
                     className={`top-0 right-0 absolute  w-4 h-4 ${
-                      getUser(like.username)?.active
+                      getUser(like.username, users)?.active
                         ? "bg-green-400"
                         : "bg-slate-400"
                     } border-[3px] border-white dark:border-gray-900 rounded-full`}
@@ -82,7 +73,7 @@ const Likes = ({ setOpenLikes, users, likes, router }) => {
                     onClick={() => router.push(`/profile/${like.username}`)}
                     className="font-semibold mt-1 cursor-pointer flex space-x-1 items-center"
                   >
-                    {getName(getUser(like.username))}
+                    {getName(getUser(like.username, users))}
                     {like.username === "hurairayounas" && (
                       <div className="relative h-4 w-4">
                         <Image

@@ -19,13 +19,12 @@ import {
 import { db, storage } from "../../firebase";
 import Loading from "../../components/Loading";
 import { ref, getDownloadURL, uploadBytesResumable } from "firebase/storage";
-import getChatMessages from "../../utils/getChatMessages";
-import getOtherEmail from "../../utils/getOtherEmail";
-import axios from "axios";
+import { getChatMessages, getOtherEmail } from "../../utils/utilityFunctions";
 import { useRecoilState } from "recoil";
 import { themeState } from "../../atoms/states";
 import { uuidv4 } from "@firebase/util";
 import { toast, ToastContainer } from "react-toastify";
+import sendPush from "../../utils/sendPush";
 
 const Chat = () => {
   const [text, setText] = useState("");
@@ -102,15 +101,14 @@ const Chat = () => {
     }
   };
   const msgSend = (msgToSend) => {
-    if (typeof Notification !== "undefined") {
-      axios.post("/api/sendNotification", {
-        interest: user.uid,
-        title: secUser.fullname,
-        body: fileType ? fileType + "/" : msgToSend,
-        icon: secUser.profImg ? secUser.profImg : secUser.image,
-        link: "https://insta-pro.vercel.app/chat/" + id,
-      });
-    }
+    sendPush(
+      user.uid,
+      secUser.fullname,
+      "",
+      fileType ? fileType + "/" : msgToSend,
+      secUser.profImg ? secUser.profImg : secUser.image,
+      "https://insta-pro.vercel.app/chat/" + id
+    );
     setStatus(0);
     setFileType("");
     setSending(false);

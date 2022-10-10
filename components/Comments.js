@@ -3,7 +3,6 @@ import {
   EmojiHappyIcon,
   HeartIcon,
 } from "@heroicons/react/outline";
-import axios from "axios";
 import {
   addDoc,
   serverTimestamp,
@@ -15,7 +14,8 @@ import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import Moment from "react-moment";
 import { db } from "../firebase";
-import getUserProfilePic from "../utils/getUserProfilePic";
+import sendPush from "../utils/sendPush";
+import { getUserProfilePic, getUser, getName } from "../utils/utilityFunctions";
 
 const Comments = ({
   users,
@@ -99,15 +99,13 @@ const Comments = ({
   };
 
   const sendNotification = (sendToUser, message) => {
-    if (typeof Notification !== "undefined") {
-      axios.post("/api/sendNotification", {
-        interest: getUser(sendToUser).uid,
-        title: "InstaPro",
-        body: getName(getUser(session?.user.username)) + " " + message,
-        icon: "https://firebasestorage.googleapis.com/v0/b/instapro-dev.appspot.com/o/posts%2Fimage%2Fraohuraira_57d3d606-eebc-4875-a843-eb0a03e3baf5?alt=media&token=33898c43-2cd1-459c-a5c9-efa29abb35a5",
-        link: "https://insta-pro.vercel.app",
-      });
-    }
+    sendPush(
+      getUser(sendToUser, users).uid,
+      "",
+      getName(getUser(session?.user.username, users)),
+      message,
+      ""
+    );
   };
 
   const triggerUsername = (comment, username) => {
@@ -155,14 +153,6 @@ const Comments = ({
     }
   }, [focusElement, subCommentRef]);
 
-  const getUser = (username) => {
-    const currUser = users?.filter((user) => user.username === username)[0];
-    return currUser;
-  };
-  const getName = (user) => {
-    return user.fullname ? user.fullname : user.username;
-  };
-
   return (
     <div className="fixed top-0 z-50 bg-white dark:bg-gray-900 w-full md:max-w-3xl m-auto dark:text-gray-200 flex flex-col h-screen">
       {/* comments header */}
@@ -190,7 +180,7 @@ const Comments = ({
               />
               <span
                 className={`absolute -top-1 right-0 w-3.5 h-3.5 ${
-                  getUser(post.data().username)?.active
+                  getUser(post.data().username, users)?.active
                     ? "bg-green-400"
                     : "bg-slate-400"
                 } border-[3px] border-white dark:border-gray-900 rounded-full`}
@@ -204,7 +194,7 @@ const Comments = ({
                   }
                   className="font-bold cursor-pointer"
                 >
-                  {getName(getUser(post.data().username))}
+                  {getName(getUser(post.data().username, users))}
                 </span>{" "}
                 {post.data().caption}
               </div>
@@ -228,7 +218,7 @@ const Comments = ({
                   />
                   <span
                     className={`-top-1 right-0 absolute  w-3.5 h-3.5 ${
-                      getUser(comment.data().username)?.active
+                      getUser(comment.data().username, users)?.active
                         ? "bg-green-400"
                         : "bg-slate-400"
                     } border-[3px] border-white dark:border-gray-900 rounded-full`}
@@ -243,7 +233,7 @@ const Comments = ({
                     }
                     className="font-bold cursor-pointer relative"
                   >
-                    {getName(getUser(comment?.data().username))}
+                    {getName(getUser(comment?.data().username, users))}
                   </span>{" "}
                   {comment.data().comment}
                 </div>
@@ -297,7 +287,7 @@ const Comments = ({
                         />
                         <span
                           className={`-top-1 right-0 absolute  w-3.5 h-3.5 ${
-                            getUser(subCom.username)?.active
+                            getUser(subCom.username, users)?.active
                               ? "bg-green-400"
                               : "bg-slate-400"
                           } border-[3px] border-white dark:border-gray-900 rounded-full`}
@@ -312,7 +302,7 @@ const Comments = ({
                           }
                           className="font-bold cursor-pointer relative"
                         >
-                          {getName(getUser(subCom.username))}
+                          {getName(getUser(subCom.username, users))}
                         </span>{" "}
                         {subCom.comment}
                       </div>
@@ -342,7 +332,7 @@ const Comments = ({
       <section className="py-2 px-4">
         {subCommentRef?.username && (
           <div className="text-sm flex justify-between text-gray-500 my-2">
-            replying to @{getName(getUser(subCommentRef.username))}
+            replying to @{getName(getUser(subCommentRef.username, users))}
             <button onClick={cancelSubComment}>cancel</button>
           </div>
         )}

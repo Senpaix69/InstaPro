@@ -2,25 +2,23 @@ import { db } from "../firebase";
 import { useEffect, useRef, useState } from "react";
 import { useSession } from "next-auth/react";
 import Header from "../components/Header";
-import {
-  UserAddIcon,
-  UserGroupIcon,
-  SearchIcon,
-} from "@heroicons/react/solid";
+import { UserAddIcon, UserGroupIcon, SearchIcon } from "@heroicons/react/solid";
 import { addDoc, collection, doc } from "firebase/firestore";
 import { useCollection, useDocumentData } from "react-firebase-hooks/firestore";
 import { useRouter } from "next/router";
 import Loading from "../components/Loading";
-import getUserData from "../utils/getUserData";
-import getOtherEmail from "../utils/getOtherEmail";
+import {
+  getValidUsers,
+  getOtherEmail,
+  getUserActivity,
+} from "../utils/utilityFunctions";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import ChatList from "../components/ChatList";
-import getUserActivity from "../utils/getUserActivity";
 import { useRecoilState } from "recoil";
 import { themeState } from "../atoms/states";
-import axios from "axios";
 import Image from "next/image";
+import sendPush from "../utils/sendPush";
 
 const Chats = () => {
   const { data: session } = useSession();
@@ -52,7 +50,7 @@ const Chats = () => {
   };
 
   useEffect(() => {
-    setUsers(getUserData(chats, session?.user.username));
+    setUsers(getValidUsers(chats, session?.user.username));
   }, [snapshot]);
 
   const addUser = async () => {
@@ -73,15 +71,14 @@ const Chats = () => {
               toast.dismiss(toastId.current);
               toastId.current = null;
               toast.success("User Added Successfully 🤞");
-              if (typeof Notification !== "undefined") {
-                axios.post("/api/sendNotification", {
-                  interest: values[ind].uid,
-                  title: "InstaPro",
-                  body: user.fullname + " has added you in chat",
-                  icon: "https://firebasestorage.googleapis.com/v0/b/instapro-dev.appspot.com/o/posts%2Fimage%2Fraohuraira_57d3d606-eebc-4875-a843-eb0a03e3baf5?alt=media&token=33898c43-2cd1-459c-a5c9-efa29abb35a5",
-                  link: "https://insta-pro.vercel.app/Chats",
-                });
-              }
+              sendPush(
+                values[ind].uid,
+                "",
+                user.fullname,
+                "has added you in chat",
+                "",
+                "https://insta-pro.vercel.app/Chats"
+              );
             });
           } else {
             toast.dismiss(toastId.current);
@@ -226,7 +223,6 @@ const Chats = () => {
                   .map((curuser, i) => (
                     <ChatList
                       toast={toast}
-                      axios={axios}
                       key={i}
                       visitor={user}
                       id={curuser.id}

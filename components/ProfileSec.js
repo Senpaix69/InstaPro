@@ -13,7 +13,7 @@ import {
 import { CameraIcon } from "@heroicons/react/outline";
 import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
 import { uuidv4 } from "@firebase/util";
-import axios from "axios";
+import sendPush from "../utils/sendPush";
 
 const ProfileSec = ({
   posts,
@@ -25,9 +25,7 @@ const ProfileSec = ({
   view,
   setShowFollowers,
   setShowFollowings,
-  setOpenLikes,
   openLikes,
-  setOpenComments,
   openComments,
   followers,
   followings,
@@ -40,6 +38,13 @@ const ProfileSec = ({
   const [profilePic, setProfilePic] = useState("");
   const toastId = useRef(null);
   const profileImageRef = useRef(null);
+
+  useEffect(() => {
+    if (editProf) {
+      toastId = toast.warn("Note: use square image for profile");
+    }
+    return () => toast.dismiss(toastId);
+  }, [editProf]);
 
   useEffect(() => {
     if (user) {
@@ -67,13 +72,7 @@ const ProfileSec = ({
         timeStamp: serverTimestamp(),
       }
     ).then(() => {
-      axios.post("/api/sendNotification", {
-        interest: user.uid,
-        title: "InstaPro",
-        body: session?.user.username + " has followed you",
-        icon: visitor.profImg ? visitor.profImg : visitor.image,
-        link: "https://insta-pro.vercel.app/profile/" + session.user.username,
-      });
+      sendNotificationToUser("has followed you");
       toast.dismiss(toastId.current);
       toastId.current = null;
       toast.success("Followed Successfully 😇");
@@ -96,14 +95,7 @@ const ProfileSec = ({
               `profile/${session.user.username}/followings/${user.username}`
             )
           ).then(() => {
-            axios.post("/api/sendNotification", {
-              interest: user.uid,
-              title: "InstaPro",
-              body: session?.user.username + " has unfollowed you",
-              icon: visitor.profImg ? visitor.profImg : visitor.image,
-              link:
-                "https://insta-pro.vercel.app/profile/" + session.user.username,
-            });
+            sendNotificationToUser("has unfollowed you");
             toast.dismiss(toastId.current);
             toastId.current = null;
             toast.info("UnFollowed Successfully 😶");
@@ -117,7 +109,7 @@ const ProfileSec = ({
     }
   };
 
-  const addProfile = async (file) => {
+  const addMedia = async (file) => {
     if (file && file?.type?.includes("image")) {
       if (file.size / (1024 * 1024) > 5) {
         toast.error("Image size is larger than 3mb");
@@ -125,6 +117,17 @@ const ProfileSec = ({
         setProfilePic(file);
       }
     }
+  };
+
+  const sendNotificationToUser = (message) => {
+    sendPush(
+      user.uid,
+      "",
+      visitor.fullname,
+      message,
+      visitor.profImg ? visitor.profImg : visitor.image,
+      "https://insta-pro.vercel.app/profile/" + session.user.username
+    );
   };
 
   const saveEditing = async () => {
@@ -279,7 +282,11 @@ const ProfileSec = ({
           </button>
           <div
             className={`bg-gray-100 border border-gray-700 dark:bg-black text-sm text-center w-[226px] xl:w-[290px] py-1 rounded-md absolute -bottom-10 font-semibold transition-opacity duration-300 ${
-              user.username && followings ? "opacity-100" : "opacity-0"
+              user.username &&
+              session.user.username !== user.username &&
+              followings
+                ? "opacity-100"
+                : "opacity-0"
             }`}
           >
             <span className={followYou ? "text-green-500" : "text-red-500"}>
@@ -341,7 +348,7 @@ const ProfileSec = ({
             typeof="image"
             alt="profile"
             ref={profileImageRef}
-            onChange={(e) => addProfile(e.target.files[0])}
+            onChange={(e) => addMedia(e.target.files[0])}
             required
           />
           <p className="text-xs ml-3">Name</p>

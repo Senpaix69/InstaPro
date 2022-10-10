@@ -2,7 +2,7 @@ import { ArrowLeftIcon, SearchIcon } from "@heroicons/react/outline";
 import { useEffect, useState } from "react";
 import Moment from "react-moment";
 import Image from "next/image";
-import getUserProfilePic from "../utils/getUserProfilePic";
+import { getUserProfilePic, getName, getUser } from "../utils/utilityFunctions";
 const randomImg = require("../public/userimg.jpg");
 
 const FollowList = ({
@@ -27,15 +27,6 @@ const FollowList = ({
       setShow([...followings]);
     }
   }, [followers, followings]);
-
-  const getUser = (username) => {
-    const currUser = users?.filter((user) => user.username === username)[0];
-    return currUser;
-  };
-
-  const getName = (user) => {
-    return user.fullname ? user.fullname : user.username;
-  };
 
   return (
     <div hidden={showFollowers || showFollowings ? false : true}>
@@ -94,7 +85,7 @@ const FollowList = ({
                     />
                     <span
                       className={`top-0 right-0 absolute  w-4 h-4 ${
-                        getUser(user.username)?.active
+                        getUser(user.username, users)?.active
                           ? "bg-green-400"
                           : "bg-slate-400"
                       } border-[3px] border-white dark:border-gray-900 rounded-full`}
@@ -105,7 +96,7 @@ const FollowList = ({
                       onClick={() => router.push(`/profile/${user.username}`)}
                       className="font-bold cursor-pointer flex items-center"
                     >
-                      {getName(getUser(user.username))}
+                      {getName(getUser(user.username, users))}
                       {user.username === "hurairayounas" && (
                         <div className="relative h-4 w-4">
                           <Image

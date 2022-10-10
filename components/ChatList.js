@@ -9,13 +9,14 @@ import {
   query,
 } from "firebase/firestore";
 import { db } from "../firebase";
+import sendPush from "../utils/sendPush";
 import {
   useCollectionData,
   useDocumentData,
 } from "react-firebase-hooks/firestore";
 import { useRef } from "react";
 
-const ChatList = ({ redirect, id, user, toast, visitor, axios }) => {
+const ChatList = ({ redirect, id, user, toast, visitor }) => {
   const [message, loadingMessage] = useCollectionData(
     query(
       collection(db, `chats/${id}/messages`),
@@ -36,15 +37,14 @@ const ChatList = ({ redirect, id, user, toast, visitor, axios }) => {
           toast.success("Deleted Successfully 😄");
         })
         .then(() => {
-          if (typeof Notification !== "undefined") {
-            axios.post("/api/sendNotification", {
-              interest: currUser.uid,
-              title: "InstaPro",
-              body: visitor.fullname + " has deleted your chat",
-              icon: "https://firebasestorage.googleapis.com/v0/b/instapro-dev.appspot.com/o/posts%2Fimage%2Fraohuraira_57d3d606-eebc-4875-a843-eb0a03e3baf5?alt=media&token=33898c43-2cd1-459c-a5c9-efa29abb35a5",
-              link: "https://insta-pro.vercel.app/Chats",
-            });
-          }
+          sendPush(
+            currUser.uid,
+            "",
+            visitor.fullname,
+            "has delete your chat",
+            "",
+            "https://insta-pro.vercel.app/Chats"
+          );
         });
     }
   };
