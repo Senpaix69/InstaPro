@@ -9,7 +9,7 @@ const Loading = ({ page }) => {
             ? "mt-72"
             : page === "profile"
             ? "mt-80"
-            : "mt-44"
+            : "mt-52"
           : "justify-center"
       }`}
     >
