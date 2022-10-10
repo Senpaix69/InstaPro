@@ -48,6 +48,7 @@ const Post = ({
   const [comments, setComments] = useState([]);
   const [hasLike, setHasLike] = useState(false);
   const [view, setView] = useRecoilState(postView);
+
   let unsubscribe = null;
   const [likes] = useCollectionData(
     query(
@@ -130,6 +131,14 @@ const Post = ({
       setPostComments(comments);
     }
   }, [comments]);
+
+  const getLength = (comments) => {
+    let len = comments?.length;
+    comments?.forEach((comment) => {
+      len += comment.data().subcomments?.length;
+    });
+    return len;
+  };
 
   const handleOpenLikes = () => {
     setPostLikes(likes);
@@ -285,7 +294,7 @@ const Post = ({
               onClick={handleOpenComments}
               className="px-4 text-sm text-gray-400"
             >
-              view {comments.length}
+              view {getLength(comments)}
               {comments.length === 1 ? " comment" : " comments"}
             </button>
           )}

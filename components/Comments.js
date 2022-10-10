@@ -29,6 +29,9 @@ const Comments = ({
 }) => {
   const { data: session } = useSession();
   const [subCommentRef, setSubCommentRef] = useState({});
+  const [openIndex, setOpenIndex] = useState(
+    new Array(comments?.length).fill(-1)
+  );
   const [comment, setComment] = useState("");
   const focusElement = useRef(null);
 
@@ -136,6 +139,16 @@ const Comments = ({
     }
   };
 
+  const handleSubComment = (index, action) => {
+    const newIndexes = [];
+    openIndex.forEach((val, n) => {
+      if (n === index) {
+        newIndexes.push(action === "show" ? 1 : -1);
+      } else return newIndexes.push(val);
+    });
+    setOpenIndex(newIndexes);
+  };
+
   useEffect(() => {
     if (subCommentRef.username) {
       focusElement.current.focus();
@@ -166,7 +179,7 @@ const Comments = ({
       {/* comments Body */}
       <section className="flex-1 overflow-y-scroll scrollbar-hide">
         {post?.data().caption && (
-          <div className="m-3 flex border-b-2 border-gray-600 pb-4 mb-5">
+          <div className="m-3 flex border-b-2 border-gray-700 pb-3">
             <div className="relative h-10 w-10">
               <Image
                 loading="eager"
@@ -176,20 +189,20 @@ const Comments = ({
                 className="rounded-full"
               />
               <span
-                className={`-top-1 right-0 absolute  w-3.5 h-3.5 ${
+                className={`absolute -top-1 right-0 w-3.5 h-3.5 ${
                   getUser(post.data().username)?.active
                     ? "bg-green-400"
                     : "bg-slate-400"
                 } border-[3px] border-white dark:border-gray-900 rounded-full`}
               ></span>
             </div>
-            <div className="ml-3 flex-1 mr-3">
-              <div className="text-md">
+            <div className="flex-1 mx-3">
+              <div className="text-md -mb-1">
                 <span
                   onClick={() =>
                     router.push(`/profile/${post.data().username}`)
                   }
-                  className="font-bold cursor-pointer relative"
+                  className="font-bold cursor-pointer"
                 >
                   {getName(getUser(post.data().username))}
                 </span>{" "}
@@ -202,7 +215,7 @@ const Comments = ({
           </div>
         )}
         {comments?.map((comment, i) => (
-          <div key={i} className="mb-1 mx-3 py-3 border-b dark:border-gray-800">
+          <div key={i} className="mb-2 mx-3 pb-3 border-b dark:border-gray-800">
             <div className="relative w-full flex">
               <div className="absolute">
                 <div className="relative h-10 w-10">
@@ -252,57 +265,75 @@ const Comments = ({
                 </button>
               )}
             </div>
-            {comment.data()?.subcomments?.map((subCom, index) => (
-              <div key={index} className="ml-14 mt-5">
-                <div className="w-full flex relative">
-                  <div className="absolute">
-                    <div className="relative h-7 w-7">
-                      <Image
-                        loading="eager"
-                        alt="image"
-                        src={getUserProfilePic(subCom.username, users)}
-                        layout="fill"
-                        className="rounded-full"
-                      />
-                      <span
-                        className={`-top-1 right-0 absolute  w-3.5 h-3.5 ${
-                          getUser(subCom.username)?.active
-                            ? "bg-green-400"
-                            : "bg-slate-400"
-                        } border-[3px] border-white dark:border-gray-900 rounded-full`}
-                      ></span>
+            {comment.data()?.subcomments?.length > 0 && openIndex[i] === -1 ? (
+              <button
+                onClick={() => handleSubComment(i, "show")}
+                className="ml-14 mt-2 text-gray-400 text-xs"
+              >
+                view {comment.data()?.subcomments?.length} comments
+              </button>
+            ) : (
+              comment.data()?.subcomments?.length > 0 && (
+                <button
+                  onClick={() => handleSubComment(i, "hide")}
+                  className="ml-14 mt-2 text-gray-400 text-xs"
+                >
+                  hide comments
+                </button>
+              )
+            )}
+            {openIndex[i] !== -1 &&
+              comment.data()?.subcomments?.map((subCom, index) => (
+                <div key={index} className="ml-12 mt-3">
+                  <div className="w-full flex relative">
+                    <div className="absolute">
+                      <div className="relative h-7 w-7">
+                        <Image
+                          loading="eager"
+                          alt="image"
+                          src={getUserProfilePic(subCom.username, users)}
+                          layout="fill"
+                          className="rounded-full"
+                        />
+                        <span
+                          className={`-top-1 right-0 absolute  w-3.5 h-3.5 ${
+                            getUser(subCom.username)?.active
+                              ? "bg-green-400"
+                              : "bg-slate-400"
+                          } border-[3px] border-white dark:border-gray-900 rounded-full`}
+                        ></span>
+                      </div>
                     </div>
-                  </div>
-                  <div className="flex-1 ml-11 mr-3">
-                    <div className="text-sm">
-                      <span
-                        onClick={() =>
-                          router.push(`/profile/${subCom.username}`)
-                        }
-                        className="font-bold cursor-pointer relative"
-                      >
-                        {getName(getUser(subCom.username))}
-                      </span>{" "}
-                      {subCom.comment}
+                    <div className="flex-1 ml-9 mr-3">
+                      <div className="text-sm">
+                        <span
+                          onClick={() =>
+                            router.push(`/profile/${subCom.username}`)
+                          }
+                          className="font-bold cursor-pointer relative"
+                        >
+                          {getName(getUser(subCom.username))}
+                        </span>{" "}
+                        {subCom.comment}
+                      </div>
                     </div>
+                    <HeartIcon className="h-5 w-5 btn" />
                   </div>
-                  <HeartIcon className="h-5 w-5 btn" />
-                </div>
-                <div className="mt-1 text-xs text-gray-400 px-11 flex space-x-3 font-semibold">
-                  <Moment fromNow>{subCom.timeStamp?.toDate()}</Moment>
-                  <button
-                    onClick={() => triggerUsername(comment, subCom.username)}
-                  >
-                    Reply
-                  </button>
-                  {subCom.username === session?.user.username && (
-                    <button onClick={() => deleteSubComment(comment, index)}>
-                      Delete
+                  <div className="mt-1 text-xs text-gray-400 px-9 flex space-x-3 font-semibold">
+                    <Moment fromNow>{subCom.timeStamp?.toDate()}</Moment>
+                    <button
+                      onClick={() => triggerUsername(comment, subCom.username)}
+                    >
+                      Reply
                     </button>
-                  )}
+                    {subCom.username === session?.user.username && (
+                      <button onClick={() => deleteSubComment(comment, index)}>
+                        Delete
+                      </button>
+                    )}
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))}
           </div>
         ))}
       </section>
