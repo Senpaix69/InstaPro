@@ -25,7 +25,6 @@ import {
 import { useEffect, useState } from "react";
 import { db } from "../firebase";
 import Moment from "react-moment";
-import { useSession } from "next-auth/react";
 import { postView } from "../atoms/states";
 import { useRecoilState } from "recoil";
 import { useCollectionData } from "react-firebase-hooks/firestore";
@@ -36,6 +35,7 @@ const Post = ({
   router,
   deletePost,
   user,
+  visitor,
   openComments,
   setOpenLikes,
   setPostLikes,
@@ -43,7 +43,6 @@ const Post = ({
   setPostComments,
   setCurPost,
 }) => {
-  const { data: session } = useSession();
   const [comment, setComment] = useState("");
   const [comments, setComments] = useState([]);
   const [hasLike, setHasLike] = useState(false);
@@ -75,29 +74,20 @@ const Post = ({
   useEffect(() => {
     if (likes) {
       setHasLike(
-        likes.findIndex((like) => like.username === session?.user?.username) !==
-          -1
+        likes.findIndex((like) => like.username === visitor.username) !== -1
       );
     }
-  }, [likes, session?.user?.uid]);
+  }, [likes, visitor]);
 
   const likePost = async () => {
     if (hasLike) {
-      await deleteDoc(doc(db, "posts", post.id, "likes", session.user.uid));
+      await deleteDoc(doc(db, "posts", post.id, "likes", visitor.uid));
     } else {
-      await setDoc(doc(db, "posts", post.id, "likes", session.user.uid), {
-        username: session.user.username,
+      await setDoc(doc(db, "posts", post.id, "likes", visitor.uid), {
+        username: visitor.username,
         timeStamp: serverTimestamp(),
       }).then(() => {
-        if (user.username !== session.user.username) {
-          sendPush(
-            user.uid,
-            "",
-            session.user.username,
-            "has liked your post",
-            ""
-          );
-        }
+        sendNotification("has liked your post");
       });
     }
   };
@@ -109,21 +99,25 @@ const Post = ({
 
     await addDoc(collection(db, "posts", post.id, "comments"), {
       comment: commentToSend,
-      username: session.user.username,
-      userImg: session.user.image,
+      username: visitor.username,
+      userImg: visitor.image,
       timeStamp: serverTimestamp(),
       subcomments: [],
     }).then(() => {
-      if (user.username !== session.user.username) {
-        sendPush(
-          user.uid,
-          "",
-          session.user.username,
-          "has commented on your post",
-          ""
-        );
-      }
+      sendNotification("has commented to your post");
     });
+  };
+
+  const sendNotification = (message) => {
+    if (user.username !== visitor.username) {
+      sendPush(
+        user.uid,
+        "",
+        visitor.fullname ? visitor.fullname : visitor.username,
+        message,
+        ""
+      );
+    }
   };
 
   useEffect(() => {
@@ -212,7 +206,7 @@ const Post = ({
             <Moment fromNow className="mr-2 text-[10px]">
               {post.data().timeStamp?.toDate()}
             </Moment>
-            {session?.user?.username === post.data().username ? (
+            {visitor?.username === post.data().username ? (
               <div className="relative rounded-full h-6 w-6 bg-white mr-2">
                 <XCircleIcon
                   className="absolute -top-[4px] -left-1 w-8 h-8 mr-3 opacity-80 cursor-pointer text-red-600"

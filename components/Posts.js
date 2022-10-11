@@ -8,6 +8,7 @@ import {
   where,
 } from "firebase/firestore";
 import { useEffect, useRef, useState } from "react";
+import { useSession } from "next-auth/react";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { db } from "../firebase";
@@ -19,6 +20,7 @@ import { useCollectionData } from "react-firebase-hooks/firestore";
 import { postView, likesView, commentsView } from "../atoms/states";
 import { useRecoilState } from "recoil";
 import Comments from "./Comments";
+import { getUser } from "../utils/utilityFunctions";
 
 const Posts = ({
   setTotalPosts,
@@ -27,6 +29,7 @@ const Posts = ({
   showFollowers,
   showFollowings,
 }) => {
+  const { data: session } = useSession();
   const [posts, setPosts] = useState(undefined);
   const [postLikes, setPostLikes] = useState([]);
   const [postComments, setPostComments] = useState([]);
@@ -37,6 +40,7 @@ const Posts = ({
   const [users, loading] = useCollectionData(collection(db, "profile"));
   const [openLikes, setOpenLikes] = useRecoilState(likesView);
   const [openComments, setOpenComments] = useRecoilState(commentsView);
+  const visitor = getUser(session?.user.username, users);
   let unsubscribe = null;
 
   useEffect(() => {
@@ -144,11 +148,8 @@ const Posts = ({
               setCurPost={setCurPost}
               setOpenLikes={setOpenLikes}
               setPostLikes={setPostLikes}
-              user={
-                users?.filter(
-                  (user) => user.username === post.data().username
-                )[0]
-              }
+              user={getUser(post.data().username, users)}
+              visitor={visitor}
             />
           ))
         )}

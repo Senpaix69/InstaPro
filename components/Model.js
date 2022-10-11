@@ -199,7 +199,7 @@ const Model = () => {
                 <button
                   type="button"
                   disabled={!selectFile}
-                  className="inline-flex justify-center w-full rounded-lg border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white dark:text-gray-300 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:text-sm disabled:bg-blue-500 dark:disabled:bg-gray-700 disabled:cursor-not-allowed hover:disabled:bg-gray-300 dark:hover:disabled:bg-gray-600"
+                  className="inline-flex justify-center w-full rounded-lg border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white dark:text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:text-sm disabled:bg-blue-500 dark:disabled:bg-gray-700 disabled:cursor-not-allowed hover:disabled:bg-gray-300 dark:hover:disabled:bg-gray-600"
                   onClick={postMedia}
                 >
                   {loading

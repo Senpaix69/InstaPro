@@ -123,7 +123,7 @@ const ProfileSec = ({
     sendPush(
       user.uid,
       "",
-      visitor.fullname,
+      visitor.fullname ? visitor.fullname : visitor.username,
       message,
       visitor.profImg ? visitor.profImg : visitor.image,
       "https://insta-pro.vercel.app/profile/" + session.user.username

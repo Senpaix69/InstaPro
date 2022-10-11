@@ -96,7 +96,20 @@ const Chats = () => {
 
   const createGroup = () => {
     setMenu(false);
-    toast.info("Will Be Creating Soon");
+    toastId = toast.loading("yr wo ek baat kehni thi");
+    setTimeout(() => {
+      toast.error("idher dekh bhai", { position: "top-left" });
+    }, 6000);
+    setTimeout(() => {
+      toast.success("sochne de", { position: "bottom-right" });
+    }, 10000);
+    setTimeout(() => {
+      toast.info("haan yaad agya", { position: "bottom-left" });
+    }, 16000);
+    setTimeout(() => {
+      toast.dismiss(toastId);
+      toast.success("Tum ganduuuuu ho");
+    }, 20000);
   };
 
   const redirect = (id) => {
@@ -135,7 +148,7 @@ const Chats = () => {
                 </h1>
               </button>
               <button
-                onClick={() => setMenu(!menu)}
+                onClick={() => setMenu((prev) => !prev)}
                 className="absolute right-3 top-4 items-center p-2 text-sm font-medium text-center text-gray-900 bg-white rounded-lg hover:bg-gray-100 focus:ring-0 focus:outline-none dark:text-white dark:bg-gray-800"
                 type="button"
               >
