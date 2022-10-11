@@ -7,6 +7,7 @@ import { useCollectionData } from "react-firebase-hooks/firestore";
 import { collection } from "firebase/firestore";
 import { db } from "../firebase";
 import Image from "next/image";
+import { toast } from "react-toastify";
 
 const InstaStories = ({ user, openLikes, openComments }) => {
   const { data: session } = useSession();
@@ -36,8 +37,9 @@ const InstaStories = ({ user, openLikes, openComments }) => {
   }, [fLoading, uLoading, user]);
 
   const postStories = () => {
-    setStoryOpen(true);
-    setOpen(true);
+    toast.info("Note: Stories are in development right now");
+    // setStoryOpen(true);
+    // setOpen(true);
   };
 
   return (

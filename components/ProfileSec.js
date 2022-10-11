@@ -35,15 +35,16 @@ const ProfileSec = ({
   const [hasFollowed, setHasFollowed] = useState(false);
   const [followYou, setFollowYou] = useState(false);
   const [editProf, setEditProf] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [profilePic, setProfilePic] = useState("");
   const toastId = useRef(null);
   const profileImageRef = useRef(null);
 
   useEffect(() => {
     if (editProf) {
-      toastId = toast.warn("Note: use square image for profile");
+      if (toast.isActive(toastId.current)) toast.dismiss(toastId.current);
+      toastId.current = toast.warn("Note: use square image for profile");
     }
-    return () => toast.dismiss(toastId);
   }, [editProf]);
 
   useEffect(() => {
@@ -54,8 +55,8 @@ const ProfileSec = ({
   }, [user]);
 
   const followUser = async () => {
-    if (toast.isActive(toastId)) {
-      toast.dismiss(toastId);
+    if (toast.isActive(toastId.current)) {
+      toast.dismiss(toastId.current);
     }
     toastId.current = toast.loading("Following...");
     await setDoc(
@@ -81,8 +82,8 @@ const ProfileSec = ({
 
   const unFollowUser = async () => {
     if (confirm(`Do you really want to unfollow: ${user.username}`)) {
-      if (toast.isActive(toastId)) {
-        toast.dismiss(toastId);
+      if (toast.isActive(toastId.current)) {
+        toast.dismiss(toastId.current);
       }
       toastId.current = toast.loading("unfollowing...");
       await deleteDoc(
@@ -131,8 +132,9 @@ const ProfileSec = ({
   };
 
   const saveEditing = async () => {
-    if (toast.isActive(toastId)) {
-      toast.dismiss(toastId);
+    setLoading(true);
+    if (toast.isActive(toastId.current)) {
+      toast.dismiss(toastId.current);
     }
     toastId.current = toast.loading("Saving...");
 
@@ -151,9 +153,7 @@ const ProfileSec = ({
           console.log(percent);
         },
         (err) => {
-          toast.error(err);
-          setEditProf(false);
-          setProfilePic("");
+          updateProfile(false);
         },
         () => {
           // download url
@@ -163,11 +163,7 @@ const ProfileSec = ({
               fullname: textName,
               profImg: url,
             }).then(() => {
-              toast.dismiss(toastId.current);
-              toastId.current = null;
-              toast.success("Profile Edited Successfully 😀");
-              setEditProf(false);
-              setProfilePic("");
+              updateProfile(true);
             });
           });
         }
@@ -177,13 +173,19 @@ const ProfileSec = ({
         bio: textBio,
         fullname: textName,
       }).then(() => {
-        toast.dismiss(toastId.current);
-        toastId.current = null;
-        toast.success("Profile Edited Successfully 😀");
-        setEditProf(false);
-        setProfilePic("");
+        updateProfile(true);
       });
     }
+  };
+
+  const updateProfile = (success) => {
+    toast.dismiss(toastId.current);
+    toastId.current = null;
+    if (success) toast.success("Profile updated Successfully 😀");
+    else toast.error("Profile update failed");
+    setEditProf(false);
+    setLoading(false);
+    setProfilePic("");
   };
 
   useEffect(() => {
@@ -372,12 +374,14 @@ const ProfileSec = ({
           <div className="relative h-10">
             <div className="flex space-x-4 absolute bottom-1 right-3 text-white text-sm font-semibold">
               <button
+                disabled={loading}
                 onClick={saveEditing}
                 className="bg-blue-500 w-20 h-7 rounded-lg"
               >
                 Save
               </button>
               <button
+                disabled={loading}
                 onClick={cancelEditing}
                 className="bg-gray-500 w-20 h-7 rounded-lg"
               >

@@ -16,6 +16,7 @@ import {
 import Image from "next/image";
 import { useState } from "react";
 import initBeams from "./initBeams";
+import { toast } from "react-toastify";
 
 const Menu = ({
   session,
@@ -70,7 +71,13 @@ const Menu = ({
               <AHomeIcon className="h-7 w-7 btn" />
             )}
           </li>
-          <li>
+          <li
+            onClick={() =>
+              toast.info("Note: Search will be open soon", {
+                toastId: user?.uid,
+              })
+            }
+          >
             {active.includes("Search") ? (
               <SearchIcon className="h-7 w-7 btn" />
             ) : (
