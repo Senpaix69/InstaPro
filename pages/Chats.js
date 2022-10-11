@@ -101,14 +101,14 @@ const Chats = () => {
       toast.error("idher dekh bhai", { position: "top-left" });
     }, 6000);
     setTimeout(() => {
-      toast.success("sochne de", { position: "bottom-right" });
+      toast.success("sochne do", { position: "bottom-right" });
     }, 10000);
     setTimeout(() => {
       toast.info("haan yaad agya", { position: "bottom-left" });
     }, 16000);
     setTimeout(() => {
       toast.dismiss(toastId);
-      toast.success("Tum ganduuuuu ho");
+      toast.success("Group abhi add ni hue hain please wait😁");
     }, 20000);
   };
 
