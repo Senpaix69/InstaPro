@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { PlusIcon } from "@heroicons/react/outline";
 import { useSession } from "next-auth/react";
-import { storyState, modelState } from "../atoms/states";
+import { storyState, modelState, watchStory } from "../atoms/states";
 import { useRecoilState } from "recoil";
 import { useCollectionData } from "react-firebase-hooks/firestore";
 import { collection } from "firebase/firestore";
@@ -12,6 +12,7 @@ import { toast } from "react-toastify";
 const InstaStories = ({ user, openLikes, openComments }) => {
   const { data: session } = useSession();
   const [storyOpen, setStoryOpen] = useRecoilState(storyState);
+  const [watch, setWatch] = useRecoilState(watchStory);
   const [open, setOpen] = useRecoilState(modelState);
   const [users, uLoading] = useCollectionData(collection(db, "profile"));
   const [followings, fLoading] = useCollectionData(
@@ -21,15 +22,17 @@ const InstaStories = ({ user, openLikes, openComments }) => {
 
   useEffect(() => {
     const getValidUsers = () => {
-      users?.forEach((user) => {
+      const valid = [];
+      users?.forEach((itruser) => {
         if (
           followings.forEach((us) => {
-            if (us.username === user?.username) {
-              setValidUsers((prev) => [...prev, user]);
+            if (us.username === itruser?.username) {
+              valid.push(itruser);
             }
           })
         );
       });
+      setValidUsers(valid);
     };
     if (!fLoading && !uLoading && validUsers.length === 0) {
       getValidUsers();
@@ -37,7 +40,9 @@ const InstaStories = ({ user, openLikes, openComments }) => {
   }, [fLoading, uLoading, user]);
 
   const postStories = () => {
-    toast.info("Note: Stories are in development right now");
+    toast("Note: Stories are in development right now", {
+      toastId: "Story",
+    });
     // setStoryOpen(true);
     // setOpen(true);
   };
@@ -57,7 +62,7 @@ const InstaStories = ({ user, openLikes, openComments }) => {
             Add Story
           </p>
         </div>
-        {user && (
+        {user?.stories && (
           <div>
             <div className="flex items-center justify-center p-[1px] rounded-full border-red-500 border-2 object-contain cursor-pointer hover:scale-110 transition transform duration-200 ease-out">
               <div className="relative w-14 h-14">

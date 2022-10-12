@@ -10,7 +10,7 @@ import Loading from "../components/Loading";
 import {
   getValidUsers,
   getOtherEmail,
-  getUserActivity,
+  getAllUsers,
 } from "../utils/utilityFunctions";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -27,11 +27,10 @@ const Chats = () => {
   const [search, setSearch] = useState("");
   const [snapshot, loading] = useCollection(collection(db, "chats"));
   const chats = snapshot?.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
-  const values = getUserActivity();
+  const values = getAllUsers();
   const [darkMode, setDarkMode] = useRecoilState(themeState);
   const [user] = useDocumentData(doc(db, `profile/${session?.user.username}`));
   const [menu, setMenu] = useState(false);
-  const toastId = useRef(null);
 
   const chatExits = (email) => {
     let valid = false;
@@ -42,7 +41,9 @@ const Chats = () => {
         (docf.users[1].username === session.user.username &&
           docf.users[0].username === email)
       ) {
-        valid = true;
+        if (!docf.name) {
+          valid = true;
+        }
         stop();
       }
     });
@@ -56,11 +57,10 @@ const Chats = () => {
   const addUser = async () => {
     setMenu(false);
     const uName = prompt("Enter username: ")?.split(" ").join("").toLowerCase();
-    if (uName?.length) {
+    if (uName?.length > 0) {
       if (uName !== session.user.username) {
         if (!chatExits(uName)) {
-          toastId.current = toast.loading("Finding...");
-          const ind = values.findIndex((user) => user.username === uName);
+          const ind = values?.findIndex((user) => user.username === uName);
           if (ind !== -1 && !loading) {
             await addDoc(collection(db, "chats"), {
               users: [
@@ -68,48 +68,55 @@ const Chats = () => {
                 { username: session?.user.username },
               ],
             }).then(() => {
-              toast.dismiss(toastId.current);
-              toastId.current = null;
-              toast.success("User Added Successfully 🤞");
-              sendPush(
-                values[ind].uid,
-                "",
-                user.fullname,
-                "has added you in chat",
-                "",
-                "https://insta-pro.vercel.app/Chats"
-              );
+              actions("chat", ind);
             });
           } else {
-            toast.dismiss(toastId.current);
-            toastId.current = null;
-            toast.warn("User Not Found 😐");
+            toast.warn("User Not Found 😐", { toastId: "notFound" });
           }
         } else {
-          toast.error("User Already Exist 🙂");
+          toast.error("User Already Exist 🙂", { toastId: "exits" });
         }
       } else {
-        toast.error("You can not add yourselt 🙄");
+        toast.error("You can not add yourselt 🙄", { toastId: "eorr" });
       }
     }
   };
 
-  const createGroup = () => {
+  const createGroup = async () => {
     setMenu(false);
-    toastId = toast.loading("yr wo ek baat kehni thi");
-    setTimeout(() => {
-      toast.error("idher dekh bhai", { position: "top-left" });
-    }, 6000);
-    setTimeout(() => {
-      toast.success("sochne do", { position: "bottom-right" });
-    }, 10000);
-    setTimeout(() => {
-      toast.info("haan yaad agya", { position: "bottom-left" });
-    }, 16000);
-    setTimeout(() => {
-      toast.dismiss(toastId);
-      toast.success("Group abhi add ni hue hain please wait😁");
-    }, 20000);
+    const newUser = prompt("Enter Username: ")
+      ?.split(" ")
+      .join("")
+      .toLowerCase();
+    if (newUser?.length > 0) {
+      const ind = values?.findIndex((user) => user.username === newUser);
+      if (ind !== -1 && !loading) {
+        const name = prompt("Enter Group Name: ") || "";
+        await addDoc(collection(db, "chats"), {
+          name: name,
+          users: [
+            { username: values[ind].username },
+            { username: session?.user.username, admin: true },
+          ],
+        }).then(() => {
+          actions("group", ind, name);
+        });
+      } else {
+        toast.warn("User Not Found 😐", { toastId: "notFound" });
+      }
+    }
+  };
+
+  const actions = (create, ind, name) => {
+    toast.success(create + " created Successfully 🤞", { toastId: "added" });
+    sendPush(
+      values[ind]?.uid,
+      "",
+      user.fullname,
+      `has added you in ${create === "group" ? name : "chat"}`,
+      "",
+      "https://insta-pro.vercel.app/chats"
+    );
   };
 
   const redirect = (id) => {
@@ -229,7 +236,7 @@ const Chats = () => {
               ) : (
                 users
                   ?.filter((curuser) =>
-                    getOtherEmail(curuser, session.user).includes(
+                    getOtherEmail(curuser, session.user)?.includes(
                       search.toLowerCase()
                     )
                   )
@@ -239,6 +246,8 @@ const Chats = () => {
                       key={i}
                       visitor={user}
                       id={curuser.id}
+                      group={snapshot.docs[i]?.data()?.name}
+                      image={snapshot.docs[i]?.data()?.image}
                       redirect={redirect}
                       user={getOtherEmail(curuser, session.user)}
                     />

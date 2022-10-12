@@ -2,7 +2,7 @@ import "../styles/globals.css";
 import { SessionProvider } from "next-auth/react";
 import { RecoilRoot } from "recoil";
 import { StrictMode } from "react";
-import { ToastContainer } from "react-toastify";
+import { ToastContainer, Slide } from "react-toastify";
 
 function MyApp({ Component, pageProps: { session, ...pageProps } }) {
   return (
@@ -12,7 +12,9 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }) {
           <Component {...pageProps} />
           <ToastContainer
             autoClose={2500}
-            position={"top-center"}
+            position={"top-left"}
+            transition={Slide}
+            limit={2}
             theme="dark"
             pauseOnFocusLoss={false}
           />

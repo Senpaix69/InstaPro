@@ -4,9 +4,11 @@ import {
   collection,
   deleteDoc,
   doc,
+  getDoc,
   limit,
   orderBy,
   query,
+  updateDoc,
 } from "firebase/firestore";
 import { db } from "../firebase";
 import sendPush from "../utils/sendPush";
@@ -14,10 +16,8 @@ import {
   useCollectionData,
   useDocumentData,
 } from "react-firebase-hooks/firestore";
-import { useRef } from "react";
 
-
-const ChatList = ({ redirect, id, user, toast, visitor }) => {
+const ChatList = ({ redirect, id, user, toast, visitor, group, image }) => {
   const [message, loadingMessage] = useCollectionData(
     query(
       collection(db, `chats/${id}/messages`),
@@ -26,28 +26,53 @@ const ChatList = ({ redirect, id, user, toast, visitor }) => {
     )
   );
   const [currUser, loading] = useDocumentData(doc(db, `profile/${user}`));
-  const toastId = useRef(null);
 
   const deleteChat = async () => {
     if (confirm("Do You really want to delete this chat?")) {
-      toastId.current = toast.loading("deleting...");
-      await deleteDoc(doc(db, "chats", id))
-        .then(() => {
-          toast.dismiss(toastId.current);
-          toastId.current = null;
-          toast.success("Deleted Successfully 😄");
-        })
-        .then(() => {
-          sendPush(
-            currUser.uid,
-            "",
-            visitor.fullname,
-            "has delete your chat",
-            "",
-            "https://insta-pro.vercel.app/Chats"
-          );
-        });
+      const toastId = toast.loading("deleting...");
+      const checkGroup = await getDoc(doc(db, `chats/${id}`));
+      if (checkGroup.exists()) {
+        if (checkGroup.data()?.name) {
+          if (
+            checkGroup
+              ?.data()
+              .users?.find((user) => user.username === visitor.username)?.admin
+          ) {
+            deleteAll(toastId);
+          } else {
+            removeUser(checkGroup.data().users);
+          }
+        } else {
+          deleteAll(toastId);
+        }
+      }
     }
+  };
+
+  const removeUser = async (members) => {
+    await updateDoc(doc(db, `chats/${id}`), {
+      users: [
+        members?.filter((itruser) => itruser.username !== visitor.username),
+      ],
+    });
+  };
+
+  const deleteAll = async (toastId) => {
+    await deleteDoc(doc(db, "chats", id))
+      .then(() => {
+        toast.dismiss(toastId);
+        toast.success("Deleted Successfully 😄");
+      })
+      .then(() => {
+        sendPush(
+          currUser.uid,
+          "",
+          visitor.fullname,
+          `has deleted ${group ? `"${group}"->group` : "your chat"}`,
+          "",
+          "https://insta-pro.vercel.app/chats"
+        );
+      });
   };
 
   return (
@@ -68,7 +93,9 @@ const ChatList = ({ redirect, id, user, toast, visitor }) => {
               loading="eager"
               layout="fill"
               src={
-                currUser
+                image
+                  ? image
+                  : currUser
                   ? currUser.profImg
                     ? currUser.profImg
                     : currUser.image
@@ -77,19 +104,25 @@ const ChatList = ({ redirect, id, user, toast, visitor }) => {
               alt="story"
               className="rounded-full"
             />
-            <span
-              className={`top-0 right-0 absolute w-4 h-4 ${
-                !loading && currUser?.active ? "bg-green-400" : "bg-slate-400"
-              } border-[3px] border-white dark:border-gray-900 rounded-full`}
-            ></span>
+            {!group && (
+              <span
+                className={`top-0 right-0 absolute w-4 h-4 ${
+                  !loading && currUser?.active ? "bg-green-400" : "bg-slate-400"
+                } border-[3px] border-white dark:border-gray-900 rounded-full`}
+              ></span>
+            )}
           </div>
         </div>
         <div className="ml-3 flex flex-col -space-y-1 w-full truncate">
           <div className="flex items-center">
             <h1 className="font-semibold">
-              {currUser?.fullname ? currUser.fullname : currUser?.username}
+              {group
+                ? group
+                : currUser?.fullname
+                ? currUser.fullname
+                : currUser?.username}
             </h1>
-            {currUser?.username === "hurairayounas" && (
+            {!group && currUser?.username === "hurairayounas" && (
               <div className="relative h-4 w-4">
                 <Image
                   src={require("../public/verified.png")}

@@ -9,22 +9,35 @@ import { useRef, useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import { useDocumentData } from "react-firebase-hooks/firestore";
+import EditGroup from "../../components/EditGroup";
 import {
   collection,
   doc,
   addDoc,
   serverTimestamp,
   deleteDoc,
+  updateDoc,
 } from "firebase/firestore";
 import { db, storage } from "../../firebase";
 import Loading from "../../components/Loading";
 import { ref, getDownloadURL, uploadBytesResumable } from "firebase/storage";
-import { getChatMessages, getOtherEmail } from "../../utils/utilityFunctions";
+import {
+  getChatMessages,
+  getAllUsers,
+  getUser,
+  getName,
+  getOtherEmail,
+  getUserProfilePic,
+} from "../../utils/utilityFunctions";
 import { useRecoilState } from "recoil";
 import { themeState } from "../../atoms/states";
-import { uuidv4 } from "@firebase/util";
-import { toast, ToastContainer } from "react-toastify";
 import sendPush from "../../utils/sendPush";
+import {
+  UserAddIcon,
+  UserGroupIcon,
+  ViewListIcon,
+} from "@heroicons/react/outline";
+import GroupMembers from "../../components/GroupMembers";
 
 const Chat = () => {
   const [text, setText] = useState("");
@@ -32,33 +45,32 @@ const Chat = () => {
   const router = useRouter();
   const { id } = router.query;
   const messagesEndRef = useRef(null);
+  const users = getAllUsers();
+  const [menu, setMenu] = useState(false);
   const [sending, setSending] = useState(false);
+  const [editGroup, setEditGroup] = useState(false);
   const messages = getChatMessages(id);
   const [selectFile, setSelectFile] = useState(null);
   const [fileType, setFileType] = useState("");
   const filePickerRef = useRef(null);
   const [status, setStatus] = useState(0);
+  const [showMembers, setShowMembers] = useState(false);
   const [darkMode] = useRecoilState(themeState);
   const [chat] = useDocumentData(doc(db, `chats/${id}`));
-  const [user] = useDocumentData(
-    doc(db, `profile/${getOtherEmail(chat, session?.user)}`)
-  );
-  const [secUser] = useDocumentData(
-    doc(db, `profile/${session?.user.username}`)
-  );
+  const you = getUser(session?.user.username, users);
+  const user = getUser(getOtherEmail(chat, session?.user), users);
 
   const sendMessage = async (e) => {
     e.preventDefault();
     const msgToSend = text;
     setText("");
-
     if (selectFile) {
       const imgRef = selectFile;
       setSelectFile(null);
       setSending(true);
       const storageRef = ref(
         storage,
-        `chats/${fileType}/${session?.user.username}-${uuidv4()}`
+        `chats/${fileType}/${you?.username}-${you?.uid}`
       );
       const uploadTask = uploadBytesResumable(storageRef, imgRef);
       uploadTask.on(
@@ -69,7 +81,7 @@ const Chat = () => {
           );
           setStatus(percent);
         },
-        (err) => {
+        () => {
           setStatus(0);
           setFileType("");
           setSending(false);
@@ -100,15 +112,24 @@ const Chat = () => {
       });
     }
   };
+
   const msgSend = (msgToSend) => {
-    sendPush(
-      user.uid,
-      secUser.fullname,
-      "",
-      fileType ? fileType + "/" : msgToSend,
-      secUser.profImg ? secUser.profImg : secUser.image,
-      "https://insta-pro.vercel.app/chat/" + id
-    );
+    chat?.users.forEach((itruser) => {
+      if (itruser.username !== you.username) {
+        sendPush(
+          getUser(itruser.username, users).uid,
+          chat.name ? "" : you.fullname,
+          chat.name ? you.fullname : "",
+          chat.name
+            ? `has send message in ${chat.name}`
+            : fileType
+            ? fileType + "/"
+            : msgToSend,
+          chat.image ? chat.image : you.profImg ? you.profImg : you.image,
+          "https://insta-pro.vercel.app/chat/" + id
+        );
+      }
+    });
     setStatus(0);
     setFileType("");
     setSending(false);
@@ -130,35 +151,97 @@ const Chat = () => {
       setFileType(file.type.includes("image") ? "image" : "video");
       if (fileType === "image") {
         if (file.size / (1024 * 1024) > 3) {
-          toast.error("Image size is larger than 3mb");
+          alert("Image size is larger than 3mb");
         } else {
           setSelectFile(file);
         }
       } else if (file.size / (1024 * 1024) > 50) {
-        toast.error("Video size is larger than 50mb");
+        alert("Video size is larger than 50mb");
       } else {
         setSelectFile(file);
       }
     }
   };
 
-  const getProfileImage = (username) => {
-    if (user?.username === username) {
-      return user.profImg ? user.profImg : user.image;
+  const addUser = async () => {
+    setMenu(false);
+    if (chat?.users?.find((user) => user.username === you.username)?.admin) {
+      const newUser = prompt("Enter Username: ")
+        ?.split(" ")
+        .join("")
+        .toLowerCase();
+      if (newUser?.length > 0) {
+        if (users?.findIndex((user) => user.username === newUser) !== -1) {
+          console.log("User Exits");
+          if (
+            chat?.users?.findIndex((user) => user.username === newUser) === -1
+          ) {
+            await updateDoc(doc(db, "chats", id), {
+              users: [...chat.users, { username: newUser }],
+            }).then(() => {
+              sendPush(
+                getUser(newUser, users).uid,
+                "",
+                you.fullname,
+                `has added you in ${chat?.name}`,
+                you.profImg ? you.profImg : you.image,
+                "https://insta-pro.vercel.app/chat/" + id
+              );
+              alert("User added successfully");
+            });
+          } else {
+            alert("User already added in group");
+          }
+        } else {
+          alert("User Not Found 😐");
+        }
+      }
     } else {
-      return secUser.profImg ? secUser.profImg : secUser.image;
+      alert("You are not admin");
     }
   };
 
   return (
     <div className={darkMode ? "bg-gray-100" : "dark bg-gray-900"}>
-      <div className="max-w-6xl lg:mx-auto flex justify-center">
+      <div className="relative max-w-3xl lg:mx-auto flex justify-center">
         <div
           className="dark:bg-black bg-[url('https://i.pinimg.com/originals/b7/fc/af/b7fcaf2631fc54f28ef3f123855d03dc.jpg')] dark:bg-[url('https://wallpapercave.com/wp/wp9100371.jpg')]
             bg-no-repeat bg-cover bg-center w-full flex flex-col md:w-[700px] h-screen overflow-y-scroll scrollbar-hide"
         >
+          {chat?.name && (
+            <GroupMembers
+              deleteDoc={deleteDoc}
+              updateDoc={updateDoc}
+              doc={doc}
+              db={db}
+              name={chat?.name}
+              members={chat?.users}
+              router={router}
+              you={session?.user.username}
+              id={id}
+              users={users}
+              getUser={getUser}
+              showMembers={showMembers}
+              setShowMembers={setShowMembers}
+            />
+          )}
+          {editGroup && (
+            <EditGroup
+              gName={chat?.name}
+              gDesc={chat?.description}
+              setEditGroup={setEditGroup}
+              getDownloadURL={getDownloadURL}
+              updateDoc={updateDoc}
+              doc={doc}
+              you={you}
+              uploadBytesResumable={uploadBytesResumable}
+              db={db}
+              id={id}
+              storage={storage}
+            />
+          )}
           {/* Chat Header */}
-          <section className="shadow-md bg-white sticky top-0 z-50 dark:bg-gray-900 dark:text-gray-200">
+          <section className="shadow-md bg-white sticky top-0 z-20 dark:bg-gray-900 dark:text-gray-200">
             <div className="flex items-center px-2 py-1">
               <ArrowLeftIcon
                 onClick={() => router?.back()}
@@ -170,7 +253,9 @@ const Chat = () => {
                     loading="eager"
                     layout="fill"
                     src={
-                      user
+                      chat?.image
+                        ? chat.image
+                        : user
                         ? user.profImg
                           ? user.profImg
                           : user.image
@@ -182,19 +267,21 @@ const Chat = () => {
                 </div>
               </div>
               <button
-                disabled={user ? false : true}
+                disabled={user ? (chat?.name ? true : false) : true}
                 onClick={() => router.push(`/profile/${user?.username}`)}
                 className="text-left"
               >
                 <div className="flex items-center">
                   <h1 className="font-bold">
-                    {user
+                    {chat?.name
+                      ? chat.name
+                      : user
                       ? user?.fullname
                         ? user.fullname
                         : user.username
                       : "Loading..."}
                   </h1>
-                  {user?.username === "hurairayounas" && (
+                  {!chat?.name && user?.username === "hurairayounas" && (
                     <div className="relative h-4 w-4">
                       <Image
                         src={require("../../public/verified.png")}
@@ -224,15 +311,104 @@ const Chat = () => {
                   )}
                 </div>
               </button>
+              <button
+                onClick={() => setMenu((prev) => !prev)}
+                className="absolute right-3 top-2 items-center p-2 text-sm font-medium text-center"
+                type="button"
+              >
+                <div className="flex space-x-2">
+                  <ViewListIcon className="h-6 w-6" />
+                  {menu ? (
+                    <svg
+                      className="w-6 h-6"
+                      aria-hidden="true"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                        clipRule="evenodd"
+                      ></path>
+                    </svg>
+                  ) : (
+                    <svg
+                      className="w-6 h-6"
+                      aria-hidden="true"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
+                        clipRule="evenodd"
+                      ></path>
+                    </svg>
+                  )}
+                </div>
+              </button>
+              <div
+                hidden={!menu}
+                className="absolute right-3 top-16 z-10 w-44 bg-white rounded shadow dark:bg-gray-900"
+              >
+                <ul className="py-1 text-sm text-gray-700 dark:text-gray-200">
+                  <li>
+                    <button
+                      onClick={addUser}
+                      className="flex items-center w-full py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white text-left"
+                    >
+                      <UserAddIcon className="mr-2 h-5 w-5" />
+                      Add User
+                    </button>
+                  </li>
+                  <li>
+                    <button
+                      onClick={() => {
+                        setMenu(false);
+                        setEditGroup(true);
+                      }}
+                      className="flex items-center w-full py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white text-left"
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        strokeWidth={1.5}
+                        stroke="currentColor"
+                        className="w-5 h-5 mr-2"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M11.42 15.17L17.25 21A2.652 2.652 0 0021 17.25l-5.877-5.877M11.42 15.17l2.496-3.03c.317-.384.74-.626 1.208-.766M11.42 15.17l-4.655 5.653a2.548 2.548 0 11-3.586-3.586l6.837-5.63m5.108-.233c.55-.164 1.163-.188 1.743-.14a4.5 4.5 0 004.486-6.336l-3.276 3.277a3.004 3.004 0 01-2.25-2.25l3.276-3.276a4.5 4.5 0 00-6.336 4.486c.091 1.076-.071 2.264-.904 2.95l-.102.085m-1.745 1.437L5.909 7.5H4.5L2.25 3.75l1.5-1.5L7.5 4.5v1.409l4.26 4.26m-1.745 1.437l1.745-1.437m6.615 8.206L15.75 15.75M4.867 19.125h.008v.008h-.008v-.008z"
+                        />
+                      </svg>
+                      Edit Group
+                    </button>
+                    <button
+                      onClick={() => {
+                        setMenu(false);
+                        setShowMembers(true);
+                      }}
+                      className="flex items-center w-full py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white text-left"
+                    >
+                      <UserGroupIcon className="mr-2 h-5 w-5" />
+                      Members
+                    </button>
+                  </li>
+                </ul>
+              </div>
             </div>
           </section>
 
           {/* Chat Body */}
           <section className="flex-1">
-            {user?.bio && (
+            {(chat?.description || user?.bio) && (
               <div className="flex items-center justify-around m-2 p-2 mb-4 text-sm text-center text-gray-700 dark:bg-opacity-70 rounded-lg dark:bg-gray-900 dark:text-slate-400">
                 <ArrowLeftIcon className="h-3 w-3" />
-                {user?.bio}
+                {chat?.description || user?.bio}
                 <ArrowRightIcon className="h-3 w-3" />
               </div>
             )}
@@ -241,18 +417,16 @@ const Chat = () => {
                 <div
                   ref={messagesEndRef}
                   key={i}
-                  className={`flex mt-1 ${
-                    msg?.data().username === session?.user.username
+                  className={`flex ${
+                    msg?.data().username === you?.username
                       ? "justify-end"
-                      : ""
+                      : `mt-1 ${chat?.name ? "mt-5" : ""}`
                   }`}
                 >
-                  <div className="text-gray-200 flex items-center rounded-md w-fit max-w-xs py-1 px-2 relative">
+                  <div className="dark:text-gray-200 flex items-center rounded-md w-fit max-w-xs py-1 px-2 relative">
                     <div
                       className={`absolute top-1 rounded-full ${
-                        msg?.data().username === session?.user.username
-                          ? "right-2"
-                          : ""
+                        msg?.data().username === you?.username ? "right-2" : ""
                       }`}
                     >
                       <button
@@ -265,7 +439,7 @@ const Chat = () => {
                           <Image
                             loading="eager"
                             layout="fill"
-                            src={getProfileImage(msg.data().username)}
+                            src={getUserProfilePic(msg.data().username, users)}
                             alt="prof"
                             className="rounded-full"
                           />
@@ -274,12 +448,12 @@ const Chat = () => {
                     </div>
                     <div
                       className={`${
-                        msg?.data().username === session?.user.username
-                          ? "mr-9 bg-slate-600 bg-opacity-50"
-                          : "ml-9 bg-stone-700 bg-opacity-50"
-                      } p-2 rounded-lg`}
+                        msg?.data().username === you?.username
+                          ? "mr-9 bg-green-400 bg-opacity-50 dark:bg-slate-600 dark:bg-opacity-50"
+                          : "ml-9 bg-blue-400 bg-opacity-50 dark:bg-stone-700 dark:bg-opacity-50"
+                      } py-1 px-3 rounded-lg font-normal`}
                     >
-                      <div>{msg?.data().text}</div>
+                      <p>{msg?.data().text}</p>
                       {msg.data().image && (
                         <div className="my-2 shadow-md p-2">
                           <img src={msg.data().image} alt="img" />
@@ -296,11 +470,11 @@ const Chat = () => {
                           <source src={msg.data().video} />
                         </video>
                       )}
-                      <div className="flex text-gray-300 justify-end">
+                      <div className="flex text-gray-700 dark:text-gray-300 justify-end">
                         <Moment fromNow className="text-[10px]">
                           {msg?.data()?.timeStamp?.toDate()}
                         </Moment>
-                        <span className="ml-1 text-sm font-semibold text-gray-300 bg-transparent rounded-full">
+                        <span className="ml-1 text-sm bg-transparent rounded-full">
                           <svg
                             aria-hidden="true"
                             className="w-4 h-4"
@@ -319,13 +493,16 @@ const Chat = () => {
                       </div>
                     </div>
 
-                    {msg?.data().username === session?.user.username && (
-                      <>
-                        <TrashIcon
-                          className="h-5 w-5 absolute -left-6 cursor-pointer text-gray-800 overflow-hidden dark:text-gray-200"
-                          onClick={() => unsendMessage(msg.id)}
-                        />
-                      </>
+                    {msg?.data().username === you.username && (
+                      <TrashIcon
+                        className="h-5 w-5 absolute -left-6 cursor-pointer text-gray-800 overflow-hidden dark:text-gray-200"
+                        onClick={() => unsendMessage(msg.id)}
+                      />
+                    )}
+                    {chat?.name && msg?.data().username !== you.username && (
+                      <span className="absolute text-xs -top-3 left-3">
+                        {getName(getUser(msg.data().username, users))}
+                      </span>
                     )}
                   </div>
                 </div>
@@ -336,7 +513,7 @@ const Chat = () => {
           </section>
 
           {/* Chat Bottom */}
-          <section className="bg-gray-50 sticky bottom-0 z-50 shadow-sm px-1 dark:text-white dark:bg-gray-900">
+          <section className="bg-gray-50 sticky bottom-0 z-20 shadow-sm px-1 dark:text-white dark:bg-gray-900">
             {(selectFile || sending) && (
               <div className="font-bold p-4 mr-3 text-gray-500 w-full text-right">
                 {sending ? (
@@ -424,12 +601,6 @@ const Chat = () => {
               </div>
             </form>
           </section>
-          <ToastContainer
-            autoClose={2500}
-            position={"top-center"}
-            theme="dark"
-            pauseOnFocusLoss={false}
-          />
         </div>
       </div>
     </div>

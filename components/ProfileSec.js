@@ -42,7 +42,6 @@ const ProfileSec = ({
 
   useEffect(() => {
     if (editProf) {
-      if (toast.isActive(toastId.current)) toast.dismiss(toastId.current);
       toastId.current = toast.warn("Note: use square image for profile");
     }
   }, [editProf]);
@@ -132,13 +131,13 @@ const ProfileSec = ({
   };
 
   const saveEditing = async () => {
-    setLoading(true);
     if (toast.isActive(toastId.current)) {
       toast.dismiss(toastId.current);
+      toastId.current = null;
     }
-    toastId.current = toast.loading("Saving...");
-
     if (profilePic) {
+      toastId.current = toast.loading("Saving...");
+      setLoading(true);
       const storageRef = ref(
         storage,
         `posts/image/${session.user.username}_${uuidv4()}`
@@ -152,7 +151,7 @@ const ProfileSec = ({
           );
           console.log(percent);
         },
-        (err) => {
+        () => {
           updateProfile(false);
         },
         () => {
@@ -169,6 +168,8 @@ const ProfileSec = ({
         }
       );
     } else {
+      toastId.current = toast.loading("Saving...");
+      setLoading(true);
       await updateDoc(doc(db, "profile", user.username), {
         bio: textBio,
         fullname: textName,
@@ -180,12 +181,13 @@ const ProfileSec = ({
 
   const updateProfile = (success) => {
     toast.dismiss(toastId.current);
-    toastId.current = null;
-    if (success) toast.success("Profile updated Successfully 😀");
-    else toast.error("Profile update failed");
+    if (success)
+      toast.success("Profile updated Successfully 😀", { toastId: "success" });
+    else toast.error("Profile update failed", { toastId: "error" });
     setEditProf(false);
     setLoading(false);
     setProfilePic("");
+    toastId.current = null;
   };
 
   useEffect(() => {
@@ -231,6 +233,7 @@ const ProfileSec = ({
                 />
               ) : (
                 <button
+                  disabled={loading}
                   onClick={() => setProfilePic("")}
                   className="absolute top-[40%] left-[12%] text-xs md:text-sm"
                 >
@@ -284,7 +287,7 @@ const ProfileSec = ({
           </button>
           <div
             className={`bg-gray-100 border border-gray-700 dark:bg-black text-sm text-center w-[226px] xl:w-[290px] py-1 rounded-md absolute -bottom-10 font-semibold transition-opacity duration-300 ${
-              user.username &&
+              user?.username &&
               session.user.username !== user.username &&
               followings
                 ? "opacity-100"

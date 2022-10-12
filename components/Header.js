@@ -37,9 +37,13 @@ const Header = ({
   useEffect(() => {
     window.addEventListener("focus", () => setActive(true));
     window.addEventListener("blur", () => setActive(false));
+    window.addEventListener("online", () => setActive(true));
+    window.addEventListener("offline", () => setActive(false));
     return () => {
       window.removeEventListener("focus", () => setActive(true));
       window.removeEventListener("blur", () => setActive(false));
+      window.addEventListener("online", () => setActive(true));
+      window.addEventListener("offline", () => setActive(false));
     };
   }, []);
 

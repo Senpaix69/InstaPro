@@ -149,6 +149,7 @@ const Model = () => {
               <div>
                 {selectFile ? (
                   <button
+                    disabled={loading}
                     onClick={() => setSelectFile(null)}
                     className="font-bold flex items-center justify-center w-full space-x-2 dark:text-gray-200"
                   >

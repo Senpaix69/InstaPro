@@ -66,7 +66,7 @@ const Posts = ({
   }, [router.pathname]);
 
   useEffect(() => {
-    if (router.pathname !== "/") {
+    if (router.pathname !== "/" && profile) {
       unsubscribe = onSnapshot(
         query(
           collection(db, "posts"),

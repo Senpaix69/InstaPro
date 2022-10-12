@@ -73,7 +73,7 @@ const Menu = ({
           </li>
           <li
             onClick={() =>
-              toast.info("Note: Search will be open soon", {
+              toast("Note: Search will be open soon", {
                 toastId: user?.uid,
               })
             }
@@ -91,7 +91,7 @@ const Menu = ({
               <APlusCircleIcon className="h-7 w-7 btn" />
             )}
           </li>
-          <li onClick={() => router.push("/Chats")}>
+          <li onClick={() => router.push("/chats")}>
             {active.includes("Chat") ? (
               <ChatAlt2Icon className="h-7 w-7 btn" />
             ) : (
