@@ -16,6 +16,7 @@ import {
 } from "react-firebase-hooks/firestore";
 import { useRef } from "react";
 
+
 const ChatList = ({ redirect, id, user, toast, visitor }) => {
   const [message, loadingMessage] = useCollectionData(
     query(
