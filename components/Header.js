@@ -117,7 +117,7 @@ const Header = ({
               />
               <div className="relative navBtn dark:text-gray-200">
                 <PaperAirplaneIcon
-                  onClick={() => router.push("/Chats")}
+                  onClick={() => router.push("/chats")}
                   className="navBtn rotate-45"
                 />
                 <div className="absolute -top-2 -right-2 text-xs w-5 h-5 bg-red-500 flex items-center justify-center rounded-full animate-pulse text-white">
