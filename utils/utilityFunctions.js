@@ -7,7 +7,13 @@ import { db } from "../firebase";
 
 const getChatMessages = (id) => {
   const [messages, loading] = useCollection(
-    query(collection(db, `chats/${id}/messages`), orderBy("timeStamp", "asc"))
+    query(
+      collection(
+        db,
+        `${id?.includes("group") ? "groups" : "chats"}/${id}/messages`
+      ),
+      orderBy("timeStamp", "asc")
+    )
   );
   if (!loading) {
     return messages.docs;

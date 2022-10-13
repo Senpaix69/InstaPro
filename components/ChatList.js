@@ -30,7 +30,10 @@ const ChatList = ({
   const [loading, setLoading] = useState(false);
   const [message, loadingMessage] = useCollectionData(
     query(
-      collection(db, `chats/${id}/messages`),
+      collection(
+        db,
+        `${id?.includes("group") ? "groups" : "chat"}/${id}/messages`
+      ),
       orderBy("timeStamp", "desc"),
       limit(1)
     )
@@ -69,7 +72,8 @@ const ChatList = ({
           if (
             checkGroup
               ?.data()
-              .users?.find((user) => user.username === visitor.username)?.admin
+              .users?.find((user) => user.username === visitor.username)
+              ?.creator
           ) {
             deleteAll(toastId, deletingWhat);
           } else {
@@ -187,7 +191,7 @@ const ChatList = ({
             <span className="text-gray-400 w-[70%] overflow-hidden truncate">
               {!loadingMessage && message[0]?.username === visitor.username
                 ? "You: "
-                : ""}
+                : `${message[0]?.username}: `}
               {!loadingMessage
                 ? message[0]?.text?.length > 0
                   ? message[0].text

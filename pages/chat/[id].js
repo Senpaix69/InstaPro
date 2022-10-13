@@ -137,7 +137,8 @@ const Chat = () => {
         }
       );
     } else {
-      await addDoc(collection(db, "chats", id, "messages"), {
+      const check = id?.includes("group") ? "groups" : "chats";
+      await addDoc(collection(db, check, id, "messages"), {
         text: msgToSend,
         username: session.user.username,
         timeStamp: serverTimestamp(),
