@@ -32,7 +32,7 @@ const ChatList = ({
     query(
       collection(
         db,
-        `${id?.includes("group") ? "groups" : "chat"}/${id}/messages`
+        `${id?.includes("group") ? "groups" : "chats"}/${id}/messages`
       ),
       orderBy("timeStamp", "desc"),
       limit(1)
@@ -191,7 +191,7 @@ const ChatList = ({
             <span className="text-gray-400 w-[70%] overflow-hidden truncate">
               {!loadingMessage && message[0]?.username === visitor.username
                 ? "You: "
-                : `${message ? message[0]?.username : ""}: `}
+                : `${message?.length > 0 ? `${message[0]?.username}: ` : ""} `}
               {!loadingMessage
                 ? message[0]?.text?.length > 0
                   ? message[0].text

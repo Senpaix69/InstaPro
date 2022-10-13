@@ -184,8 +184,7 @@ const GroupMembers = ({
                     </button>
                   </li>
                   {(creator ||
-                    (admin && !user?.creator) &&
-                    (admin && !user?.admin)) && (
+                    (admin && !user?.creator && admin && !user?.admin)) && (
                     <li>
                       <button
                         onClick={() => {
