@@ -537,7 +537,7 @@ const Chat = () => {
                       />
                     )}
                     {chat?.name && msg?.data().username !== you.username && (
-                      <span className="absolute text-xs -top-3 left-3">
+                      <span className="absolute text-xs -top-3 left-11">
                         {getName(getUser(msg.data().username, users))}
                       </span>
                     )}

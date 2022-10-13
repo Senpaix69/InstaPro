@@ -67,13 +67,13 @@ const GroupMembers = ({
         } absolute w-full inset-0 h-screen z-40`}
       ></div>
       <div
-        className={`absolute w-full max-w-[85%] h-screen text-white z-50 bg-gray-200 bg-opacity-70 dark:bg-gray-900 dark:bg-opacity-90 p-5 transition-all duration-500 overflow-y-scroll scrollbar-hide ${
+        className={`absolute w-full max-w-[80%] h-screen text-white z-50 bg-gray-200 bg-opacity-70 dark:bg-gray-900 dark:bg-opacity-90 p-3 transition-all duration-500 overflow-y-scroll scrollbar-hide ${
           showMembers
             ? "translate-x-0 opacity-100"
             : "-translate-x-[100%] opacity-0"
         }`}
       >
-        <h1 className="font-bold text-lg">Members</h1>
+        <h1 className="font-bold text-xl mb-4">Members</h1>
         {members.map((user, index) => {
           const curUser = getUser(user.username, users);
           const profImg = curUser?.profImg ? curUser.profImg : curUser?.image;
@@ -81,7 +81,7 @@ const GroupMembers = ({
             <div
               key={index}
               onClick={() => router.push(`/profile/${user?.username}`)}
-              className="mt-4 flex items-start gap-2 p-[2px] rounded-full object-contain cursor-pointer hover:scale-105 transition transform duration-200 ease-out hover:bg-gray-200 dark:hover:bg-gray-600 relative"
+              className="my-2 flex items-start gap-2 p-[3px] rounded-full object-contain cursor-pointer hover:scale-105 transition transform duration-200 ease-out hover:bg-gray-200 dark:hover:bg-gray-600 relative"
             >
               <div className="relative w-12 h-12">
                 <Image
@@ -98,8 +98,15 @@ const GroupMembers = ({
                 ></span>
               </div>
               <div className="flex flex-col">
-                <h1 className="text-md font-semibold">
+                <h1 className="text-md font-semibold flex items-center gap-4">
                   {curUser?.fullname || curUser?.username}
+                  {user?.creator ? (
+                    <h1 className="text-xs text-red-600">creator</h1>
+                  ) : (
+                    user?.admin && (
+                      <h1 className="text-xs text-blue-500">admin</h1>
+                    )
+                  )}
                 </h1>
                 <p className="text-xs text-gray-300 truncate">{curUser?.bio}</p>
               </div>
