@@ -73,7 +73,7 @@ const ChatList = ({
           ) {
             deleteAll(toastId, deletingWhat);
           } else {
-            removeUser(checkGroup.data().users);
+            removeUser(checkGroup.data().users, toastId);
           }
         } else {
           deleteAll(toastId, deletingWhat);
@@ -82,7 +82,7 @@ const ChatList = ({
     }
   };
 
-  const removeUser = async (members) => {
+  const removeUser = async (members, toastId) => {
     const newMembers = members?.filter(
       (itruser) => itruser.username !== visitor.username
     );
@@ -95,8 +95,10 @@ const ChatList = ({
       });
       setLoading(false);
     }
-    if (!loading)
+    if (!loading) {
+      toast.dismiss(toastId);
       toast.success("Removed Member Successfully", { toastId: "success" });
+    }
   };
 
   const deleteAll = async (toastId, deletingWhat) => {
