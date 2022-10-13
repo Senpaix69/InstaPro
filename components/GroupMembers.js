@@ -98,16 +98,16 @@ const GroupMembers = ({
                 ></span>
               </div>
               <div className="flex flex-col">
-                <h1 className="text-md font-semibold flex items-center gap-4">
+                <p className="text-md font-semibold flex items-center gap-4">
                   {curUser?.fullname || curUser?.username}
                   {user?.creator ? (
-                    <h1 className="text-xs text-red-600">creator</h1>
+                    <span className="text-xs text-red-600">creator</span>
                   ) : (
                     user?.admin && (
-                      <h1 className="text-xs text-blue-500">admin</h1>
+                      <span className="text-xs text-blue-500">admin</span>
                     )
                   )}
-                </h1>
+                </p>
                 <p className="text-xs text-gray-300 truncate">{curUser?.bio}</p>
               </div>
 

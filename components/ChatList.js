@@ -27,6 +27,7 @@ const ChatList = ({
   doc,
 }) => {
   const [currUser, setCurrUser] = useState({});
+  const [loading, setLoading] = useState(false);
   const [message, loadingMessage] = useCollectionData(
     query(
       collection(db, `chats/${id}/messages`),
@@ -51,9 +52,17 @@ const ChatList = ({
   }, [user]);
 
   const deleteChat = async () => {
-    const deletingWhat = id.includes("group") ? "groups" : "chats";
-    if (confirm("Do You really want to delete this chat?")) {
-      const toastId = toast.loading("deleting...");
+    const deletingWhat = id?.includes("group") ? "groups" : "chats";
+    if (
+      confirm(
+        `Do You really want to delete this ${deletingWhat.slice(
+          0,
+          deletingWhat.length - 1
+        )}?`
+      )
+    ) {
+      setLoading(true);
+      const toastId = toast.loading("deleting...", { toastId: "delete" });
       const checkGroup = await getDoc(doc(db, `${deletingWhat}/${id}`));
       if (checkGroup.exists()) {
         if (checkGroup.data()?.name) {
@@ -74,11 +83,20 @@ const ChatList = ({
   };
 
   const removeUser = async (members) => {
-    await updateDoc(doc(db, `groups/${id}`), {
-      users: [
-        members?.filter((itruser) => itruser.username !== visitor.username),
-      ],
-    });
+    const newMembers = members?.filter(
+      (itruser) => itruser.username !== visitor.username
+    );
+    if (newMembers?.length === 1) {
+      await deleteDoc(doc(db, `groups/${id}`));
+      setLoading(false);
+    } else {
+      await updateDoc(doc(db, `groups/${id}`), {
+        users: newMembers,
+      });
+      setLoading(false);
+    }
+    if (!loading)
+      toast.success("Removed Member Successfully", { toastId: "success" });
   };
 
   const deleteAll = async (toastId, deletingWhat) => {
@@ -90,6 +108,7 @@ const ChatList = ({
         else removeChat(id);
       })
       .then(() => {
+        setLoading(false);
         sendPush(
           currUser.uid,
           "",
@@ -105,6 +124,7 @@ const ChatList = ({
   return (
     <div className="relative mx-3 my-1">
       <button
+        disabled={loading}
         className="absolute right-2 cursor-pointer bg-red-600 text-gray-200 text-sm font-semibold mt-2 px-2 py-[1.5px] rounded-lg shadow-sm dark:bg-opacity-90"
         onClick={deleteChat}
       >

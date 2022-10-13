@@ -16,7 +16,6 @@ import {
   serverTimestamp,
   deleteDoc,
   updateDoc,
-  getDoc,
   onSnapshot,
 } from "firebase/firestore";
 import { db, storage } from "../../firebase";
@@ -207,7 +206,6 @@ const Chat = () => {
         .toLowerCase();
       if (newUser?.length > 0) {
         if (users?.findIndex((user) => user.username === newUser) !== -1) {
-          console.log("User Exits");
           if (
             chat?.users?.findIndex((user) => user.username === newUser) === -1
           ) {
@@ -348,44 +346,46 @@ const Chat = () => {
                   </div>
                 )}
               </button>
-              <button
-                onClick={() => setMenu((prev) => !prev)}
-                className="absolute right-3 top-2 items-center p-2 text-sm font-medium text-center"
-                type="button"
-              >
-                <div className="flex space-x-2">
-                  <ViewListIcon className="h-6 w-6" />
-                  {menu ? (
-                    <svg
-                      className="w-6 h-6"
-                      aria-hidden="true"
-                      fill="currentColor"
-                      viewBox="0 0 20 20"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        fillRule="evenodd"
-                        d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                        clipRule="evenodd"
-                      ></path>
-                    </svg>
-                  ) : (
-                    <svg
-                      className="w-6 h-6"
-                      aria-hidden="true"
-                      fill="currentColor"
-                      viewBox="0 0 20 20"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        fillRule="evenodd"
-                        d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
-                        clipRule="evenodd"
-                      ></path>
-                    </svg>
-                  )}
-                </div>
-              </button>
+              {id?.includes("group") && (
+                <button
+                  onClick={() => setMenu((prev) => !prev)}
+                  className="absolute right-3 top-2 items-center p-2 text-sm font-medium text-center"
+                  type="button"
+                >
+                  <div className="flex space-x-2">
+                    <ViewListIcon className="h-6 w-6" />
+                    {menu ? (
+                      <svg
+                        className="w-6 h-6"
+                        aria-hidden="true"
+                        fill="currentColor"
+                        viewBox="0 0 20 20"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          fillRule="evenodd"
+                          d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                          clipRule="evenodd"
+                        ></path>
+                      </svg>
+                    ) : (
+                      <svg
+                        className="w-6 h-6"
+                        aria-hidden="true"
+                        fill="currentColor"
+                        viewBox="0 0 20 20"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          fillRule="evenodd"
+                          d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
+                          clipRule="evenodd"
+                        ></path>
+                      </svg>
+                    )}
+                  </div>
+                </button>
+              )}
               <div
                 hidden={!menu}
                 className="absolute right-3 top-16 z-10 w-44 bg-white rounded shadow dark:bg-gray-900"
