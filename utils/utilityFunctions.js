@@ -21,7 +21,6 @@ const getOtherEmail = (all, currentUser) => {
 };
 
 const getAllUsers = () => {
-  
   const [values] = useCollectionData(collection(db, "profile"));
   return values;
 };
