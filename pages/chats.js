@@ -1,10 +1,16 @@
 import { db } from "../firebase";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import Header from "../components/Header";
 import { UserAddIcon, UserGroupIcon, SearchIcon } from "@heroicons/react/solid";
-import { addDoc, collection, doc } from "firebase/firestore";
-import { useCollection, useDocumentData } from "react-firebase-hooks/firestore";
+import {
+  addDoc,
+  collection,
+  doc,
+  onSnapshot,
+  setDoc,
+} from "firebase/firestore";
+import { useDocumentData } from "react-firebase-hooks/firestore";
 import { useRouter } from "next/router";
 import Loading from "../components/Loading";
 import {
@@ -12,6 +18,7 @@ import {
   getOtherEmail,
   getAllUsers,
 } from "../utils/utilityFunctions";
+import { uuidv4 } from "@firebase/util";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import ChatList from "../components/ChatList";
@@ -23,18 +30,57 @@ import sendPush from "../utils/sendPush";
 const Chats = () => {
   const { data: session } = useSession();
   const router = useRouter();
-  const [users, setUsers] = useState();
+  const [validChats, setValidChats] = useState([]);
+  const [validGroups, setValidGroups] = useState([]);
   const [search, setSearch] = useState("");
-  const [snapshot, loading] = useCollection(collection(db, "chats"));
-  const chats = snapshot?.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
   const values = getAllUsers();
   const [darkMode, setDarkMode] = useRecoilState(themeState);
   const [user] = useDocumentData(doc(db, `profile/${session?.user.username}`));
   const [menu, setMenu] = useState(false);
 
+  useEffect(() => {
+    let unsubGroups;
+    let unsubChats;
+    if (session) {
+      unsubGroups = onSnapshot(collection(db, "groups"), (gRes) => {
+        if (!gRes.empty) {
+          setValidGroups(
+            getValidUsers(getArray(gRes.docs), session?.user.username)
+          );
+        }
+      });
+      unsubChats = onSnapshot(collection(db, "chats"), (cRes) => {
+        if (!cRes.empty) {
+          setValidChats(
+            getValidUsers(getArray(cRes.docs), session?.user.username)
+          );
+        }
+      });
+    }
+    return () => {
+      if (unsubChats) {
+        unsubChats();
+      }
+      if (unsubGroups) {
+        unsubGroups();
+      }
+    };
+  }, [session, router]);
+
+  const getArray = (documents) => {
+    const arr = [];
+    documents.forEach((user) => {
+      arr.push({
+        id: user.id,
+        ...user.data(),
+      });
+    });
+    return arr;
+  };
+
   const chatExits = (email) => {
     let valid = false;
-    chats?.map((docf) => {
+    validChats?.map((docf) => {
       if (
         (docf.users[0].username === session.user.username &&
           docf.users[1].username === email) ||
@@ -50,10 +96,6 @@ const Chats = () => {
     return valid;
   };
 
-  useEffect(() => {
-    setUsers(getValidUsers(chats, session?.user.username));
-  }, [snapshot]);
-
   const addUser = async () => {
     setMenu(false);
     const uName = prompt("Enter username: ")?.split(" ").join("").toLowerCase();
@@ -61,7 +103,7 @@ const Chats = () => {
       if (uName !== session.user.username) {
         if (!chatExits(uName)) {
           const ind = values?.findIndex((user) => user.username === uName);
-          if (ind !== -1 && !loading) {
+          if (ind !== -1) {
             await addDoc(collection(db, "chats"), {
               users: [
                 { username: values[ind].username },
@@ -84,16 +126,19 @@ const Chats = () => {
 
   const createGroup = async () => {
     setMenu(false);
+    const ref = uuidv4().split("/")[0];
     const newUser = prompt("Enter Username: ")
       ?.split(" ")
       .join("")
       .toLowerCase();
     if (newUser?.length > 0) {
       const ind = values?.findIndex((user) => user.username === newUser);
-      if (ind !== -1 && !loading) {
-        const name = prompt("Enter Group Name: ") || "";
-        await addDoc(collection(db, "chats"), {
+      if (ind !== -1) {
+        const name = prompt("Enter Group Name: ") || "MyGroup";
+        await setDoc(doc(db, `groups/group-${ref}`), {
           name: name,
+          image:
+            "https://www.hotelbenitsesarches.com/wp-content/uploads/community-group.jpg",
           users: [
             { username: values[ind].username },
             { username: session?.user.username, admin: true },
@@ -119,11 +164,19 @@ const Chats = () => {
     );
   };
 
+  const removeChat = (id) => {
+    setValidChats(validChats.filter((chat) => chat.id !== id));
+  };
+
+  const removeGroup = (id) => {
+    setValidGroups(validGroups.filter((group) => group.id !== id));
+  };
+
   const redirect = (id) => {
     router.push(`/chat/${id}`);
   };
 
-  if (!session && loading) return <Loading />;
+  if (!session) return <Loading />;
   return (
     <div
       className={`h-screen overflow-y-scroll scrollbar-hide ${
@@ -223,35 +276,62 @@ const Chats = () => {
                 <SearchIcon className="h-4 w-4" />
                 <input
                   className="bg-transparent outline-none focus:ring-0 dark:placeholder:text-gray-300"
-                  placeholder="Search"
+                  placeholder="search username..."
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                 />
               </div>
             </div>
-            <p className="font-bold ml-5 mb-2">Messages</p>
             <div className="mt-1">
-              {loading && values === undefined ? (
+              {validGroups && validChats && values === undefined ? (
                 <Loading page={router?.pathname} />
               ) : (
-                users
-                  ?.filter((curuser) =>
-                    getOtherEmail(curuser, session.user)?.includes(
-                      search.toLowerCase()
-                    )
-                  )
-                  .map((curuser, i) => (
+                <>
+                  {validGroups.length > 0 && (
+                    <p className="font-bold ml-4 my-2">Groups</p>
+                  )}
+                  {validGroups.map((group, i) => (
                     <ChatList
                       toast={toast}
+                      collection={collection}
+                      removeGroup={removeGroup}
+                      doc={doc}
                       key={i}
                       visitor={user}
-                      id={curuser.id}
-                      group={snapshot.docs[i]?.data()?.name}
-                      image={snapshot.docs[i]?.data()?.image}
+                      group={group}
+                      id={group.id}
                       redirect={redirect}
-                      user={getOtherEmail(curuser, session.user)}
                     />
-                  ))
+                  ))}
+                  {validChats.length > 0 && (
+                    <p
+                      className={`font-bold ml-4 ${
+                        validGroups.length > 0 ? "mt-4" : "mt-1"
+                      } mb-2`}
+                    >
+                      Messages
+                    </p>
+                  )}
+                  {validChats
+                    ?.filter((curuser) =>
+                      getOtherEmail(curuser, session.user)?.includes(
+                        search.toLowerCase()
+                      )
+                    )
+                    .map((curuser, i) => (
+                      <ChatList
+                        toast={toast}
+                        removeChat={removeChat}
+                        collection={collection}
+                        doc={doc}
+                        key={i}
+                        visitor={user}
+                        id={curuser.id}
+                        redirect={redirect}
+                        user={getOtherEmail(curuser, session.user)}
+                      />
+                    ))}
+                </>
               )}
             </div>
           </div>

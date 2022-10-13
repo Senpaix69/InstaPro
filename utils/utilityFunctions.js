@@ -19,13 +19,13 @@ const getChatMessages = (id) => {
 };
 
 const getOtherEmail = (all, currentUser) => {
-  return all?.users.filter((user) => user.username !== currentUser?.username)[0]
+  return all?.users?.filter((user) => user.username !== currentUser?.username)[0]
     ?.username;
 };
 
 const getAllUsers = () => {
   const [values] = useCollectionData(collection(db, "profile"));
-  return values || [];
+  return values;
 };
 
 const getValidUsers = (allUsers, currentUser) => {

@@ -21,17 +21,15 @@ const GroupMembers = ({
     members?.filter((member) => member.username === you)[0]?.admin || false
   );
 
-  console.log(name);
-
   const removeUser = async (username, user) => {
     if (confirm(`Do you really want to remove ${username}?`)) {
       const newMembers = await members?.filter(
         (itruser) => itruser.username !== username
       );
       if (newMembers?.length === 1) {
-        console.log("first");
-        await deleteDoc(doc(db, `chats/${id}`)).then(() => {
+        await deleteDoc(doc(db, `groups/${id}`)).then(() => {
           const uidRef = user.uid;
+          alert("Removed Member Successfully");
           sendNotification(uidRef);
           setShowMembers(false);
           setTimeout(() => {
@@ -39,10 +37,9 @@ const GroupMembers = ({
           }, 3000);
         });
       } else {
-        await updateDoc(doc(db, `chats/${id}`), {
+        await updateDoc(doc(db, `groups/${id}`), {
           users: newMembers,
         });
-        console.log("second");
         sendNotification(username, user);
       }
     }
@@ -50,7 +47,7 @@ const GroupMembers = ({
 
   const sendNotification = (uid) => {
     const sender = getUser(you, users);
-    const Sname = sender?.fullname || you;
+    const Sname = sender?.fullname ? sender?.fullname : you;
     sendPush(
       uid,
       "",
@@ -70,7 +67,7 @@ const GroupMembers = ({
         } absolute w-full inset-0 h-screen z-40`}
       ></div>
       <div
-        className={`absolute w-full max-w-[70%] h-screen text-white z-50 bg-gray-200 bg-opacity-70 dark:bg-gray-800 dark:bg-opacity-70 p-5 transition-all duration-500 overflow-y-scroll scrollbar-hide ${
+        className={`absolute w-full max-w-[85%] h-screen text-white z-50 bg-gray-200 bg-opacity-70 dark:bg-gray-900 dark:bg-opacity-90 p-5 transition-all duration-500 overflow-y-scroll scrollbar-hide ${
           showMembers
             ? "translate-x-0 opacity-100"
             : "-translate-x-[100%] opacity-0"
@@ -79,14 +76,14 @@ const GroupMembers = ({
         <h1 className="font-bold text-lg">Members</h1>
         {members.map((user, index) => {
           const curUser = getUser(user.username, users);
-          const profImg = curUser?.profImg || curUser?.image;
+          const profImg = curUser?.profImg ? curUser.profImg : curUser?.image;
           return (
             <div
               key={index}
               onClick={() => router.push(`/profile/${user?.username}`)}
-              className="mt-4 flex items-start gap-2 p-[2px] rounded-full object-contain cursor-pointer hover:scale-110 transition transform duration-200 ease-out hover:bg-gray-200 dark:hover:bg-gray-600 relative"
+              className="mt-4 flex items-start gap-2 p-[2px] rounded-full object-contain cursor-pointer hover:scale-105 transition transform duration-200 ease-out hover:bg-gray-200 dark:hover:bg-gray-600 relative"
             >
-              <div className="relative w-14 h-14">
+              <div className="relative w-12 h-12">
                 <Image
                   loading="eager"
                   layout="fill"
@@ -100,11 +97,11 @@ const GroupMembers = ({
                   } border-[3px] border-white dark:border-gray-900 rounded-full`}
                 ></span>
               </div>
-              <div className="flex flex-col items-center">
-                <h1 className="text-lg font-semibold">
+              <div className="flex flex-col">
+                <h1 className="text-md font-semibold">
                   {curUser?.fullname || curUser?.username}
                 </h1>
-                <p className="text-sm text-gray-300">{curUser.bio}</p>
+                <p className="text-xs text-gray-300 truncate">{curUser?.bio}</p>
               </div>
 
               {admin && (

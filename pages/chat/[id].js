@@ -8,7 +8,6 @@ import Image from "next/image";
 import { useRef, useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
-import { useDocumentData } from "react-firebase-hooks/firestore";
 import EditGroup from "../../components/EditGroup";
 import {
   collection,
@@ -17,6 +16,8 @@ import {
   serverTimestamp,
   deleteDoc,
   updateDoc,
+  getDoc,
+  onSnapshot,
 } from "firebase/firestore";
 import { db, storage } from "../../firebase";
 import Loading from "../../components/Loading";
@@ -56,9 +57,43 @@ const Chat = () => {
   const [status, setStatus] = useState(0);
   const [showMembers, setShowMembers] = useState(false);
   const [darkMode] = useRecoilState(themeState);
-  const [chat] = useDocumentData(doc(db, `chats/${id}`));
+  const [chat, setChat] = useState({});
   const you = getUser(session?.user.username, users);
-  const user = getUser(getOtherEmail(chat, session?.user), users);
+  const [user, setUser] = useState({});
+
+  useEffect(() => {
+    let unsubChats;
+    let unsubGroups;
+    if (id) {
+      if (id.includes("group")) {
+        unsubGroups = onSnapshot(doc(db, `groups/${id}`), (snapshot) => {
+          if (snapshot.exists()) {
+            setChat(snapshot.data());
+          }
+        });
+      } else {
+        unsubChats = onSnapshot(doc(db, `chats/${id}`), (snapshot) => {
+          if (snapshot.exists()) {
+            setChat(snapshot.data());
+          }
+        });
+      }
+    }
+    return () => {
+      if (unsubChats) {
+        unsubChats();
+      }
+      if (unsubGroups) {
+        unsubGroups();
+      }
+    };
+  }, [router]);
+
+  useEffect(() => {
+    if (chat !== {} && !id?.includes("group")) {
+      setUser(getUser(getOtherEmail(chat, session?.user), users));
+    }
+  }, [chat, id]);
 
   const sendMessage = async (e) => {
     e.preventDefault();
@@ -176,7 +211,7 @@ const Chat = () => {
           if (
             chat?.users?.findIndex((user) => user.username === newUser) === -1
           ) {
-            await updateDoc(doc(db, "chats", id), {
+            await updateDoc(doc(db, "groups", id), {
               users: [...chat.users, { username: newUser }],
             }).then(() => {
               sendPush(
@@ -255,10 +290,10 @@ const Chat = () => {
                     src={
                       chat?.image
                         ? chat.image
-                        : user
+                        : user?.profImg
                         ? user.profImg
-                          ? user.profImg
-                          : user.image
+                        : user?.image
+                        ? user.image
                         : require("../../public/userimg.jpg")
                     }
                     alt="prof"
@@ -275,10 +310,10 @@ const Chat = () => {
                   <h1 className="font-bold">
                     {chat?.name
                       ? chat.name
-                      : user
-                      ? user?.fullname
-                        ? user.fullname
-                        : user.username
+                      : user?.fullname
+                      ? user.fullname
+                      : user?.username
+                      ? user.username
                       : "Loading..."}
                   </h1>
                   {!chat?.name && user?.username === "hurairayounas" && (
@@ -293,23 +328,25 @@ const Chat = () => {
                     </div>
                   )}
                 </div>
-                <div className="flex space-x-1">
-                  <span className="text-xs md:text-sm text-gray-400">
-                    active
-                  </span>
-                  {user?.active ? (
+                {messages && (
+                  <div className="flex space-x-1">
                     <span className="text-xs md:text-sm text-gray-400">
-                      now
+                      active
                     </span>
-                  ) : (
-                    <Moment
-                      fromNow
-                      className="text-xs md:text-sm text-gray-400"
-                    >
-                      {user?.timeStamp?.toDate()}
-                    </Moment>
-                  )}
-                </div>
+                    {user?.active ? (
+                      <span className="text-xs md:text-sm text-gray-400">
+                        now
+                      </span>
+                    ) : (
+                      <Moment
+                        fromNow
+                        className="text-xs md:text-sm text-gray-400"
+                      >
+                        {user?.timeStamp?.toDate()}
+                      </Moment>
+                    )}
+                  </div>
+                )}
               </button>
               <button
                 onClick={() => setMenu((prev) => !prev)}
@@ -412,7 +449,7 @@ const Chat = () => {
                 <ArrowRightIcon className="h-3 w-3" />
               </div>
             )}
-            {user?.username ? (
+            {messages ? (
               messages?.map((msg, i) => (
                 <div
                   ref={messagesEndRef}

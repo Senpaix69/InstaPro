@@ -11,6 +11,7 @@ const nextConfig = {
       "lh3.googleusercontent.com",
       "firebasestorage.googleapis.com",
       "cloudflare-ipfs.com",
+      "www.hotelbenitsesarches.com",
     ],
   },
   env: {

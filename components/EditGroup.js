@@ -1,7 +1,6 @@
 import { CameraIcon, PhotographIcon } from "@heroicons/react/solid";
 import { ref } from "firebase/storage";
 import { useRef, useState } from "react";
-import { toast } from "react-toastify";
 
 const EditGroup = ({
   setEditGroup,
@@ -17,16 +16,12 @@ const EditGroup = ({
   uploadBytesResumable,
 }) => {
   const filePickerRef = useRef(null);
-  const toastId = useRef(null);
   const [description, setDescription] = useState("");
   const [name, setName] = useState("");
   const [selectFile, setSelectFile] = useState("");
   const [loading, setLoading] = useState(false);
 
   const saveEditing = async () => {
-    if (toast.isActive(toastId.current)) toast.dismiss(toastId.current);
-    if (selectFile || name || description)
-      toastId.current = toast.loading("Saving...");
     if (selectFile) {
       setLoading(true);
       const storageRef = ref(
@@ -47,7 +42,7 @@ const EditGroup = ({
           // download url
           getDownloadURL(uploadTask.snapshot.ref)
             .then(async (url) => {
-              await updateDoc(doc(db, "chats", id), {
+              await updateDoc(doc(db, "groups", id), {
                 name: name || gName,
                 description: description || gDesc,
                 image: url,
@@ -57,7 +52,7 @@ const EditGroup = ({
         }
       );
     } else if (name || description) {
-      await updateDoc(doc(db, "chats", id), {
+      await updateDoc(doc(db, "groups", id), {
         name: name ? name : gName,
         description: description ? description : gDesc,
       }).then(() => saved("success"));
@@ -65,27 +60,24 @@ const EditGroup = ({
   };
 
   const saved = (action) => {
-    if (toast.isActive(toastId.current)) toast.dismiss(toastId.current);
-    if (action === "success")
-      toast.success("group edited successfully", { toastId: "success" });
-    else toast.error("Error Occured during editing", { toastId: "error" });
+    if (action === "success") alert("group edited successfully");
+    else alert("Error Occured during editing");
     setName("");
     setDescription("");
     setLoading(false);
     setSelectFile("");
     setEditGroup(false);
-    toastId.current = null;
   };
 
   const addImage = (file) => {
     if (file.type.includes("image")) {
       if (file.size / (1024 * 1024) > 3) {
-        toast.error("Image size is larger than 3mb");
+        alert("Image size is larger than 3mb");
       } else {
         setSelectFile(file);
       }
     } else {
-      toast.error("please select image");
+      alert("please select image");
     }
   };
 

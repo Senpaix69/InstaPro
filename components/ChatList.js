@@ -1,23 +1,32 @@
 import Image from "next/image";
 import Moment from "react-moment";
 import {
-  collection,
   deleteDoc,
-  doc,
   getDoc,
   limit,
+  onSnapshot,
   orderBy,
   query,
   updateDoc,
 } from "firebase/firestore";
 import { db } from "../firebase";
 import sendPush from "../utils/sendPush";
-import {
-  useCollectionData,
-  useDocumentData,
-} from "react-firebase-hooks/firestore";
+import { useCollectionData } from "react-firebase-hooks/firestore";
+import { useEffect, useState } from "react";
 
-const ChatList = ({ redirect, id, user, toast, visitor, group, image }) => {
+const ChatList = ({
+  redirect,
+  id,
+  user,
+  toast,
+  visitor,
+  group,
+  collection,
+  removeChat,
+  removeGroup,
+  doc,
+}) => {
+  const [currUser, setCurrUser] = useState({});
   const [message, loadingMessage] = useCollectionData(
     query(
       collection(db, `chats/${id}/messages`),
@@ -25,12 +34,27 @@ const ChatList = ({ redirect, id, user, toast, visitor, group, image }) => {
       limit(1)
     )
   );
-  const [currUser, loading] = useDocumentData(doc(db, `profile/${user}`));
+  useEffect(() => {
+    let unsub;
+    if (user) {
+      unsub = onSnapshot(doc(db, `profile/${user}`), (res) => {
+        if (res.exists()) {
+          setCurrUser(res.data());
+        }
+      });
+    }
+    return () => {
+      if (unsub) {
+        unsub();
+      }
+    };
+  }, [user]);
 
   const deleteChat = async () => {
+    const deletingWhat = id.includes("group") ? "groups" : "chats";
     if (confirm("Do You really want to delete this chat?")) {
       const toastId = toast.loading("deleting...");
-      const checkGroup = await getDoc(doc(db, `chats/${id}`));
+      const checkGroup = await getDoc(doc(db, `${deletingWhat}/${id}`));
       if (checkGroup.exists()) {
         if (checkGroup.data()?.name) {
           if (
@@ -38,41 +62,44 @@ const ChatList = ({ redirect, id, user, toast, visitor, group, image }) => {
               ?.data()
               .users?.find((user) => user.username === visitor.username)?.admin
           ) {
-            deleteAll(toastId);
+            deleteAll(toastId, deletingWhat);
           } else {
             removeUser(checkGroup.data().users);
           }
         } else {
-          deleteAll(toastId);
+          deleteAll(toastId, deletingWhat);
         }
       }
     }
   };
 
   const removeUser = async (members) => {
-    await updateDoc(doc(db, `chats/${id}`), {
+    await updateDoc(doc(db, `groups/${id}`), {
       users: [
         members?.filter((itruser) => itruser.username !== visitor.username),
       ],
     });
   };
 
-  const deleteAll = async (toastId) => {
-    await deleteDoc(doc(db, "chats", id))
+  const deleteAll = async (toastId, deletingWhat) => {
+    await deleteDoc(doc(db, `${deletingWhat}/${id}`))
       .then(() => {
         toast.dismiss(toastId);
         toast.success("Deleted Successfully 😄");
+        if (deletingWhat === "groups") removeGroup(id);
+        else removeChat(id);
       })
       .then(() => {
         sendPush(
           currUser.uid,
           "",
           visitor.fullname,
-          `has deleted ${group ? `"${group}"->group` : "your chat"}`,
+          `has deleted ${group ? group : "your chat"}`,
           "",
           "https://insta-pro.vercel.app/chats"
         );
-      });
+      })
+      .catch((err) => toast.error(`Error: ${err}`));
   };
 
   return (
@@ -87,15 +114,15 @@ const ChatList = ({ redirect, id, user, toast, visitor, group, image }) => {
         onClick={() => redirect(id)}
         className="flex items-center justify-center w-full py-2 cursor-pointer truncate"
       >
-        <div className="flex items-center justify-center p-[1px] rounded-full object-contain cursor-pointer hover:scale-110 transition transform duration-200 ease-out">
+        <div className="flex items-center justify-center p-[1px] rounded-full cursor-pointer">
           <div className="relative w-14 h-14">
             <Image
               loading="eager"
               layout="fill"
               src={
-                image
-                  ? image
-                  : currUser
+                group
+                  ? group.image
+                  : currUser?.username
                   ? currUser.profImg
                     ? currUser.profImg
                     : currUser.image
@@ -107,7 +134,7 @@ const ChatList = ({ redirect, id, user, toast, visitor, group, image }) => {
             {!group && (
               <span
                 className={`top-0 right-0 absolute w-4 h-4 ${
-                  !loading && currUser?.active ? "bg-green-400" : "bg-slate-400"
+                  currUser?.active ? "bg-green-400" : "bg-slate-400"
                 } border-[3px] border-white dark:border-gray-900 rounded-full`}
               ></span>
             )}
@@ -117,7 +144,7 @@ const ChatList = ({ redirect, id, user, toast, visitor, group, image }) => {
           <div className="flex items-center">
             <h1 className="font-semibold">
               {group
-                ? group
+                ? group.name
                 : currUser?.fullname
                 ? currUser.fullname
                 : currUser?.username}
