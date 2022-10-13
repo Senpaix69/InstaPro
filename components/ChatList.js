@@ -191,7 +191,7 @@ const ChatList = ({
             <span className="text-gray-400 w-[70%] overflow-hidden truncate">
               {!loadingMessage && message[0]?.username === visitor.username
                 ? "You: "
-                : `${message[0]?.username}: `}
+                : `${message ? message[0]?.username : ""}: `}
               {!loadingMessage
                 ? message[0]?.text?.length > 0
                   ? message[0].text
