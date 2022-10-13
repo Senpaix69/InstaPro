@@ -177,7 +177,15 @@ const Chat = () => {
 
   const unsendMessage = async (msgID) => {
     if (confirm("Unsend Message?")) {
-      await deleteDoc(doc(db, "chats", id, "messages", msgID));
+      await deleteDoc(
+        doc(
+          db,
+          id?.includes("group") ? "groups" : "chats",
+          id,
+          "messages",
+          msgID
+        )
+      );
     }
   };
 
