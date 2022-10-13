@@ -114,7 +114,7 @@ const ChatList = ({
         sendPush(
           currUser.uid,
           "",
-          visitor.fullname,
+          visitor.fullname || visitor.username,
           `has deleted ${group ? group : "your chat"}`,
           "",
           "https://insta-pro.vercel.app/chats"

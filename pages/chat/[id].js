@@ -199,7 +199,8 @@ const Chat = () => {
 
   const addUser = async () => {
     setMenu(false);
-    if (chat?.users?.find((user) => user.username === you.username)?.admin) {
+    const status = chat?.users?.find((user) => user.username === you.username);
+    if (status.admin || status.creator) {
       const newUser = prompt("Enter Username: ")
         ?.split(" ")
         .join("")
@@ -486,8 +487,8 @@ const Chat = () => {
                     <div
                       className={`${
                         msg?.data().username === you?.username
-                          ? "mr-9 bg-green-400 bg-opacity-50 dark:bg-slate-600 dark:bg-opacity-50"
-                          : "ml-9 bg-blue-400 bg-opacity-50 dark:bg-stone-700 dark:bg-opacity-50"
+                          ? "mr-9 bg-green-400 bg-opacity-50 dark:bg-slate-600 dark:bg-opacity-50 backdrop-blur-sm"
+                          : "ml-9 bg-blue-400 bg-opacity-50 dark:bg-stone-700 dark:bg-opacity-50 backdrop-blur-sm"
                       } py-1 px-3 rounded-lg font-normal`}
                     >
                       <p>{msg?.data().text}</p>

@@ -141,7 +141,7 @@ const Chats = () => {
             "https://www.hotelbenitsesarches.com/wp-content/uploads/community-group.jpg",
           users: [
             { username: values[ind].username },
-            { username: session?.user.username, admin: true },
+            { username: session?.user.username, creator: true },
           ],
         }).then(() => {
           actions("group", ind, name);
@@ -157,7 +157,7 @@ const Chats = () => {
     sendPush(
       values[ind]?.uid,
       "",
-      user.fullname,
+      user?.fullname || user?.username,
       `has added you in ${create === "group" ? name : "chat"}`,
       "",
       "https://insta-pro.vercel.app/chats"
