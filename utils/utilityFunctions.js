@@ -2,16 +2,12 @@ import {
   useCollection,
   useCollectionData,
 } from "react-firebase-hooks/firestore";
-import { query, collection, orderBy, limit } from "firebase/firestore";
+import { query, collection, orderBy } from "firebase/firestore";
 import { db } from "../firebase";
 
 const getChatMessages = (id) => {
   const [messages, loading] = useCollection(
-    query(
-      collection(db, `chats/${id}/messages`),
-      orderBy("timeStamp", "asc"),
-      limit(15)
-    )
+    query(collection(db, `chats/${id}/messages`), orderBy("timeStamp", "asc"))
   );
   if (!loading) {
     return messages.docs;
@@ -19,8 +15,9 @@ const getChatMessages = (id) => {
 };
 
 const getOtherEmail = (all, currentUser) => {
-  return all?.users?.filter((user) => user.username !== currentUser?.username)[0]
-    ?.username;
+  return all?.users?.filter(
+    (user) => user.username !== currentUser?.username
+  )[0]?.username;
 };
 
 const getAllUsers = () => {
