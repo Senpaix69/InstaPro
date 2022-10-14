@@ -32,7 +32,7 @@ const GroupMembers = ({
   }, [members?.length]);
 
   const removeUser = async (username, status, user) => {
-    if (status) {
+    if (status && !creator) {
       alert(`You can not remove ${status} of this group`);
     } else {
       const uidRef = user.uid;
@@ -187,12 +187,12 @@ const GroupMembers = ({
                     (admin && !user?.creator && admin && !user?.admin)) && (
                     <li>
                       <button
-                        onClick={() => {
+                        onClick={(e) => {
                           e.stopPropagation();
-                          setMenu(false);
+                          setMenu(defMenu);
                           removeUser(
                             user.username,
-                            user.admin || user.creator,
+                            user.admin ? "admin" : "",
                             curUser
                           );
                         }}
