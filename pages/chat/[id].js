@@ -461,7 +461,7 @@ const Chat = () => {
           </section>
 
           {/* Chat Body */}
-          <section className="flex-1 flex flex-col justify-end relative pt-14">
+          <section className="flex-1 flex flex-col justify-end relative pt-14 pb-2">
             {(chat?.description || user?.bio) && (
               <div
                 className="absolute top-1 w-full bg-gray-700 border border-gray-800 text-gray-200 bg-opacity-40 px-4 py-3 rounded"
@@ -470,9 +470,9 @@ const Chat = () => {
                 <strong className="font-bold">
                   {id?.includes("group") ? "Description: " : "Bio: "}
                 </strong>
-                <p className="block sm:inline">
+                <span className="block sm:inline">
                   {chat?.description || user?.bio}
-                </p>
+                </span>
               </div>
             )}
             {newMessages?.length > 0 || messages ? (
