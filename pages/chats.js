@@ -170,7 +170,7 @@ const Chats = () => {
       "",
       user?.fullname || user?.username,
       `has added you in ${create === "group" ? name : "chat"}`,
-      "",
+      user?.profImg || user?.image,
       "https://insta-pro.vercel.app/chats"
     );
   };
