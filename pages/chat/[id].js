@@ -142,8 +142,11 @@ const Chat = () => {
         text: msgToSend,
         username: session.user.username,
         timeStamp: serverTimestamp(),
-      }).then(() => {
+      }).then(async () => {
         msgSend(msgToSend);
+        await updateDoc(doc(db, check, id), {
+          timeStamp: serverTimestamp(),
+        });
       });
     }
   };

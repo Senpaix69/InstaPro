@@ -9,6 +9,9 @@ import {
   doc,
   onSnapshot,
   setDoc,
+  query,
+  orderBy,
+  serverTimestamp,
 } from "firebase/firestore";
 import { useDocumentData } from "react-firebase-hooks/firestore";
 import { useRouter } from "next/router";
@@ -42,20 +45,26 @@ const Chats = () => {
     let unsubGroups;
     let unsubChats;
     if (session) {
-      unsubGroups = onSnapshot(collection(db, "groups"), (gRes) => {
-        if (!gRes.empty) {
-          setValidGroups(
-            getValidUsers(getArray(gRes.docs), session?.user.username)
-          );
+      unsubGroups = onSnapshot(
+        query(collection(db, "groups"), orderBy("timeStamp", "desc")),
+        (gRes) => {
+          if (!gRes.empty) {
+            setValidGroups(
+              getValidUsers(getArray(gRes.docs), session?.user.username)
+            );
+          }
         }
-      });
-      unsubChats = onSnapshot(collection(db, "chats"), (cRes) => {
-        if (!cRes.empty) {
-          setValidChats(
-            getValidUsers(getArray(cRes.docs), session?.user.username)
-          );
+      );
+      unsubChats = onSnapshot(
+        query(collection(db, "chats"), orderBy("timeStamp", "desc")),
+        (cRes) => {
+          if (!cRes.empty) {
+            setValidChats(
+              getValidUsers(getArray(cRes.docs), session?.user.username)
+            );
+          }
         }
-      });
+      );
     }
     return () => {
       if (unsubChats) {
@@ -109,6 +118,7 @@ const Chats = () => {
                 { username: values[ind].username },
                 { username: session?.user.username },
               ],
+              timeStamp: serverTimestamp(),
             }).then(() => {
               actions("chat", ind);
             });
@@ -143,6 +153,7 @@ const Chats = () => {
             { username: values[ind].username },
             { username: session?.user.username, creator: true },
           ],
+          timeStamp: serverTimestamp(),
         }).then(() => {
           actions("group", ind, name);
         });
