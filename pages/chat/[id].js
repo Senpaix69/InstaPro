@@ -1,8 +1,4 @@
-import {
-  ArrowLeftIcon,
-  ArrowRightIcon,
-  TrashIcon,
-} from "@heroicons/react/solid";
+import { ArrowLeftIcon, TrashIcon } from "@heroicons/react/solid";
 import Moment from "react-moment";
 import Image from "next/image";
 import { useRef, useState, useEffect } from "react";
@@ -50,6 +46,7 @@ const Chat = () => {
   const [sending, setSending] = useState(false);
   const [editGroup, setEditGroup] = useState(false);
   const messages = getChatMessages(id);
+  const [newMessages, setNewMessages] = useState([]);
   const [selectFile, setSelectFile] = useState(null);
   const [fileType, setFileType] = useState("");
   const filePickerRef = useRef(null);
@@ -87,6 +84,16 @@ const Chat = () => {
       }
     };
   }, [router]);
+
+  useEffect(() => {
+    if (messages) {
+      const revMsg = [];
+      for (let index in messages) {
+        revMsg.push(messages[messages.length - 1 - index]);
+      }
+      setNewMessages(revMsg);
+    }
+  }, [id, messages?.length]);
 
   useEffect(() => {
     if (chat !== {} && !id?.includes("group")) {
@@ -339,7 +346,7 @@ const Chat = () => {
                     </div>
                   )}
                 </div>
-                {messages && (
+                {newMessages?.length > 0 && (
                   <div className="flex space-x-1">
                     <span className="text-xs md:text-sm text-gray-400">
                       active
@@ -454,16 +461,22 @@ const Chat = () => {
           </section>
 
           {/* Chat Body */}
-          <section className="flex-1">
+          <section className="flex-1 flex flex-col justify-end relative pt-14">
             {(chat?.description || user?.bio) && (
-              <div className="flex items-center justify-around m-2 p-2 mb-4 text-sm text-center text-gray-700 dark:bg-opacity-70 rounded-lg dark:bg-gray-900 dark:text-slate-400">
-                <ArrowLeftIcon className="h-3 w-3" />
-                {chat?.description || user?.bio}
-                <ArrowRightIcon className="h-3 w-3" />
+              <div
+                className="absolute top-1 w-full bg-gray-700 border border-gray-800 text-gray-200 bg-opacity-40 px-4 py-3 rounded"
+                role="alert"
+              >
+                <strong className="font-bold">
+                  {id?.includes("group") ? "Description: " : "Bio: "}
+                </strong>
+                <p className="block sm:inline">
+                  {chat?.description || user?.bio}
+                </p>
               </div>
             )}
-            {messages ? (
-              messages?.map((msg, i) => (
+            {newMessages?.length > 0 || messages ? (
+              newMessages?.map((msg, i) => (
                 <div
                   ref={messagesEndRef}
                   key={i}
@@ -558,7 +571,7 @@ const Chat = () => {
                 </div>
               ))
             ) : (
-              <Loading page={"List"} />
+              <Loading page={"List"} chat={true} />
             )}
           </section>
 
@@ -630,7 +643,7 @@ const Chat = () => {
                   placeholder="Your message..."
                 ></textarea>
                 <button
-                  onClick={sendMessage}
+                  onClick={(e) => sendMessage(e)}
                   disabled={text || selectFile ? false : true}
                   type="submit"
                   className={`transition-all duration-500 inline-flex justify-center py-2 text-gray-500 rounded-lg cursor-pointer dark:text-gray-400 ${

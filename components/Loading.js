@@ -1,9 +1,11 @@
 import { Puff } from "react-loader-spinner";
 
-const Loading = ({ page }) => {
+const Loading = ({ page, chat }) => {
   return (
     <div
-      className={`flex flex-col w-full items-center ${
+      className={`${
+        chat ? "absolute h-screen justify-center" : "flex-col"
+      } flex w-full items-center ${
         page
           ? page === "List"
             ? "mt-72"

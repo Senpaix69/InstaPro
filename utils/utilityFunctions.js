@@ -2,7 +2,7 @@ import {
   useCollection,
   useCollectionData,
 } from "react-firebase-hooks/firestore";
-import { query, collection, orderBy } from "firebase/firestore";
+import { query, collection, orderBy, limit } from "firebase/firestore";
 import { db } from "../firebase";
 
 const getChatMessages = (id) => {
@@ -12,7 +12,7 @@ const getChatMessages = (id) => {
         db,
         `${id?.includes("group") ? "groups" : "chats"}/${id}/messages`
       ),
-      orderBy("timeStamp", "asc")
+      orderBy("timeStamp", "desc")
     )
   );
   if (!loading) {
