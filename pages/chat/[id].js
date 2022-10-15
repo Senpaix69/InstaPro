@@ -112,20 +112,12 @@ const Chat = () => {
   useEffect(() => {
     let timeOut;
     if (messages) {
-      if (messages.length > newMessages.length) {
-        const revMsg = [];
-        for (let index in messages) {
-          revMsg.push(messages[messages.length - 1 - index]);
-        }
-        setNewMessages(revMsg);
-        if (noMoreMessages) setNoMoreMessages(false);
-        if (loadingNewMessages) setLoadingNewMessages(false);
-        console.log("Fetched");
-      } else {
-        console.log("no more messages");
-        if (!noMoreMessages) setNoMoreMessages(true);
-        timeOut = setTimeout(() => setScrollDown(true), 4000);
+      const revMsg = [];
+      for (let index in messages) {
+        revMsg.push(messages[messages.length - 1 - index]);
       }
+      setNewMessages(revMsg);
+      if (loadingNewMessages) setLoadingNewMessages(false);
     }
     return () => {
       if (timeOut) clearTimeout(timeOut);
@@ -136,7 +128,7 @@ const Chat = () => {
     if (chat.users && !id?.includes("group")) {
       setUser(getUser(getOtherEmail(chat, session?.user), users));
     }
-  }, [chat, id, messages?.length]);
+  }, [chat, id, users]);
 
   const sendMessage = async (e) => {
     setLim((prev) => prev + 1);
@@ -520,6 +512,7 @@ const Chat = () => {
             } flex-1 flex flex-col justify-end relative pb-2`}
           >
             <button
+              hidden={messages?.length > 0 ? false : true}
               disabled={loadingNewMessages}
               onClick={loadMoreMessages}
               className={`absolute top-14 w-full bg-transparent transition-opacity duration-700 text-gray-400 hover:text-blue-500 ${
