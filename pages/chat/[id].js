@@ -26,7 +26,7 @@ import {
   getUserProfilePic,
 } from "../../utils/utilityFunctions";
 import { useRecoilState } from "recoil";
-import { themeState } from "../../atoms/states";
+import { themeState, userActivity } from "../../atoms/states";
 import sendPush from "../../utils/sendPush";
 import {
   UserAddIcon,
@@ -56,6 +56,21 @@ const Chat = () => {
   const [chat, setChat] = useState({});
   const you = getUser(session?.user.username, users);
   const [user, setUser] = useState({});
+  const [active, setActive] = useRecoilState(userActivity);
+
+  useEffect(() => {
+    window.addEventListener("focus", () => setActive(true));
+    window.addEventListener("blur", () => setActive(false));
+    window.addEventListener("online", () => setActive(true));
+    window.addEventListener("offline", () => setActive(false));
+    return () => {
+      window.removeEventListener("focus", () => setActive(true));
+      window.removeEventListener("blur", () => setActive(false));
+      window.addEventListener("online", () => setActive(true));
+      window.addEventListener("offline", () => setActive(false));
+    };
+  }, []);
+
   const creator = getName(
     getUser(
       chat?.users?.filter((itr) => (itr.creator === true ? true : false))[0]
