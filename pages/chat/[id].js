@@ -56,6 +56,13 @@ const Chat = () => {
   const [chat, setChat] = useState({});
   const you = getUser(session?.user.username, users);
   const [user, setUser] = useState({});
+  const creator = getName(
+    getUser(
+      chat?.users?.filter((itr) => (itr.creator === true ? true : false))[0]
+        ?.username,
+      users
+    )
+  );
 
   useEffect(() => {
     let unsubChats;
@@ -258,7 +265,7 @@ const Chat = () => {
     <div className={darkMode ? "bg-gray-100" : "dark bg-gray-900"}>
       <div className="relative max-w-3xl lg:mx-auto flex justify-center">
         <div
-          className="dark:bg-black bg-[url('https://i.pinimg.com/originals/b7/fc/af/b7fcaf2631fc54f28ef3f123855d03dc.jpg')] dark:bg-[url('https://wallpapercave.com/wp/wp9100371.jpg')]
+          className="dark:bg-black bg-[url('https://browsecat.net/sites/default/files/neon-iphone-wallpapers-46872-643845-2936383.png')]
             bg-no-repeat bg-cover bg-center w-full flex flex-col md:w-[700px] h-screen overflow-y-scroll scrollbar-hide"
         >
           {chat?.name && (
@@ -346,12 +353,12 @@ const Chat = () => {
                     </div>
                   )}
                 </div>
-                {newMessages?.length > 0 && (
-                  <div className="flex space-x-1">
-                    <span className="text-xs md:text-sm text-gray-400">
-                      active
-                    </span>
-                    {user?.active ? (
+                <div className="flex space-x-1">
+                  <span className="text-xs md:text-sm text-gray-400">
+                    {creator ? "created by" : "active"}
+                  </span>
+                  {!creator ? (
+                    user?.active ? (
                       <span className="text-xs md:text-sm text-gray-400">
                         now
                       </span>
@@ -362,9 +369,13 @@ const Chat = () => {
                       >
                         {user?.timeStamp?.toDate()}
                       </Moment>
-                    )}
-                  </div>
-                )}
+                    )
+                  ) : (
+                    <span className="text-xs md:text-sm text-gray-400">
+                      {creator}
+                    </span>
+                  )}
+                </div>
               </button>
               {id?.includes("group") && (
                 <button
@@ -461,16 +472,16 @@ const Chat = () => {
           </section>
 
           {/* Chat Body */}
-          <section className="flex-1 flex flex-col justify-end relative pt-14 pb-2">
+          <section className="flex-1 flex flex-col justify-end relative pt-16 pb-2">
             {(chat?.description || user?.bio) && (
               <div
-                className="absolute top-1 w-full bg-gray-700 border border-gray-800 text-gray-200 bg-opacity-40 px-4 py-3 rounded"
+                className="absolute top-1 flex gap-2 items-center w-full bg-gray-700 border border-gray-800 text-gray-200 bg-opacity-40 px-4 py-3 rounded"
                 role="alert"
               >
                 <strong className="font-bold">
                   {id?.includes("group") ? "Description: " : "Bio: "}
                 </strong>
-                <span className="block sm:inline">
+                <span className="block sm:inline truncate">
                   {chat?.description || user?.bio}
                 </span>
               </div>

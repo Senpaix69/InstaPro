@@ -119,13 +119,15 @@ const GroupMembers = ({
         } absolute w-full inset-0 h-screen z-30`}
       ></div>
       <div
-        className={`absolute w-full max-w-[80%] h-screen text-white z-40 bg-gray-200 bg-opacity-70 dark:bg-gray-900 dark:bg-opacity-60 p-3 transition-all duration-700 overflow-y-scroll scrollbar-hide backdrop-blur-sm ${
+        className={`absolute w-full max-w-[80%] h-screen text-white z-40 bg-gray-200 bg-opacity-70 dark:bg-gray-900 dark:bg-opacity-60 transition-all duration-700 overflow-y-scroll scrollbar-hide backdrop-blur-sm ${
           showMembers
             ? "translate-x-0 opacity-100"
             : "-translate-x-[100%] opacity-0"
         }`}
       >
-        <h1 className="font-bold text-xl py-4 sticky top-0 z-10">Members</h1>
+        <h1 className="font-bold text-xl p-3 sticky top-0 z-10 dark:bg-gray-900 dark:backdrop-blur-sm shadow-sm shadow-gray-700">
+          Members🙂
+        </h1>
         {members.map((user, index) => {
           const curUser = getUser(user.username, users);
           const profImg = curUser?.profImg ? curUser.profImg : curUser?.image;
@@ -135,7 +137,7 @@ const GroupMembers = ({
               onClick={() => {
                 if (user.username !== you) openMenu(index);
               }}
-              className={`my-2 flex items-start gap-2 p-[3px] rounded-full object-contain cursor-pointer ${
+              className={`my-2 flex items-start gap-2 p-[3px] px-3 rounded-full object-contain cursor-pointer ${
                 menu[index] === 1 ? "scale-105" : "-z-10"
               } transition transform duration-200 ease-out hover:bg-gray-200 dark:hover:bg-gray-600 relative`}
             >
