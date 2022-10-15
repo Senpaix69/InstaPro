@@ -99,7 +99,7 @@ const Chat = () => {
     if (chat !== {} && !id?.includes("group")) {
       setUser(getUser(getOtherEmail(chat, session?.user), users));
     }
-  }, [chat, id]);
+  }, [chat, id, users]);
 
   const sendMessage = async (e) => {
     e.preventDefault();
