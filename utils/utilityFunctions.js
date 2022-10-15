@@ -5,14 +5,15 @@ import {
 import { query, collection, orderBy, limit } from "firebase/firestore";
 import { db } from "../firebase";
 
-const getChatMessages = (id) => {
+const getChatMessages = (id, lim = 15) => {
   const [messages, loading] = useCollection(
     query(
       collection(
         db,
         `${id?.includes("group") ? "groups" : "chats"}/${id}/messages`
       ),
-      orderBy("timeStamp", "desc")
+      orderBy("timeStamp", "desc"),
+      limit(lim)
     )
   );
   if (!loading) {

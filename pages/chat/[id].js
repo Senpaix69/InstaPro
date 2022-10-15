@@ -45,17 +45,27 @@ const Chat = () => {
   const [menu, setMenu] = useState(false);
   const [sending, setSending] = useState(false);
   const [editGroup, setEditGroup] = useState(false);
-  const messages = getChatMessages(id);
+  const [lim, setLim] = useState(15);
+  const [noMoreMessages, setNoMoreMessages] = useState(false);
+  const messages = getChatMessages(id, lim);
   const [newMessages, setNewMessages] = useState([]);
   const [selectFile, setSelectFile] = useState(null);
   const [fileType, setFileType] = useState("");
   const filePickerRef = useRef(null);
   const [status, setStatus] = useState(0);
   const [showMembers, setShowMembers] = useState(false);
+  const [loadingNewMessages, setLoadingNewMessages] = useState(false);
+  const [scrollDown, setScrollDown] = useState(true);
   const [darkMode] = useRecoilState(themeState);
   const [chat, setChat] = useState({});
   const you = getUser(session?.user.username, users);
   const [user, setUser] = useState({});
+  const creator = getName(
+    getUser(
+      chat?.users?.filter((itr) => itr.creator === true)[0]?.username,
+      users
+    )
+  );
 
   useEffect(() => {
     let unsubChats;
@@ -86,24 +96,39 @@ const Chat = () => {
   }, [router]);
 
   useEffect(() => {
+    let timeOut;
     if (messages) {
-      const revMsg = [];
-      for (let index in messages) {
-        revMsg.push(messages[messages.length - 1 - index]);
+      if (messages.length > newMessages.length) {
+        const revMsg = [];
+        for (let index in messages) {
+          revMsg.push(messages[messages.length - 1 - index]);
+        }
+        setNewMessages(revMsg);
+        if (noMoreMessages) setNoMoreMessages(false);
+        if (loadingNewMessages) setLoadingNewMessages(false);
+        console.log("Fetched");
+      } else {
+        console.log("no more messages");
+        if (!noMoreMessages) setNoMoreMessages(true);
+        timeOut = setTimeout(() => setScrollDown(true), 4000);
       }
-      setNewMessages(revMsg);
     }
-  }, [id, messages?.length]);
+    return () => {
+      if (timeOut) clearTimeout(timeOut);
+    };
+  }, [messages?.length, lim]);
 
   useEffect(() => {
-    if (chat !== {} && !id?.includes("group")) {
+    if (chat.users && !id?.includes("group")) {
       setUser(getUser(getOtherEmail(chat, session?.user), users));
     }
-  }, [chat, id]);
+  }, [chat, id, messages?.length]);
 
   const sendMessage = async (e) => {
+    setLim((prev) => prev + 1);
     e.preventDefault();
     const msgToSend = text;
+    const check = id?.includes("group") ? "groups" : "chats";
     setText("");
     if (selectFile) {
       const imgRef = selectFile;
@@ -131,7 +156,7 @@ const Chat = () => {
           // download url
           getDownloadURL(uploadTask.snapshot.ref)
             .then(async (url) => {
-              await addDoc(collection(db, "chats", id, "messages"), {
+              await addDoc(collection(db, check, id, "messages"), {
                 text: msgToSend,
                 username: session.user.username,
                 timeStamp: serverTimestamp(),
@@ -139,26 +164,25 @@ const Chat = () => {
               });
             })
             .then(() => {
-              msgSend(msgToSend);
+              msgSend(msgToSend, check);
             });
         }
       );
     } else {
-      const check = id?.includes("group") ? "groups" : "chats";
       await addDoc(collection(db, check, id, "messages"), {
         text: msgToSend,
         username: session.user.username,
         timeStamp: serverTimestamp(),
-      }).then(async () => {
-        msgSend(msgToSend);
-        await updateDoc(doc(db, check, id), {
-          timeStamp: serverTimestamp(),
-        });
+      }).then(() => {
+        msgSend(msgToSend, check);
       });
     }
   };
 
-  const msgSend = (msgToSend) => {
+  const msgSend = async (msgToSend, check) => {
+    await updateDoc(doc(db, check, id), {
+      timeStamp: serverTimestamp(),
+    });
     chat?.users.forEach((itruser) => {
       if (itruser.username !== you.username) {
         sendPush(
@@ -180,10 +204,17 @@ const Chat = () => {
     setSending(false);
   };
 
-  const scrollToBottom = () => {
-    messagesEndRef?.current?.scrollIntoView({ behavior: "smooth" });
+  useEffect(() => {
+    if (newMessages?.length > 0 && scrollDown) {
+      messagesEndRef?.current?.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [newMessages, scrollDown]);
+
+  const loadMoreMessages = () => {
+    setLoadingNewMessages(true);
+    setScrollDown(false);
+    setLim((prev) => prev + 10);
   };
-  useEffect(scrollToBottom, [messages]);
 
   const unsendMessage = async (msgID) => {
     if (confirm("Unsend Message?")) {
@@ -346,22 +377,26 @@ const Chat = () => {
                     </div>
                   )}
                 </div>
-                {newMessages?.length > 0 && (
+                {newMessages && (
                   <div className="flex space-x-1">
                     <span className="text-xs md:text-sm text-gray-400">
-                      active
+                      {id?.includes("group")
+                        ? `created by ${creator}`
+                        : "active"}
                     </span>
                     {user?.active ? (
                       <span className="text-xs md:text-sm text-gray-400">
                         now
                       </span>
                     ) : (
-                      <Moment
-                        fromNow
-                        className="text-xs md:text-sm text-gray-400"
-                      >
-                        {user?.timeStamp?.toDate()}
-                      </Moment>
+                      !id?.includes("group") && (
+                        <Moment
+                          fromNow
+                          className="text-xs md:text-sm text-gray-400"
+                        >
+                          {user?.timeStamp?.toDate()}
+                        </Moment>
+                      )
                     )}
                   </div>
                 )}
@@ -408,7 +443,7 @@ const Chat = () => {
               )}
               <div
                 hidden={!menu}
-                className="absolute right-3 top-16 z-10 w-44 bg-white rounded shadow dark:bg-gray-900"
+                className="absolute right-3 top-16 z-10 w-44 bg-white rounded shadow dark:bg-gray-900 dark:bg-opacity-50 backdrop-blur-sm"
               >
                 <ul className="py-1 text-sm text-gray-700 dark:text-gray-200">
                   <li>
@@ -461,16 +496,35 @@ const Chat = () => {
           </section>
 
           {/* Chat Body */}
-          <section className="flex-1 flex flex-col justify-end relative pt-14 pb-2">
+          <section
+            className={`${
+              user?.bio || chat?.description
+                ? noMoreMessages
+                  ? "pt-16"
+                  : "pt-20"
+                : "pt-2"
+            } flex-1 flex flex-col justify-end relative pb-2`}
+          >
+            <button
+              disabled={loadingNewMessages}
+              onClick={loadMoreMessages}
+              className={`absolute top-14 w-full bg-transparent transition-opacity duration-700 text-gray-400 hover:text-blue-500 ${
+                newMessages.length > 0 && noMoreMessages
+                  ? "opacity-0"
+                  : "opacity-100"
+              }`}
+            >
+              {!loadingNewMessages ? "Load More Messages" : "Loading..."}
+            </button>
             {(chat?.description || user?.bio) && (
               <div
-                className="absolute top-1 w-full bg-gray-700 border border-gray-800 text-gray-200 bg-opacity-40 px-4 py-3 rounded"
+                className="absolute flex gap-2 top-1 w-full bg-gray-700 border border-gray-800 text-gray-200 bg-opacity-40 px-4 py-3 rounded"
                 role="alert"
               >
                 <strong className="font-bold">
                   {id?.includes("group") ? "Description: " : "Bio: "}
                 </strong>
-                <span className="block sm:inline">
+                <span className="block sm:inline truncate">
                   {chat?.description || user?.bio}
                 </span>
               </div>
@@ -587,15 +641,15 @@ const Chat = () => {
               </div>
             )}
             <form onSubmit={(e) => sendMessage(e)}>
-              <div className="flex items-center p-2 bg-gray-50 rounded-lg dark:bg-gray-900">
+              <div className="flex items-center bg-gray-50 rounded-lg dark:bg-gray-900">
                 <button
                   onClick={() => filePickerRef.current.click()}
                   type="button"
-                  className="inline-flex justify-center py-2 text-gray-500 rounded-lg cursor-pointer dark:text-gray-400"
+                  className="inline-flex justify-center p-2 text-gray-500 rounded-lg cursor-pointer dark:text-gray-400"
                 >
                   <svg
                     aria-hidden="true"
-                    className="w-6 h-6"
+                    className="w-8 h-8"
                     fill="currentColor"
                     viewBox="0 0 20 20"
                     xmlns="http://www.w3.org/2000/svg"
@@ -614,45 +668,26 @@ const Chat = () => {
                   type="file"
                   onChange={(e) => addMedia(e.target.files[0])}
                 />
-                <button
-                  type="button"
-                  className="inline-flex justify-center py-2 text-gray-500 rounded-lg cursor-pointer dark:text-gray-400 ml-2"
-                >
-                  <svg
-                    aria-hidden="true"
-                    className="w-6 h-6"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M10 18a8 8 0 100-16 8 8 0 000 16zM7 9a1 1 0 100-2 1 1 0 000 2zm7-1a1 1 0 11-2 0 1 1 0 012 0zm-.464 5.535a1 1 0 10-1.415-1.414 3 3 0 01-4.242 0 1 1 0 00-1.415 1.414 5 5 0 007.072 0z"
-                      clipRule="evenodd"
-                    ></path>
-                  </svg>
-                  <span className="sr-only">Add emoji</span>
-                </button>
                 <textarea
                   disabled={sending}
                   value={text}
                   name={text}
                   onChange={(e) => setText(e.target.value)}
                   rows="1"
-                  className="block mx-4 p-2 w-full text-sm text-gray-900 bg-white rounded-lg border border-gray-300 focus:ring-0 dark:bg-gray-800 dark:border-gray-800 dark:text-white resize-none scrollbar-none"
+                  className="block mx-3 p-2 w-full text-sm text-gray-900 bg-white rounded-lg border border-gray-300 focus:ring-0 dark:bg-gray-800 dark:border-gray-800 dark:text-white resize-none scrollbar-none"
                   placeholder="Your message..."
                 ></textarea>
                 <button
                   onClick={(e) => sendMessage(e)}
                   disabled={text || selectFile ? false : true}
                   type="submit"
-                  className={`transition-all duration-500 inline-flex justify-center py-2 text-gray-500 rounded-lg cursor-pointer dark:text-gray-400 ${
+                  className={`transition-all duration-500 inline-flex justify-center p-2 text-gray-500 rounded-lg cursor-pointer dark:text-gray-400 ${
                     text || selectFile ? "animate-pulse dark:text-blue-600" : ""
                   }`}
                 >
                   <svg
                     aria-hidden="true"
-                    className="w-6 h-6 rotate-90"
+                    className="w-7 h-7 rotate-90"
                     fill="currentColor"
                     viewBox="0 0 20 20"
                     xmlns="http://www.w3.org/2000/svg"

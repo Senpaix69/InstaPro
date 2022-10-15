@@ -119,13 +119,13 @@ const GroupMembers = ({
         } absolute w-full inset-0 h-screen z-30`}
       ></div>
       <div
-        className={`absolute w-full max-w-[80%] h-screen text-white z-40 bg-gray-200 bg-opacity-70 dark:bg-gray-900 dark:bg-opacity-90 p-3 transition-all duration-500 overflow-y-scroll scrollbar-hide backdrop-blur-sm ${
+        className={`absolute w-full max-w-[80%] h-screen text-white z-40 bg-gray-200 bg-opacity-70 dark:bg-gray-900 dark:bg-opacity-60 p-3 transition-all duration-700 overflow-y-scroll scrollbar-hide backdrop-blur-sm ${
           showMembers
             ? "translate-x-0 opacity-100"
             : "-translate-x-[100%] opacity-0"
         }`}
       >
-        <h1 className="font-bold text-xl mb-4">Members</h1>
+        <h1 className="font-bold text-xl py-4 sticky top-0 z-10">Members</h1>
         {members.map((user, index) => {
           const curUser = getUser(user.username, users);
           const profImg = curUser?.profImg ? curUser.profImg : curUser?.image;
@@ -172,7 +172,7 @@ const GroupMembers = ({
               </div>
               <div
                 hidden={menu[index] === -1}
-                className="absolute z-auto right-0 top-0 w-44 bg-white rounded shadow dark:bg-slate-700"
+                className="absolute z-auto right-1 top-14 w-44 bg-white rounded-md shadow dark:bg-gray-500"
               >
                 <ul className="py-1 text-sm text-gray-700 dark:text-gray-200">
                   <li>
