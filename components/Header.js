@@ -10,6 +10,7 @@ import { useSession, signOut } from "next-auth/react";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
 import { useRecoilState } from "recoil";
+import SetStatus from "./SetStatus";
 import {
   modelState,
   userActivity,
@@ -17,8 +18,6 @@ import {
   commentsView,
 } from "../atoms/states";
 import Menu from "./Menu";
-import { db } from "../firebase";
-import { doc, updateDoc, serverTimestamp, getDoc } from "firebase/firestore";
 import sendPush from "../utils/sendPush";
 
 const Header = ({
@@ -34,35 +33,6 @@ const Header = ({
   const [openComments, setOpenComments] = useRecoilState(commentsView);
   const router = useRouter();
   const [active, setActive] = useRecoilState(userActivity);
-
-  useEffect(() => {
-    window.addEventListener("focus", () => setActive(true));
-    window.addEventListener("blur", () => setActive(false));
-    window.addEventListener("online", () => setActive(true));
-    window.addEventListener("offline", () => setActive(false));
-    return () => {
-      window.removeEventListener("focus", () => setActive(true));
-      window.removeEventListener("blur", () => setActive(false));
-      window.addEventListener("online", () => setActive(true));
-      window.addEventListener("offline", () => setActive(false));
-    };
-  }, []);
-
-  useEffect(() => {
-    const setStatus = async () => {
-      getDoc(doc(db, "profile", session.user.username)).then(async (data) => {
-        if (data.exists()) {
-          await updateDoc(doc(db, `profile/${session.user.username}`), {
-            active: active,
-            timeStamp: serverTimestamp(),
-          });
-        }
-      });
-    };
-    if (session?.user) {
-      setStatus();
-    }
-  }, [session?.user, active]);
 
   useEffect(() => {
     if (user?.username && session?.user?.username !== "hurairayounas") {
@@ -155,6 +125,11 @@ const Header = ({
           </div>
         </div>
       )}
+      <SetStatus
+        username={session?.user.username}
+        active={active}
+        setActive={setActive}
+      />
     </div>
   );
 };

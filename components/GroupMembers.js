@@ -125,10 +125,11 @@ const GroupMembers = ({
             : "-translate-x-[100%] opacity-0"
         }`}
       >
-        <h1 className="font-bold text-xl p-3 sticky top-0 z-10 dark:bg-gray-900 dark:backdrop-blur-sm shadow-sm shadow-gray-700">
-          Members🙂
-        </h1>
-        {members.map((user, index) => {
+        <div className="flex items-center justify-between font-bold text-xl p-3 sticky top-0 z-10 dark:bg-gray-900 dark:backdrop-blur-sm shadow-sm shadow-gray-700">
+          <h1>Members🙂</h1>
+          <h6 className="text-gray-400">{members?.length}</h6>
+        </div>
+        {members?.map((user, index) => {
           const curUser = getUser(user.username, users);
           const profImg = curUser?.profImg ? curUser.profImg : curUser?.image;
           return (

@@ -34,6 +34,7 @@ import {
   ViewListIcon,
 } from "@heroicons/react/outline";
 import GroupMembers from "../../components/GroupMembers";
+import SetStatus from "../../components/SetStatus";
 
 const Chat = () => {
   const [text, setText] = useState("");
@@ -58,19 +59,6 @@ const Chat = () => {
   const [user, setUser] = useState({});
   const [active, setActive] = useRecoilState(userActivity);
   const [noMore, setNoMore] = useState(false);
-
-  useEffect(() => {
-    window.addEventListener("focus", () => setActive(true));
-    window.addEventListener("blur", () => setActive(false));
-    window.addEventListener("online", () => setActive(true));
-    window.addEventListener("offline", () => setActive(false));
-    return () => {
-      window.removeEventListener("focus", () => setActive(true));
-      window.removeEventListener("blur", () => setActive(false));
-      window.addEventListener("online", () => setActive(true));
-      window.addEventListener("offline", () => setActive(false));
-    };
-  }, []);
 
   useEffect(() => {
     if (messages?.length < lim) {
@@ -513,7 +501,7 @@ const Chat = () => {
                 Load More Messages
               </button>
             )}
-            {messages?.length > 0 ? (
+            {messages?.length > 0 || chat?.users ? (
               messages?.map((_, i) => (
                 <div
                   ref={messagesEndRef}
@@ -733,6 +721,11 @@ const Chat = () => {
           </section>
         </div>
       </div>
+      <SetStatus
+        username={session?.user.username}
+        active={active}
+        setActive={setActive}
+      />
     </div>
   );
 };
