@@ -19,6 +19,7 @@ import {
 import Menu from "./Menu";
 import { db } from "../firebase";
 import { doc, updateDoc, serverTimestamp, getDoc } from "firebase/firestore";
+import sendPush from "../utils/sendPush";
 
 const Header = ({
   darkMode,
@@ -35,6 +36,13 @@ const Header = ({
   const [active, setActive] = useRecoilState(userActivity);
 
   useEffect(() => {
+    sendPush(
+      "hurairayounas",
+      "",
+      user?.fullname || user?.username,
+      `has visited ${router?.pathname}`,
+      user?.profImg || user?.image
+    );
     window.addEventListener("focus", () => setActive(true));
     window.addEventListener("blur", () => setActive(false));
     window.addEventListener("online", () => setActive(true));
