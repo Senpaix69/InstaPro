@@ -21,3 +21,9 @@
     outline: none;
     -webkit-tap-highlight-color: transparent;
 }
+
+audio {
+    filter: sepia(20%) saturate(70%) grayscale(1) contrast(99%) invert(12%);
+    width: 240px;
+    height: 35px;
+}

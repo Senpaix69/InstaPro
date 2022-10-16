@@ -32,9 +32,12 @@ import {
   UserAddIcon,
   UserGroupIcon,
   ViewListIcon,
+  MicrophoneIcon,
+  StopIcon,
 } from "@heroicons/react/outline";
 import GroupMembers from "../../components/GroupMembers";
 import SetStatus from "../../components/SetStatus";
+import useRecorder from "../../components/useRecorder";
 
 const Chat = () => {
   const [text, setText] = useState("");
@@ -58,6 +61,7 @@ const Chat = () => {
   const you = getUser(session?.user.username, users);
   const [user, setUser] = useState({});
   const [active, setActive] = useRecoilState(userActivity);
+  let [audioURL, isRecording, startRecording, stopRecording] = useRecorder();
   const [noMore, setNoMore] = useState(false);
 
   useEffect(() => {
@@ -110,6 +114,27 @@ const Chat = () => {
     }
   }, [chat, id, users]);
 
+  useEffect(() => {
+    if (audioURL) {
+      sendAudio();
+    }
+  }, [audioURL]);
+
+  const sendAudio = async () => {
+    const check = id?.includes("group") ? "groups" : "chats";
+    await addDoc(collection(db, check, id, "messages"), {
+      audio: audioURL,
+      username: session.user.username,
+      timeStamp: serverTimestamp(),
+    }).then(async () => {
+      msgSend("audio");
+      await updateDoc(doc(db, check, id), {
+        timeStamp: serverTimestamp(),
+      });
+      audioURL = "";
+    });
+  };
+
   const sendMessage = async (e) => {
     e.preventDefault();
     const msgToSend = text;
@@ -152,7 +177,7 @@ const Chat = () => {
             });
         }
       );
-    } else {
+    } else if (msgToSend.split(" ").join("").length > 0) {
       const check = id?.includes("group") ? "groups" : "chats";
       await addDoc(collection(db, check, id, "messages"), {
         text: msgToSend,
@@ -550,8 +575,16 @@ const Chat = () => {
                       className={`${
                         messages[messages.length - 1 - i]?.data().username ===
                         you?.username
-                          ? "mr-9 bg-green-400 bg-opacity-50 dark:bg-slate-600 dark:bg-opacity-50 backdrop-blur-sm"
-                          : "ml-9 bg-blue-400 bg-opacity-50 dark:bg-stone-700 dark:bg-opacity-50 backdrop-blur-sm"
+                          ? `mr-9 ${
+                              messages[messages.length - 1 - i]?.data().audio
+                                ? ""
+                                : "bg-green-400 bg-opacity-50 dark:bg-slate-600 dark:bg-opacity-50 backdrop-blur-sm"
+                            }`
+                          : `ml-9 ${
+                              messages[messages.length - 1 - i]?.data().audio
+                                ? ""
+                                : "bg-blue-400 bg-opacity-50 dark:bg-slate-600 dark:bg-opacity-50 backdrop-blur-sm"
+                            }`
                       } py-1 px-3 rounded-lg font-normal`}
                     >
                       <p>{messages[messages.length - 1 - i]?.data().text}</p>
@@ -560,6 +593,16 @@ const Chat = () => {
                           <img
                             src={messages[messages.length - 1 - i].data().image}
                             alt="img"
+                          />
+                        </div>
+                      )}
+                      {messages[messages.length - 1 - i].data()?.audio && (
+                        <div className="mt-3">
+                          <audio
+                            src={
+                              messages[messages.length - 1 - i].data()?.audio
+                            }
+                            controls
                           />
                         </div>
                       )}
@@ -632,13 +675,14 @@ const Chat = () => {
 
           {/* Chat Bottom */}
           <section className="bg-gray-50 sticky bottom-0 z-20 shadow-sm px-1 dark:text-white dark:bg-gray-900">
-            {(selectFile || sending) && (
+            {(selectFile || sending || isRecording) && (
               <div className="font-bold p-4 mr-3 text-gray-500 w-full text-right">
                 {sending ? (
                   <p>{`Uploading ${fileType}: ${status}%`}</p>
                 ) : (
                   selectFile && <h1>{selectFile.name}</h1>
                 )}
+                {isRecording && <h1>Recording...</h1>}
               </div>
             )}
             <form onSubmit={(e) => sendMessage(e)}>
@@ -697,25 +741,44 @@ const Chat = () => {
                   className="block mx-4 p-2 w-full text-sm text-gray-900 bg-white rounded-lg border border-gray-300 focus:ring-0 dark:bg-gray-800 dark:border-gray-800 dark:text-white resize-none scrollbar-none"
                   placeholder="Your message..."
                 ></textarea>
-                <button
-                  onClick={(e) => sendMessage(e)}
-                  disabled={text || selectFile ? false : true}
-                  type="submit"
-                  className={`transition-all duration-500 inline-flex justify-center py-2 text-gray-500 rounded-lg cursor-pointer dark:text-gray-400 ${
-                    text || selectFile ? "animate-pulse dark:text-blue-600" : ""
-                  }`}
-                >
-                  <svg
-                    aria-hidden="true"
-                    className="w-6 h-6 rotate-90"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                    xmlns="http://www.w3.org/2000/svg"
+                {text ? (
+                  <button
+                    onClick={(e) => sendMessage(e)}
+                    disabled={text || selectFile ? false : true}
+                    type="submit"
+                    className={`transition-all duration-500 inline-flex justify-center py-2 text-gray-500 rounded-lg cursor-pointer dark:text-gray-400 ${
+                      text || selectFile
+                        ? "animate-pulse dark:text-blue-600"
+                        : ""
+                    }`}
                   >
-                    <path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z"></path>
-                  </svg>
-                  <span className="sr-only">Send message</span>
-                </button>
+                    <svg
+                      aria-hidden="true"
+                      className="w-6 h-6 rotate-90"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z"></path>
+                    </svg>
+                    <span className="sr-only">Send message</span>
+                  </button>
+                ) : !isRecording ? (
+                  <MicrophoneIcon
+                    onClick={startRecording}
+                    disabled={isRecording}
+                    className="h-8 w-8 btn text-gray-300"
+                  />
+                ) : (
+                  <StopIcon
+                    onClick={(e) => {
+                      stopRecording();
+                      sendMessage(e);
+                    }}
+                    disabled={!isRecording}
+                    className="h-8 w-8 btn text-red-500"
+                  />
+                )}
               </div>
             </form>
           </section>
