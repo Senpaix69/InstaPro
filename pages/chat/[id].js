@@ -46,7 +46,6 @@ const Chat = () => {
   const [sending, setSending] = useState(false);
   const [editGroup, setEditGroup] = useState(false);
   const messages = getChatMessages(id);
-  const [newMessages, setNewMessages] = useState([]);
   const [selectFile, setSelectFile] = useState(null);
   const [fileType, setFileType] = useState("");
   const filePickerRef = useRef(null);
@@ -106,16 +105,6 @@ const Chat = () => {
       }
     };
   }, [router]);
-
-  useEffect(() => {
-    if (messages) {
-      const revMsg = [];
-      for (let index in messages) {
-        revMsg.push(messages[messages.length - 1 - index]);
-      }
-      setNewMessages(revMsg);
-    }
-  }, [id, messages?.length]);
 
   useEffect(() => {
     if (chat !== {} && !id?.includes("group")) {
@@ -501,13 +490,14 @@ const Chat = () => {
                 </span>
               </div>
             )}
-            {newMessages?.length > 0 || messages ? (
-              newMessages?.map((msg, i) => (
+            {chat?.users ? (
+              messages?.map((_, i) => (
                 <div
                   ref={messagesEndRef}
                   key={i}
                   className={`flex ${
-                    msg?.data().username === you?.username
+                    messages[messages.length - 1 - i]?.data().username ===
+                    you?.username
                       ? "justify-end"
                       : `mt-1 ${chat?.name ? "mt-5" : ""}`
                   }`}
@@ -515,12 +505,19 @@ const Chat = () => {
                   <div className="dark:text-gray-200 flex items-center rounded-md w-fit max-w-xs py-1 px-2 relative">
                     <div
                       className={`absolute top-1 rounded-full ${
-                        msg?.data().username === you?.username ? "right-2" : ""
+                        messages[messages.length - 1 - i]?.data().username ===
+                        you?.username
+                          ? "right-2"
+                          : ""
                       }`}
                     >
                       <button
                         onClick={() =>
-                          router.push(`/profile/${msg?.data().username}`)
+                          router.push(
+                            `/profile/${
+                              messages[messages.length - 1 - i]?.data().username
+                            }`
+                          )
                         }
                         className="flex items-center justify-center object-contain"
                       >
@@ -528,7 +525,10 @@ const Chat = () => {
                           <Image
                             loading="eager"
                             layout="fill"
-                            src={getUserProfilePic(msg.data().username, users)}
+                            src={getUserProfilePic(
+                              messages[messages.length - 1 - i].data().username,
+                              users
+                            )}
                             alt="prof"
                             className="rounded-full"
                           />
@@ -537,18 +537,22 @@ const Chat = () => {
                     </div>
                     <div
                       className={`${
-                        msg?.data().username === you?.username
+                        messages[messages.length - 1 - i]?.data().username ===
+                        you?.username
                           ? "mr-9 bg-green-400 bg-opacity-50 dark:bg-slate-600 dark:bg-opacity-50 backdrop-blur-sm"
                           : "ml-9 bg-blue-400 bg-opacity-50 dark:bg-stone-700 dark:bg-opacity-50 backdrop-blur-sm"
                       } py-1 px-3 rounded-lg font-normal`}
                     >
-                      <p>{msg?.data().text}</p>
-                      {msg.data().image && (
+                      <p>{messages[messages.length - 1 - i]?.data().text}</p>
+                      {messages[messages.length - 1 - i].data().image && (
                         <div className="my-2 shadow-md p-2">
-                          <img src={msg.data().image} alt="img" />
+                          <img
+                            src={messages[messages.length - 1 - i].data().image}
+                            alt="img"
+                          />
                         </div>
                       )}
-                      {msg.data().video && (
+                      {messages[messages.length - 1 - i].data().video && (
                         <video
                           playsInline
                           controls
@@ -556,12 +560,16 @@ const Chat = () => {
                           poster="https://domainjava.com/wp-content/uploads/2022/07/Link-Bokeh-Full-111.90-l50-204-Chrome-Video-Bokeh-Museum-2022.jpg"
                           className="w-full h-auto max-h-[300px] overflow-hidden my-2"
                         >
-                          <source src={msg.data().video} />
+                          <source
+                            src={messages[messages.length - 1 - i].data().video}
+                          />
                         </video>
                       )}
                       <div className="flex text-gray-700 dark:text-gray-300 justify-end">
                         <Moment fromNow className="text-[10px]">
-                          {msg?.data()?.timeStamp?.toDate()}
+                          {messages[messages.length - 1 - i]
+                            ?.data()
+                            ?.timeStamp?.toDate()}
                         </Moment>
                         <span className="ml-1 text-sm bg-transparent rounded-full">
                           <svg
@@ -582,17 +590,27 @@ const Chat = () => {
                       </div>
                     </div>
 
-                    {msg?.data().username === you.username && (
+                    {messages[messages.length - 1 - i]?.data().username ===
+                      you.username && (
                       <TrashIcon
                         className="h-5 w-5 absolute -left-6 cursor-pointer text-gray-800 overflow-hidden dark:text-gray-200"
-                        onClick={() => unsendMessage(msg.id)}
+                        onClick={() =>
+                          unsendMessage(messages[messages.length - 1 - i].id)
+                        }
                       />
                     )}
-                    {chat?.name && msg?.data().username !== you.username && (
-                      <span className="absolute text-xs -top-3 left-11">
-                        {getName(getUser(msg.data().username, users))}
-                      </span>
-                    )}
+                    {chat?.name &&
+                      messages[messages.length - 1 - i]?.data().username !==
+                        you.username && (
+                        <span className="absolute text-xs -top-3 left-11">
+                          {getName(
+                            getUser(
+                              messages[messages.length - 1 - i].data().username,
+                              users
+                            )
+                          )}
+                        </span>
+                      )}
                   </div>
                 </div>
               ))
