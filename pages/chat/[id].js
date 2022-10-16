@@ -201,10 +201,15 @@ const Chat = () => {
     setSending(false);
   };
 
-  // const scrollToBottom = () => {
-  //   messagesEndRef?.current?.scrollIntoView({ behavior: "smooth" });
-  // };
-  // useEffect(scrollToBottom, [messages]);
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      messagesEndRef?.current?.scrollIntoView({ behavior: "smooth" });
+    }, 5000);
+    return () => {
+      console.log("Cleared Time");
+      clearTimeout(timeout);
+    };
+  }, [lim]);
 
   const unsendMessage = async (msgID) => {
     if (confirm("Unsend Message?")) {
@@ -503,7 +508,7 @@ const Chat = () => {
             {messages?.length > 0 && !noMore && (
               <button
                 onClick={() => setLim((prev) => prev + 10)}
-                className="w-full text-white"
+                className="w-full text-white font-semibold"
               >
                 Load More Messages
               </button>
