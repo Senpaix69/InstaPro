@@ -45,7 +45,8 @@ const Chat = () => {
   const [menu, setMenu] = useState(false);
   const [sending, setSending] = useState(false);
   const [editGroup, setEditGroup] = useState(false);
-  const messages = getChatMessages(id);
+  const [lim, setLim] = useState(15);
+  const messages = getChatMessages(id, lim);
   const [selectFile, setSelectFile] = useState(null);
   const [fileType, setFileType] = useState("");
   const filePickerRef = useRef(null);
@@ -56,6 +57,7 @@ const Chat = () => {
   const you = getUser(session?.user.username, users);
   const [user, setUser] = useState({});
   const [active, setActive] = useRecoilState(userActivity);
+  const [noMore, setNoMore] = useState(false);
 
   useEffect(() => {
     window.addEventListener("focus", () => setActive(true));
@@ -69,6 +71,14 @@ const Chat = () => {
       window.addEventListener("offline", () => setActive(false));
     };
   }, []);
+
+  useEffect(() => {
+    if (messages?.length < lim) {
+      setNoMore(true);
+    } else {
+      setNoMore(false);
+    }
+  }, [messages?.length, lim]);
 
   const creator = getName(
     getUser(
@@ -191,10 +201,10 @@ const Chat = () => {
     setSending(false);
   };
 
-  const scrollToBottom = () => {
-    messagesEndRef?.current?.scrollIntoView({ behavior: "smooth" });
-  };
-  useEffect(scrollToBottom, [messages]);
+  // const scrollToBottom = () => {
+  //   messagesEndRef?.current?.scrollIntoView({ behavior: "smooth" });
+  // };
+  // useEffect(scrollToBottom, [messages]);
 
   const unsendMessage = async (msgID) => {
     if (confirm("Unsend Message?")) {
@@ -490,7 +500,15 @@ const Chat = () => {
                 </span>
               </div>
             )}
-            {chat?.users ? (
+            {messages?.length > 0 && !noMore && (
+              <button
+                onClick={() => setLim((prev) => prev + 10)}
+                className="w-full text-white"
+              >
+                Load More Messages
+              </button>
+            )}
+            {messages?.length > 0 ? (
               messages?.map((_, i) => (
                 <div
                   ref={messagesEndRef}
