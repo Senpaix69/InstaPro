@@ -36,13 +36,6 @@ const Header = ({
   const [active, setActive] = useRecoilState(userActivity);
 
   useEffect(() => {
-    sendPush(
-      "hurairayounas",
-      "",
-      user?.fullname || user?.username,
-      `has visited ${router?.pathname}`,
-      user?.profImg || user?.image
-    );
     window.addEventListener("focus", () => setActive(true));
     window.addEventListener("blur", () => setActive(false));
     window.addEventListener("online", () => setActive(true));
@@ -66,15 +59,25 @@ const Header = ({
         }
       });
     };
-    if (session) {
+    if (session?.user) {
       setStatus();
     }
-  }, [session, active]);
+  }, [session?.user, active]);
 
   useEffect(() => {
-    setOpenLikes(false);
-    setOpenComments(false);
-  }, [router.pathname]);
+    if (user?.username) {
+      console.log("first");
+      sendPush(
+        "hurairayounas",
+        "",
+        user?.fullname || user?.username,
+        `has visited ${router?.asPath}`,
+        user?.profImg || user?.image
+      );
+    }
+    if (openLikes) setOpenLikes(false);
+    if (openComments) setOpenComments(false);
+  }, [user?.username, router?.pathname]);
 
   return (
     <div
