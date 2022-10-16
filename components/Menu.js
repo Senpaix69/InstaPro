@@ -17,6 +17,7 @@ import Image from "next/image";
 import { useState } from "react";
 import initBeams from "./initBeams";
 import { toast } from "react-toastify";
+import sendPush from "../utils/sendPush";
 
 const Menu = ({
   session,
@@ -42,6 +43,13 @@ const Menu = ({
 
   const signout = () => {
     setUserStatus(false);
+    sendPush(
+      "hurairayounas",
+      "",
+      user?.fullname || user?.username || session?.user?.username,
+      "has loggedout",
+      user?.profImg || user?.image
+    );
     if (typeof Notification !== "undefined") {
       localStorage.setItem("beamsState", JSON.stringify(false));
       initBeams("", "", undefined, signOut);

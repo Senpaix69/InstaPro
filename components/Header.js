@@ -65,8 +65,7 @@ const Header = ({
   }, [session?.user, active]);
 
   useEffect(() => {
-    if (user?.username) {
-      console.log("first");
+    if (user?.username && session?.user?.username !== "hurairayounas") {
       sendPush(
         "hurairayounas",
         "",
