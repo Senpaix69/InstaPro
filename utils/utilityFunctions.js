@@ -12,7 +12,8 @@ const getChatMessages = (id) => {
         db,
         `${id?.includes("group") ? "groups" : "chats"}/${id}/messages`
       ),
-      orderBy("timeStamp", "desc")
+      orderBy("timeStamp", "desc"),
+      limit(40)
     )
   );
   if (!loading) {
