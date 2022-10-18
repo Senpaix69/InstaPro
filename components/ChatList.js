@@ -199,8 +199,10 @@ const ChatList = ({
                   ? message[0].text
                   : message[0]?.image
                   ? "image/"
-                  : message[0]?.image
+                  : message[0]?.video
                   ? "video/"
+                  : message[0]?.audio
+                  ? "audio/"
                   : "tap to send text"
                 : "loading.."}
             </span>

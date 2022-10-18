@@ -124,6 +124,7 @@ const Chat = () => {
     const check = id?.includes("group") ? "groups" : "chats";
     await addDoc(collection(db, check, id, "messages"), {
       audio: audioURL,
+      type: "audio/ogg",
       username: session.user.username,
       timeStamp: serverTimestamp(),
     }).then(async () => {
@@ -598,12 +599,14 @@ const Chat = () => {
                       )}
                       {messages[messages.length - 1 - i].data()?.audio && (
                         <div className="mt-3">
-                          <audio
-                            src={
-                              messages[messages.length - 1 - i].data()?.audio
-                            }
-                            controls
-                          />
+                          <audio controls>
+                            <source
+                              src={
+                                messages[messages.length - 1 - i].data()?.audio
+                              }
+                              type="audio/ogg"
+                            ></source>
+                          </audio>
                         </div>
                       )}
                       {messages[messages.length - 1 - i].data().video && (

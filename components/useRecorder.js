@@ -15,15 +15,19 @@ const useRecorder = () => {
     }
 
     // Manage recorder state.
-    if (isRecording) {
-      recorder?.start();
-    } else {
-      recorder?.stop();
+    if (recorder !== null) {
+      if (isRecording) {
+        recorder?.start();
+      } else {
+        recorder?.stop();
+      }
     }
 
     // Obtain the audio when ready.
     const handleData = (e) => {
-      setAudioURL(URL.createObjectURL(e.data));
+      const blob = new Blob([e.data], { type: "audio/mp3; codecs=opus" });
+      const audioURL = URL.createObjectURL(blob);
+      setAudioURL(audioURL);
     };
 
     recorder.addEventListener("dataavailable", handleData);
